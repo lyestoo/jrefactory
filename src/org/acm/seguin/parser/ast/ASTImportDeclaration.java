@@ -103,4 +103,14 @@ public class ASTImportDeclaration extends SimpleNode {
 	public Object jjtAccept(JavaParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
+
+
+    public boolean isImportOnDemand() {
+        return importPackage;
+    }
+
+    public ASTName getImportedNameNode() {
+        return (ASTName) jjtGetFirstChild();
+    }
+
 }

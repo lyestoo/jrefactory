@@ -52,7 +52,7 @@
 package org.acm.seguin.tools.stub;
 
 import java.io.File;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 
 /**
  *  Generates a stub set from a file or a directory

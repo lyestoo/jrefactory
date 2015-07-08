@@ -23,8 +23,8 @@ import org.acm.seguin.util.MissingSettingsException;
  *  The files that have changed are indexed files, in that they have an index
  *  appended to the name of the file.
  *
- *@author     Mike Atkinson (<a href="mailto:javastyle@ladyshot.demon.co.uk">Mike</a>)
- *@version    $Version: $
+ *@author     <a href="mailto:JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: UndoAction.java,v 1.3 2003/07/29 20:51:56 mikeatkinson Exp $
  *@since      2.7.05
  */
 public interface UndoAction {

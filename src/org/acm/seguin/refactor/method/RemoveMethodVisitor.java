@@ -123,7 +123,7 @@ public class RemoveMethodVisitor extends IdentifyMethodVisitor {
 		int loop = node.jjtGetNumChildren();
 		for (int ndx = 0; ndx < loop; ndx++) {
 			SimpleNode next = (SimpleNode) node.jjtGetChild(ndx);
-			SimpleNode possible = (SimpleNode) next.jjtGetChild(0);
+			SimpleNode possible = (SimpleNode) next.jjtGetFirstChild();
 			if (isFound(possible)) {
 				removeSingle(node, next, ndx);
 				return next;

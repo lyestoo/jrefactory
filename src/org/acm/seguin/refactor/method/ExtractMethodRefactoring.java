@@ -8,8 +8,7 @@
  */
 package org.acm.seguin.refactor.method;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import org.acm.seguin.parser.Node;
@@ -29,7 +28,7 @@ import org.acm.seguin.parser.factory.BufferParserFactory;
 import org.acm.seguin.parser.query.Found;
 import org.acm.seguin.parser.query.Search;
 import org.acm.seguin.pretty.JavadocTags;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.pretty.PrettyPrintVisitor;
 import org.acm.seguin.pretty.PrintData;
 import org.acm.seguin.refactor.Refactoring;
@@ -38,12 +37,15 @@ import org.acm.seguin.summary.FileSummary;
 import org.acm.seguin.summary.SummaryLoadVisitor;
 import org.acm.seguin.summary.SummaryLoaderState;
 import org.acm.seguin.summary.VariableSummary;
+import org.acm.seguin.parser.JavaParserTreeConstants;
 
 /**
  *  Refactoring class that extracts a portion of the method and creates a new
  *  method with what the user has selected.
  *
  *@author    Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: ExtractMethodRefactoring.java,v 1.5 2003/09/18 23:07:30 mikeatkinson Exp $ 
  */
 public class ExtractMethodRefactoring extends Refactoring
 {
@@ -379,14 +381,14 @@ public class ExtractMethodRefactoring extends Refactoring
 
 		extractedMethodFileSummary = findVariablesUsed(root);
 
-		ASTTypeDeclaration top = (ASTTypeDeclaration) root.jjtGetChild(0);
-		ASTClassDeclaration classDecl = (ASTClassDeclaration) top.jjtGetChild(0);
+		ASTTypeDeclaration top = (ASTTypeDeclaration) root.jjtGetFirstChild();
+		ASTClassDeclaration classDecl = (ASTClassDeclaration) top.jjtGetFirstChild();
 		ASTUnmodifiedClassDeclaration unmodifiedClassDecl =
-				(ASTUnmodifiedClassDeclaration) classDecl.jjtGetChild(0);
-		ASTClassBody classBody = (ASTClassBody) unmodifiedClassDecl.jjtGetChild(0);
-		ASTClassBodyDeclaration bodyDecl = (ASTClassBodyDeclaration) classBody.jjtGetChild(0);
+				(ASTUnmodifiedClassDeclaration) classDecl.jjtGetFirstChild();
+		ASTClassBody classBody = (ASTClassBody) unmodifiedClassDecl.jjtGetFirstChild();
+		ASTClassBodyDeclaration bodyDecl = (ASTClassBodyDeclaration) classBody.jjtGetFirstChild();
 
-		return (SimpleNode) bodyDecl.jjtGetChild(0);
+		return (SimpleNode) bodyDecl.jjtGetFirstChild();
 	}
 
 
@@ -500,17 +502,14 @@ public class ExtractMethodRefactoring extends Refactoring
 	 */
 	private void printFile(SimpleNode root)
 	{
-		ByteArrayOutputStream baos;
-
-		baos = new ByteArrayOutputStream();
+		StringWriter writer = new StringWriter();
 		JavadocTags.get().reload();
-		PrintData pd = new PrintData(baos);
+		PrintData pd = new PrintData(writer);
 		PrettyPrintVisitor ppv = new PrettyPrintVisitor();
 		ppv.visit((ASTCompilationUnit) root, pd);
 		pd.close();
 
-		byte[] buffer = baos.toByteArray();
-		String file = new String(buffer);
+		String file = writer.toString();
 		if (file.length() > 0)
 		{
 			fullFile = new StringBuffer(file);
@@ -639,12 +638,12 @@ public class ExtractMethodRefactoring extends Refactoring
 		{
 			Node block = methodDecl.jjtGetChild(methodDecl.jjtGetNumChildren() - 1);
 
-			ASTBlockStatement blockStatement = new ASTBlockStatement(0);
+			ASTBlockStatement blockStatement = new ASTBlockStatement(JavaParserTreeConstants.JJTBLOCKSTATEMENT);
 
-			ASTStatement statement = new ASTStatement(0);
+			ASTStatement statement = new ASTStatement(JavaParserTreeConstants.JJTSTATEMENT);
 			blockStatement.jjtAddChild(statement, 0);
 
-			ASTReturnStatement returnStatement = new ASTReturnStatement(0);
+			ASTReturnStatement returnStatement = new ASTReturnStatement(JavaParserTreeConstants.JJTRETURNSTATEMENT);
 			statement.jjtAddChild(returnStatement, 0);
 
 			BuildExpression be = new BuildExpression();
@@ -678,10 +677,12 @@ public class ExtractMethodRefactoring extends Refactoring
 		ASTMethodDeclaration extractedFrom = (ASTMethodDeclaration) currentNode;
 		ASTMethodDeclaration newMethod = (ASTMethodDeclaration) methodTree;
 
-		ModifierHolder efmh = extractedFrom.getModifiers();
-		ModifierHolder nmmh = newMethod.getModifiers();
-		nmmh.setStatic(efmh.isStatic());
-		nmmh.setSynchronized(nmmh.isSynchronized());
+		//ModifierHolder efmh = extractedFrom.getModifiers();
+		//ModifierHolder nmmh = newMethod.getModifiers();
+		//nmmh.setStatic(efmh.isStatic());
+		//nmmh.setSynchronized(nmmh.isSynchronized());
+		newMethod.setStatic(extractedFrom.isStatic());
+		newMethod.setSynchronized(extractedFrom.isSynchronized());
 	}
 
 

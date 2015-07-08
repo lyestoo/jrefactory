@@ -72,7 +72,7 @@ import oracle.javatools.editor.BasicEditorPane;
 import oracle.jdeveloper.ceditor.find.FindableEditor;
 import org.acm.seguin.pretty.PrettyPrintFromIDE;
 import org.acm.seguin.tools.install.PrettyPrinterConfigGUI;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 
 /**
  *  The PrettyPrinter Extension for Oracle jDeveloper 9i.

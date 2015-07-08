@@ -66,8 +66,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import org.acm.seguin.awt.OrderableList;
-//import org.acm.seguin.util.InsertionSortArray;
-//import org.acm.seguin.util.Comparator;
+
 
 /**
  *  This class is responsible for ordering the methods and fields.

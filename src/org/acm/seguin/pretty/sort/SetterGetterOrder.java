@@ -70,13 +70,13 @@ public class SetterGetterOrder extends Ordering {
 	 *@return         the objects index if it is found or 7 if it is not
 	 */
 	protected int getIndex(Object object) {
-		Object data = ((SimpleNode) object).jjtGetChild(0);
+		Object data = ((SimpleNode) object).jjtGetFirstChild();
 
 		//  Now that we have data, determine the type of data
 		if (data instanceof ASTMethodDeclaration) {
 			ASTMethodDeclaration declaration = (ASTMethodDeclaration) data;
                         int child=1;
-                        if (declaration.jjtGetChild(0) instanceof ASTTypeParameters) {
+                        if (declaration.jjtGetFirstChild() instanceof ASTTypeParameters) {
                             child++;
                         }
                         ASTMethodDeclarator declar = (ASTMethodDeclarator) (declaration.jjtGetChild(child));

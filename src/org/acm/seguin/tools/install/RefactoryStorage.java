@@ -113,9 +113,6 @@ public class RefactoryStorage {
      */
     public void store() {
         try {
-            //String dir = FileSettings.getSettingsRoot() + File.separator + ".Refactory";
-            //String filename = dir + File.separator + "refactory.settings";
-
             PrintWriter output = new PrintWriter(new FileWriter(new File(FileSettings.getRefactorySettingsRoot(),"refactory.settings")));
             Iterator iter = map.keySet().iterator();
             while (iter.hasNext()) {

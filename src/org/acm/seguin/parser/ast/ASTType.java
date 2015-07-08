@@ -18,9 +18,6 @@ import org.acm.seguin.parser.JavaParser;
  *@created    October 13, 1999
  */
 public class ASTType extends SimpleNode {
-	//  Instance Variable
-	private int arrayCount;
-
 
 	/**
 	 *  Constructor for the ASTType object
@@ -42,25 +39,6 @@ public class ASTType extends SimpleNode {
 		super(p, id);
 	}
 
-
-	/**
-	 *  Set the number of indirection for the array
-	 *
-	 *@param  count  the count
-	 */
-	public void setArrayCount(int count) {
-		arrayCount = count;
-	}
-
-
-	/**
-	 *  Get the number of indirection for the array
-	 *
-	 *@return    the count
-	 */
-	public int getArrayCount() {
-		return arrayCount;
-	}
 
 
 	/**

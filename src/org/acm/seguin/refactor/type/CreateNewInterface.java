@@ -9,19 +9,15 @@
 package org.acm.seguin.refactor.type;
 
 import java.io.File;
-import java.io.IOException;
-import org.acm.seguin.parser.Node;
 import org.acm.seguin.parser.ast.*;
 import org.acm.seguin.pretty.PrettyPrintFile;
 import org.acm.seguin.refactor.RefactoringException;
-import org.acm.seguin.summary.FileSummary;
 import org.acm.seguin.summary.PackageSummary;
 import org.acm.seguin.summary.Summary;
 import org.acm.seguin.summary.TypeDeclSummary;
 import org.acm.seguin.summary.TypeSummary;
-import org.acm.seguin.summary.query.GetTypeSummary;
-import org.acm.seguin.summary.query.SamePackage;
 import org.acm.seguin.summary.query.TopLevelDirectory;
+import org.acm.seguin.parser.JavaParserTreeConstants;
 
 /**
  *  This object creates an interface from nothing. It is responsible for
@@ -89,8 +85,6 @@ public class CreateNewInterface {
 			nextIndex++;
 		}
 
-		ASTName parentName = new ASTName(0);
-
 		//  Create the class
 		ASTTypeDeclaration td = createTypeDeclaration();
 		root.jjtAddChild(td, nextIndex);
@@ -108,8 +102,8 @@ public class CreateNewInterface {
 	 */
 	ASTPackageDeclaration createPackageDeclaration()
 	{
-		ASTPackageDeclaration packDecl = new ASTPackageDeclaration(0);
-		ASTName packName = new ASTName(0);
+		ASTPackageDeclaration packDecl = new ASTPackageDeclaration(JavaParserTreeConstants.JJTPACKAGEDECLARATION);
+		ASTName packName = new ASTName();
 		packName.fromString(m_packageName);
 		packDecl.jjtAddChild(packName, 0);
 
@@ -124,7 +118,7 @@ public class CreateNewInterface {
 	 */
 	ASTTypeDeclaration createTypeDeclaration()
 	{
-		ASTTypeDeclaration td = new ASTTypeDeclaration(0);
+		ASTTypeDeclaration td = new ASTTypeDeclaration();
 		ASTInterfaceDeclaration id = createModifiedClass();
 		td.jjtAddChild(id, 0);
 
@@ -139,7 +133,7 @@ public class CreateNewInterface {
 	 */
 	ASTInterfaceDeclaration createModifiedClass()
 	{
-		ASTInterfaceDeclaration id = new ASTInterfaceDeclaration(0);
+		ASTInterfaceDeclaration id = new ASTInterfaceDeclaration(JavaParserTreeConstants.JJTINTERFACEDECLARATION);
 		id.addModifier("public");
 		ASTUnmodifiedInterfaceDeclaration uid = createClassBody(m_interfaceName);
 		id.jjtAddChild(uid, 0);
@@ -156,9 +150,9 @@ public class CreateNewInterface {
 	 */
 	ASTUnmodifiedInterfaceDeclaration createClassBody(String parentName)
 	{
-		ASTUnmodifiedInterfaceDeclaration uid = new ASTUnmodifiedInterfaceDeclaration(0);
+		ASTUnmodifiedInterfaceDeclaration uid = new ASTUnmodifiedInterfaceDeclaration(JavaParserTreeConstants.JJTUNMODIFIEDINTERFACEDECLARATION);
 		uid.setName(parentName);
-		ASTInterfaceBody ib = new ASTInterfaceBody(0);
+		ASTInterfaceBody ib = new ASTInterfaceBody(JavaParserTreeConstants.JJTINTERFACEBODY);
 		uid.jjtAddChild(ib, 0);
 		return uid;
 	}
@@ -198,8 +192,7 @@ public class CreateNewInterface {
 	 *@param  base  Description of Parameter
 	 *@return       the package summary
 	 */
-	private PackageSummary getPackageSummary(Summary base)
-	{
+	private PackageSummary getPackageSummary(Summary base) {
 		Summary current = base;
 		while (!(current instanceof PackageSummary)) {
 			current = current.getParent();
@@ -215,8 +208,7 @@ public class CreateNewInterface {
 	 *@param  two  Description of Parameter
 	 *@return      The SameParent value
 	 */
-	private boolean isSameParent(TypeSummary one, TypeSummary two)
-	{
+	private boolean isSameParent(TypeSummary one, TypeSummary two) {
 		if (isObject(one)) {
 			return isObject(two);
 		}
@@ -235,8 +227,7 @@ public class CreateNewInterface {
 	 *@param  item  Description of Parameter
 	 *@return       The Object value
 	 */
-	private boolean isObject(TypeSummary item)
-	{
+	private boolean isObject(TypeSummary item) {
 		if (item == null) {
 			return true;
 		}

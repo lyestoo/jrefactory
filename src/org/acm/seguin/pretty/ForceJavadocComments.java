@@ -8,6 +8,7 @@
  */
 package org.acm.seguin.pretty;
 
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.util.FileSettings;
 import org.acm.seguin.util.SettingNotFoundException;
 
@@ -45,6 +46,7 @@ public class ForceJavadocComments {
 				 || isProtected(minimumLevel, mods)
 				 || isPublic(minimumLevel, mods);
 	}
+
 
 
 	/**
@@ -95,4 +97,5 @@ public class ForceJavadocComments {
 		return level.equalsIgnoreCase("public") && 
 				mods.isPublic();
 	}
+
 }

@@ -50,7 +50,7 @@
  * <http://www.sourceforge.org/projects/jrefactory>.
  */
 package org.acm.seguin.uml;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.summary.MethodSummary;
 import org.acm.seguin.uml.line.DragPanelAdapter;
 
@@ -82,10 +82,10 @@ public class UMLMethod extends UMLLine implements ISourceful {
         current = initCurrent;
 
         //  Reset the parent data
-        ModifierHolder modifiers = summary.getModifiers();
-        setProtection(UMLLine.getProtectionCode(modifiers));
+        //ModifierHolder modifiers = summary.getModifiers();
+        setProtection(UMLLine.getProtectionCode(summary));
         setLabelText(summary.toString());
-        setLabelFont(UMLLine.getProtectionFont(false, modifiers));
+        setLabelFont(UMLLine.getProtectionFont(false, summary));
 
         //  Reset the size
         setSize(getPreferredSize());

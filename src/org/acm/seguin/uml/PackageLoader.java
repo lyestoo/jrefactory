@@ -51,29 +51,41 @@
  */
 package org.acm.seguin.uml;
 
-import java.awt.Rectangle;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+import org.acm.seguin.summary.PackageSummary;
+import org.acm.seguin.summary.TypeDeclSummary;
+import org.acm.seguin.summary.TypeSummary;
+import org.acm.seguin.summary.Summary;
+import org.acm.seguin.summary.ImportSummary;
+import org.acm.seguin.summary.FileSummary;
+import org.acm.seguin.summary.ReflectiveSummaryLoader;
 import org.acm.seguin.awt.ExceptionPrinter;
 import org.acm.seguin.ide.common.SummaryLoaderThread;
-import org.acm.seguin.summary.*;
 import org.acm.seguin.summary.query.GetTypeSummary;
 import org.acm.seguin.uml.line.AssociationRelationship;
 import org.acm.seguin.uml.line.ImplementsRelationship;
 import org.acm.seguin.uml.line.InheretenceRelationship;
 import org.acm.seguin.uml.line.SegmentedLine;
-import org.acm.seguin.uml.line.EndPointPanel;
 import org.acm.seguin.util.FileSettings;
+
+import org.acm.seguin.project.Project;
+import org.acm.seguin.project.ProjectClassLoader;
 
 /**
  *  Loads a UMLPackage panel from a package summary
  *
  *@author     Chris Seguin
- *@author     Mike Atkinson
- *@version    $Id: PackageLoader.java,v 1.5 2003/07/22 20:43:27 mikeatkinson Exp $
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: PackageLoader.java,v 1.8 2003/09/11 16:41:17 mikeatkinson Exp $
  *@created    September 12, 2001
  */
 public class PackageLoader implements Runnable {
@@ -84,7 +96,7 @@ public class PackageLoader implements Runnable {
 
     private PackageSummary loadSummary;
     private File loadFile;
-    private InputStream loadStream;
+    private Reader loadStream;
 
 
     /**
@@ -92,7 +104,7 @@ public class PackageLoader implements Runnable {
      *
      *@param  panel  the panel that we are loading
      */
-    public PackageLoader(UMLPackage panel, InputStream input) {
+    public PackageLoader(UMLPackage panel, Reader input) {
         packagePanel = panel;
         loadSummary = null;
         loadStream = input;
@@ -184,7 +196,7 @@ public class PackageLoader implements Runnable {
         return inputFile;
     }
 
-
+    private ProjectClassLoader pcl = null;
     /**
      *  Returns the UMLType panel associated with a summary or null if none is
      *  available
@@ -192,9 +204,54 @@ public class PackageLoader implements Runnable {
      *@param  summary  the type declaration
      *@return          the panel associated with the type
      */
-    private UMLType getUMLType(TypeDeclSummary summary) {
+    private UMLType getUMLType(TypeSummary current, TypeDeclSummary summary) {
         if (summary != null) {
             TypeSummary typeSummary = GetTypeSummary.query(summary);
+            if (typeSummary == null) {
+                if (pcl == null) {
+                    pcl = new ProjectClassLoader(Project.getProject("default"));
+                }
+                //System.out.println("package="+summary.getPackage());
+                //System.out.println("name="+summary.getName());
+                //System.out.println("getLongName="+summary.getLongName());
+                String fullName = summary.getLongName();
+                Summary fs = current;
+                while ((fs != null) && !(fs instanceof FileSummary)) {
+                    fs = fs.getParent();
+                }
+                FileSummary fileSummary =(FileSummary) fs;
+                
+                if (fileSummary != null) {
+                    Iterator i = fileSummary.getImports();
+                    if (i!=null) {
+                        while (i.hasNext()) {
+                            ImportSummary is = (ImportSummary)i.next();
+                            String type = is.getType();
+                            if (summary.getName().equals(type)) {
+                                fullName = is.getPackage().getName();
+                                break;
+                            } else {
+                                try {
+                                    String testName = is.getPackage().getName()+"."+summary.getName();
+                                    //System.out.println("testName="+testName);
+                                    //typeSummary = ReflectiveSummaryLoader.loadType(testName);
+                                    pcl.loadClass(testName);
+                                    fullName = testName;
+                                    break;
+                                } catch (ClassNotFoundException e) {
+                                }
+                            }
+                        }
+                    }
+                }
+                //System.out.println("fullName="+fullName);
+                try {
+                    typeSummary = ReflectiveSummaryLoader.loadType(fullName, pcl);
+                    //typeSummary = pcl.loadClass(fullName);
+                } catch (ClassNotFoundException e) {
+                    //e.printStackTrace(); // FIXME: don't print stack trace
+                }
+            }
             if (typeSummary != null) {
                 UMLType typePanel = packagePanel.findType(typeSummary);
                 if (typePanel == null) {
@@ -252,7 +309,7 @@ public class PackageLoader implements Runnable {
      *
      *@param  input  Description of Parameter
      */
-    private void load(InputStream input) {
+    private void load(Reader input) {
         loadPositions(input);
     }
 
@@ -332,7 +389,7 @@ public class PackageLoader implements Runnable {
         for (int ndx = 0; ndx < typeList.length; ndx++) {
             TypeSummary current = typeList[ndx].getSummary();
             TypeDeclSummary parent = current.getParentClass();
-            UMLType typePanel = getUMLType(parent);
+            UMLType typePanel = getUMLType(current, parent);
             if (typePanel != null) {
                 packagePanel.add(new InheretenceRelationship(typeList[ndx], typePanel));
             }
@@ -356,7 +413,7 @@ public class PackageLoader implements Runnable {
             if (iter != null) {
                 while (iter.hasNext()) {
                     TypeDeclSummary next = (TypeDeclSummary) iter.next();
-                    UMLType typePanel = getUMLType(next);
+                    UMLType typePanel = getUMLType(current, next);
                     if (typePanel != null) {
                         SegmentedLine nextLine;
                         if (current.isInterface()) {
@@ -396,13 +453,13 @@ public class PackageLoader implements Runnable {
      *
      *@param  inputStream  Description of Parameter
      */
-    private void loadPositions(InputStream inputStream) {
+    private void loadPositions(Reader inputStream) {
         try {
-            InputStreamReader fr = new InputStreamReader(inputStream);
-            BufferedReader input = new BufferedReader(fr);
-            loadPositions(input);
-            input.close();
-            fr.close();
+            if (!(inputStream instanceof BufferedReader)) {
+                inputStream = new BufferedReader(inputStream);
+            }
+            loadPositions(inputStream);
+            inputStream.close();
         } catch (IOException ioe) {
             ExceptionPrinter.print(ioe, false);
         }

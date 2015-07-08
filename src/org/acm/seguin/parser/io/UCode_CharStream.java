@@ -11,12 +11,12 @@ package org.acm.seguin.parser.io;
 
 public final class UCode_CharStream extends CharStream {
 
-	private static char[] nextCharBuf;
-	private static int nextCharInd = -1;
+	private char[] nextCharBuf;
+	private int nextCharInd = -1;
 
 
 	/**
-	 *  Constructor for the UCode_CharStream object
+	 *  ??? for the UCode_CharStream object
 	 *
 	 *@param  dstream      Description of Parameter
 	 *@param  startline    Description of Parameter
@@ -26,7 +26,7 @@ public final class UCode_CharStream extends CharStream {
 	public UCode_CharStream(java.io.Reader dstream,
 			int startline, int startcolumn, int buffersize) {
 		if (inputStream != null) {
-			throw new Error("\n   ERROR: Second call to the constructor of a static UCode_CharStream.  You must\n" +
+			throw new Error("\n   ERROR: Second call to the constructor of a UCode_CharStream.  You must\n" +
 					"       either use ReInit() or set the JavaCC option STATIC to false\n" +
 					"       during the generation of this class.");
 		}
@@ -42,45 +42,6 @@ public final class UCode_CharStream extends CharStream {
 	}
 
 
-	/**
-	 *  Constructor for the UCode_CharStream object
-	 *
-	 *@param  dstream      Description of Parameter
-	 *@param  startline    Description of Parameter
-	 *@param  startcolumn  Description of Parameter
-	 */
-	public UCode_CharStream(java.io.Reader dstream,
-			int startline, int startcolumn) {
-		this(dstream, startline, startcolumn, 4096);
-	}
-
-
-	/**
-	 *  Constructor for the UCode_CharStream object
-	 *
-	 *@param  dstream      Description of Parameter
-	 *@param  startline    Description of Parameter
-	 *@param  startcolumn  Description of Parameter
-	 *@param  buffersize   Description of Parameter
-	 */
-	public UCode_CharStream(java.io.InputStream dstream, int startline,
-			int startcolumn, int buffersize) {
-		this(new java.io.InputStreamReader(dstream), startline, startcolumn, 4096);
-	}
-
-
-	/**
-	 *  Constructor for the UCode_CharStream object
-	 *
-	 *@param  dstream      Description of Parameter
-	 *@param  startline    Description of Parameter
-	 *@param  startcolumn  Description of Parameter
-	 */
-	public UCode_CharStream(java.io.InputStream dstream, int startline,
-			int startcolumn) {
-		this(dstream, startline, startcolumn, 4096);
-	}
-
 
 	/**
 	 *  Description of the Method
@@ -90,7 +51,7 @@ public final class UCode_CharStream extends CharStream {
 	 *@param  startcolumn  Description of Parameter
 	 *@param  buffersize   Description of Parameter
 	 */
-	public static void ReInit(java.io.Reader dstream,
+	public void ReInit(java.io.Reader dstream,
 			int startline, int startcolumn, int buffersize) {
 		inputStream = dstream;
 		line = startline;
@@ -106,114 +67,13 @@ public final class UCode_CharStream extends CharStream {
 	}
 
 
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  dstream      Description of Parameter
-	 *@param  startline    Description of Parameter
-	 *@param  startcolumn  Description of Parameter
-	 */
-	public static void ReInit(java.io.Reader dstream,
-			int startline, int startcolumn) {
-		ReInit(dstream, startline, startcolumn, 4096);
-	}
-
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  dstream      Description of Parameter
-	 *@param  startline    Description of Parameter
-	 *@param  startcolumn  Description of Parameter
-	 *@param  buffersize   Description of Parameter
-	 */
-	public static void ReInit(java.io.InputStream dstream, int startline,
-			int startcolumn, int buffersize) {
-		ReInit(new java.io.InputStreamReader(dstream), startline, startcolumn, 4096);
-	}
-
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  dstream      Description of Parameter
-	 *@param  startline    Description of Parameter
-	 *@param  startcolumn  Description of Parameter
-	 */
-	public static void ReInit(java.io.InputStream dstream, int startline,
-			int startcolumn) {
-		ReInit(dstream, startline, startcolumn, 4096);
-	}
-
-
-	/**
-	 *@return        The Column value
-	 *@deprecated
-	 *@see           #getEndColumn
-	 */
-
-	public final static int getColumn() {
-		return bufcolumn[bufpos];
-	}
-
-
-	/**
-	 *@return        The Line value
-	 *@deprecated
-	 *@see           #getEndLine
-	 */
-
-	public final static int getLine() {
-		return bufline[bufpos];
-	}
-
-
-	/**
-	 *  Gets the EndColumn attribute of the UCode_CharStream class
-	 *
-	 *@return    The EndColumn value
-	 */
-	public final static int getEndColumn() {
-		return bufcolumn[bufpos];
-	}
-
-
-	/**
-	 *  Gets the EndLine attribute of the UCode_CharStream class
-	 *
-	 *@return    The EndLine value
-	 */
-	public final static int getEndLine() {
-		return bufline[bufpos];
-	}
-
-
-	/**
-	 *  Gets the BeginColumn attribute of the UCode_CharStream class
-	 *
-	 *@return    The BeginColumn value
-	 */
-	public final static int getBeginColumn() {
-		return bufcolumn[tokenBegin];
-	}
-
-
-	/**
-	 *  Gets the BeginLine attribute of the UCode_CharStream class
-	 *
-	 *@return    The BeginLine value
-	 */
-	public final static int getBeginLine() {
-		return bufline[tokenBegin];
-	}
-
 
 	/**
 	 *  Description of the Method
 	 *
 	 *@return    Description of the Returned Value
 	 */
-	public final static String GetImage() {
+	public final String GetImage() {
 		if (bufpos >= tokenBegin) {
 			return new String(buffer, tokenBegin, bufpos - tokenBegin + 1);
 		}
@@ -230,7 +90,7 @@ public final class UCode_CharStream extends CharStream {
 	 *@param  len  Description of Parameter
 	 *@return      Description of the Returned Value
 	 */
-	public final static char[] GetSuffix(int len) {
+	public final char[] GetSuffix(int len) {
 		char[] ret = new char[len];
 
 		if ((bufpos + 1) >= len) {
@@ -246,19 +106,6 @@ public final class UCode_CharStream extends CharStream {
 	}
 
 
-	/**
-	 *  Description of the Method
-	 *
-	 *@return                          Description of the Returned Value
-	 *@exception  java.io.IOException  Description of Exception
-	 */
-	public static char BeginToken() throws java.io.IOException {
-		tokenBegin = -1;
-		char c = readChar();
-		tokenBegin = bufpos;
-
-		return c;
-	}
 
 
 	/**
@@ -267,7 +114,7 @@ public final class UCode_CharStream extends CharStream {
 	 *@return                          Description of the Returned Value
 	 *@exception  java.io.IOException  Description of Exception
 	 */
-	public final static char readChar() throws java.io.IOException {
+	public final char readChar() throws java.io.IOException {
 		if (inBuf > 0) {
 			--inBuf;
 			return (char) buffer[(bufpos == bufsize - 1) ? (bufpos = 0) : ++bufpos];
@@ -309,7 +156,7 @@ public final class UCode_CharStream extends CharStream {
 	 *
 	 *@param  amount  Description of Parameter
 	 */
-	public final static void backup(int amount) {
+	public final void backup(int amount) {
 
 		inBuf += amount;
 		if ((bufpos -= amount) < 0) {
@@ -321,7 +168,7 @@ public final class UCode_CharStream extends CharStream {
 	/**
 	 *  Description of the Method
 	 */
-	public static void Done() {
+	public void Done() {
 		nextCharBuf = null;
 		buffer = null;
 		bufline = null;
@@ -336,7 +183,7 @@ public final class UCode_CharStream extends CharStream {
 	 *@param  newLine  Description of Parameter
 	 *@param  newCol   Description of Parameter
 	 */
-	public static void adjustBeginLineColumn(int newLine, int newCol) {
+	public void adjustBeginLineColumn(int newLine, int newCol) {
 		int start = tokenBegin;
 		int len;
 
@@ -388,7 +235,7 @@ public final class UCode_CharStream extends CharStream {
 	 *
 	 *@param  wrapAround  Description of Parameter
 	 */
-	private final static void ExpandBuff(boolean wrapAround) {
+	private final void ExpandBuff(boolean wrapAround) {
 		char[] newbuffer = new char[bufsize + 2048];
 		int newbufline[] = new int[bufsize + 2048];
 		int newbufcolumn[] = new int[bufsize + 2048];
@@ -437,7 +284,7 @@ public final class UCode_CharStream extends CharStream {
 	 *
 	 *@exception  java.io.IOException  Description of Exception
 	 */
-	private final static void FillBuff() throws java.io.IOException {
+	private final void FillBuff() throws java.io.IOException {
 		if (maxNextCharInd == 4096) {
 			maxNextCharInd = nextCharInd = 0;
 		}
@@ -477,7 +324,7 @@ public final class UCode_CharStream extends CharStream {
 	 *@return                          Description of the Returned Value
 	 *@exception  java.io.IOException  Description of Exception
 	 */
-	private final static char ReadChar() throws java.io.IOException {
+	private final char ReadChar() throws java.io.IOException {
 		if (++nextCharInd >= maxNextCharInd) {
 			FillBuff();
 		}
@@ -497,7 +344,7 @@ public final class UCode_CharStream extends CharStream {
 	 *
 	 *@param  c  Description of Parameter
 	 */
-	private final static void UpdateLineColumn(char c) {
+	private final void UpdateLineColumn(char c) {
 		column++;
 
 		if (prevCharIsLF) {

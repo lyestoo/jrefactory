@@ -51,7 +51,7 @@
  */
 package org.acm.seguin.uml;
 
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;

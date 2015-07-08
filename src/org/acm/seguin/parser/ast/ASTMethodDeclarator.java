@@ -87,26 +87,6 @@ public class ASTMethodDeclarator extends SimpleNode {
 
 
 	/**
-	 *  Convert this object to a string
-	 *
-	 *@return    a string representing this object
-	 */
-	public String toString() {
-		//  Create the string
-		StringBuffer buf = new StringBuffer(super.toString());
-		buf.append(" <");
-		buf.append(getName());
-		for (int ndx = 0; ndx < arrayCount; ndx++) {
-			buf.append("[]");
-		}
-		buf.append(">");
-
-		//  Return it
-		return buf.toString();
-	}
-
-
-	/**
 	 *  Makes sure all the java doc components are present. For methods and
 	 *  constructors we need to do more work - checking parameters, return types,
 	 *  and exceptions.
@@ -125,4 +105,9 @@ public class ASTMethodDeclarator extends SimpleNode {
 	public Object jjtAccept(JavaParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
+
+
+        public int getParameterCount() {
+            return this.jjtGetFirstChild().jjtGetNumChildren();
+        }
 }

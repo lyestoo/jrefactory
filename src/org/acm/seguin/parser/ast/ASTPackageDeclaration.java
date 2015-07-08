@@ -14,6 +14,7 @@ import org.acm.seguin.pretty.JavaDocableImpl;
 import org.acm.seguin.pretty.PrintData;
 import org.acm.seguin.parser.JavaParserVisitor;
 import org.acm.seguin.parser.JavaParser;
+import org.acm.seguin.parser.JavaParserTreeConstants;
 
 /**
  *  Holds the package declaration at the beginning of the java file
@@ -24,6 +25,7 @@ import org.acm.seguin.parser.JavaParser;
 public class ASTPackageDeclaration extends SimpleNode implements JavaDocable {
 	//  Instance Variables
 	JavaDocableImpl jdi;
+
 
 
 	/**

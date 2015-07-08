@@ -70,8 +70,9 @@ import org.acm.seguin.uml.line.SizableLabel;
  *  Displays the summary of a type object
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
  *@created    June 7, 1999
- *@version    SDR 3.0 $Id: UMLType.java,v 1.3 2003/07/18 16:14:54 mikeatkinson Exp $
+ *@version    $Id: UMLType.java,v 1.4 2003/07/29 20:51:57 mikeatkinson Exp $
  *@since      empty
  */
 public class UMLType extends EndPointPanel implements ISourceful {
@@ -142,7 +143,7 @@ public class UMLType extends EndPointPanel implements ISourceful {
       nameLabel = new SizableLabel(type.getName());
       nameLabel.setLocation(borderWidth, borderWidth);
       nameLabel.setSLHorizontalAlignment(JLabel.CENTER);
-      nameLabel.setSLFont(UMLLine.getProtectionFont(true, type.getModifiers()));
+      nameLabel.setSLFont(UMLLine.getProtectionFont(true, type));
       add(nameLabel);
       nameLabel.addMouseListener(listener);
       nameLabel.addMouseListener(adapter);
@@ -493,14 +494,16 @@ public class UMLType extends EndPointPanel implements ISourceful {
       packagePanel.add(fieldPanel);
 
       TypeSummary typeSummary = fieldPanel.getType();
-      JPanel endPanel = packagePanel.findType(typeSummary);
+      UMLType endPanel = packagePanel.findType(typeSummary);
       if (endPanel == null) {
          endPanel = new UMLType(packagePanel, typeSummary, true);
          packagePanel.add(endPanel);
          endPanel.setLocation(0, 0);
       }
+      endPanel.scale(getScale());
 
       AssociationRelationship result = new AssociationRelationship(this, (EndPointPanel)endPanel, fieldPanel);
+      result.scale(getScale());
       packagePanel.add(result);
 
       return result;

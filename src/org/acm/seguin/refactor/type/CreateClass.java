@@ -30,6 +30,7 @@ import org.acm.seguin.summary.query.GetPackageSummary;
 import org.acm.seguin.summary.query.GetTypeSummary;
 import org.acm.seguin.summary.query.SamePackage;
 import org.acm.seguin.summary.query.TopLevelDirectory;
+import org.acm.seguin.parser.JavaParserTreeConstants;
 
 /**
  *  This object creates a class from nothing. It is responsible for building
@@ -197,7 +198,7 @@ public class CreateClass {
 		if (added) {
 			typeIndex++;
 
-			parentName = new ASTName(0);
+			parentName = new ASTName();
 			parentName.addNamePart(parentSummary.getName());
 		}
 
@@ -225,7 +226,7 @@ public class CreateClass {
 	 */
 	ASTName getNameFromSummary(TypeSummary summary)
 	{
-		ASTName name = new ASTName(0);
+		ASTName name = new ASTName();
 		if ((summary == null) || summary.getName().equals("Object")) {
 			name.fromString("Object");
 		}
@@ -267,8 +268,8 @@ public class CreateClass {
 	 */
 	ASTPackageDeclaration createPackageDeclaration()
 	{
-		ASTPackageDeclaration packDecl = new ASTPackageDeclaration(0);
-		ASTName packName = new ASTName(0);
+		ASTPackageDeclaration packDecl = new ASTPackageDeclaration(JavaParserTreeConstants.JJTPACKAGEDECLARATION);
+		ASTName packName = new ASTName();
 		packName.fromString(packageNameString);
 		packDecl.jjtAddChild(packName, 0);
 
@@ -294,7 +295,7 @@ public class CreateClass {
 		}
 
 		//  Create the import statement
-		ASTImportDeclaration importDecl = new ASTImportDeclaration(0);
+		ASTImportDeclaration importDecl = new ASTImportDeclaration(JavaParserTreeConstants.JJTIMPORTDECLARATION);
 		importDecl.jjtAddChild(parentName, 0);
 		root.jjtAddChild(importDecl, index);
 		return true;
@@ -309,7 +310,7 @@ public class CreateClass {
 	 */
 	ASTTypeDeclaration createTypeDeclaration(ASTName grandparentName)
 	{
-		ASTTypeDeclaration td = new ASTTypeDeclaration(0);
+		ASTTypeDeclaration td = new ASTTypeDeclaration();
 
 		ASTClassDeclaration cd = createModifiedClass(grandparentName);
 		td.jjtAddChild(cd, 0);
@@ -326,7 +327,7 @@ public class CreateClass {
 	 */
 	ASTClassDeclaration createModifiedClass(ASTName grandparentName)
 	{
-		ASTClassDeclaration cd = new ASTClassDeclaration(0);
+		ASTClassDeclaration cd = new ASTClassDeclaration(JavaParserTreeConstants.JJTCLASSDECLARATION);
 		if (isAbstract) {
 			cd.addModifier("abstract");
 		}
@@ -354,10 +355,10 @@ public class CreateClass {
 	 */
 	ASTUnmodifiedClassDeclaration createClassBody(String parentName, ASTName grandparentName)
 	{
-		ASTUnmodifiedClassDeclaration ucd = new ASTUnmodifiedClassDeclaration(0);
+		ASTUnmodifiedClassDeclaration ucd = new ASTUnmodifiedClassDeclaration(JavaParserTreeConstants.JJTUNMODIFIEDCLASSDECLARATION);
 		ucd.setName(parentName);
 		ucd.jjtAddChild(grandparentName, 0);
-		ucd.jjtAddChild(new ASTClassBody(0), 1);
+		ucd.jjtAddChild(new ASTClassBody(JavaParserTreeConstants.JJTCLASSBODY), 1);
 		return ucd;
 	}
 

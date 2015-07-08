@@ -51,7 +51,7 @@
  */
 package org.acm.seguin.util;
 
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -62,6 +62,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Enumeration;
 import org.acm.seguin.awt.ExceptionPrinter;
+import org.acm.seguin.project.Project;
 
 /**
  *  Settings loaded from a file
@@ -71,6 +72,7 @@ import org.acm.seguin.awt.ExceptionPrinter;
  *@created    October 3, 1999
  */
 public class FileSettings implements Settings {
+    private String project;
     private String app;
     private String type;
     private File file;
@@ -93,14 +95,14 @@ public class FileSettings implements Settings {
      */
     public FileSettings(File express) throws MissingSettingsException {
         file = express;
+        app = express.getParent();
+        type = express.getName();
+
         if (!file.exists()) {
             throw new NoSettingsFileException(app, type);
         }
 
         load();
-
-        this.app = express.getParent();
-        this.type = express.getName();
 
         continuallyReload = false;
         reloadNow = false;
@@ -112,34 +114,86 @@ public class FileSettings implements Settings {
     /**
      *  Constructor for the FileSettings object
      *
+     *@param  project                       Description of the Parameter
      *@param  app                           The application name
      *@param  type                          The application type
      *@exception  MissingSettingsException  The file is not found
      */
-    protected FileSettings(String app, String type) throws MissingSettingsException {
-        File directory = new File(getSettingsRoot(), "." + app);
+    protected FileSettings(String project, String app, String type) throws MissingSettingsException {
+        //System.out.println("FileSettings(" + project + "," + app + "," + type + ")");
+        File directory = getSettingsRoot();
+        //System.out.println("(1) directory=" + directory);
+
+        directory = new File(directory, "." + app);
+        //System.out.println("(2) directory=" + directory);
         if (!directory.exists()) {
             directory.mkdirs();
+            System.out.println("directory="+directory);
             throw new NoSettingsFileException(app, type);
+        }
+
+        if (project != null) {
+            directory = new File(directory, "projects");
+            //System.out.println("(3) directory=" + directory);
+            if (!directory.exists()) {
+                directory.mkdirs();
+                //throw new NoSettingsFileException(app, type);
+            }
+            directory = new File(directory, project);
+            //System.out.println("(4) directory=" + directory);
+            if (!directory.exists()) {
+                directory.mkdirs();
+                //throw new NoSettingsFileException(app, type);
+            }
         }
 
         file = new File(directory, type + ".settings");
         if (!file.exists()) {
-            throw new NoSettingsFileException(app, type);
+            System.out.println("creating file=" + file);
+            try {
+                java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(file));
+                pw.println("# project " + type + " pretty.settings");
+                pw.close();
+            } catch (java.io.IOException e) {
+            }
+            //throw new NoSettingsFileException(app, type);
         }
 
         load();
 
         this.app = app;
         this.type = type;
+        this.project = project;
 
         continuallyReload = false;
         reloadNow = false;
 
-        parent = null;
+        parent = (project == null) ? null : getSettings(null, app, type);
     }
 
 
+    /**
+     *  Constructor for the FileSettings object
+     */
+    /*protected FileSettings(String app, String type) throws MissingSettingsException {
+        File directory = new File(getSettingsRoot(), "." + app);
+        if (!directory.exists()) {
+            directory.mkdirs();
+            throw new NoSettingsFileException(app, type);
+        }
+        file = new File(directory, type + ".settings");
+        if (!file.exists()) {
+            throw new NoSettingsFileException(app, type);
+        }
+        load();
+        this.app = app;
+        this.type = type;
+        this.project = null;
+        continuallyReload = false;
+        reloadNow = false;
+        parent = null;
+    }
+    */
     /**
      *  Sets the ContinuallyReload attribute of the FileSettings object
      *
@@ -170,33 +224,65 @@ public class FileSettings implements Settings {
      *@return    the iterator
      */
     public Enumeration getKeys() {
-        if (!isUpToDate()) {
-            load();
-        }
-        reloadNow = false;
-
+        reloadIfNecessary();
         return props.keys();
+    }
+
+
+    /**
+     *  Description of the Method
+     *
+     *@param  key  Description of the Parameter
+     */
+    public void removeKey(String key) {
+        props.remove(key);
     }
 
 
     /**
      *  Gets a string
      *
-     *@param  code  The code to look up
-     *@return       The associated string
+     *@param  key  The code to look up
+     *@return      The associated string
      */
-    public String getString(String code) {
-        if (!isUpToDate()) {
-            load();
-        }
-        reloadNow = false;
+    public boolean isLocalProperty(String key) {
+        reloadIfNecessary();
 
-        String result = props.getProperty(code);
-        if ((result == null) && (parent != null)) {
-            result = parent.getString(code);
+        if (key == null || props == null) {
+            return false;
         }
+        String result = props.getProperty(key);
+        return result != null;
+    }
+
+
+    /**
+     *  Gets a string
+     *
+     *@param  key  The code to look up
+     *@return      The associated string
+     */
+    public String getProperty(String key) {
+        reloadIfNecessary();
+
+        String result = props.getProperty(key);
+        if ((result == null) && (parent != null)) {
+            result = parent.getString(key);
+        }
+        return result;
+    }
+
+
+    /**
+     *  Gets a string
+     *
+     *@param  key  The code to look up
+     *@return      The associated string
+     */
+    public String getString(String key) {
+        String result = getProperty(key);
         if (result == null) {
-            throw new SettingNotFoundException(app, type, code);
+            throw new SettingNotFoundException(app, type, key);
         }
 
         return result;
@@ -204,16 +290,44 @@ public class FileSettings implements Settings {
 
 
     /**
+     *  Gets a string
+     *
+     *@param  key  The code to look up
+     *@param  def  Use this if the code is not found
+     *@return      The associated string
+     */
+    public String getProperty(String key, String def) {
+        String result = getProperty(key);
+        if (result == null) {
+            result = def;
+        }
+        return result;
+    }
+
+
+    /**
+     *  Sets a string
+     *
+     *@param  key    The code to look up
+     *@param  value  New value for the setting code.
+     */
+    public void setString(String key, String value) {
+        reloadIfNecessary();
+        props.setProperty(key, value);
+    }
+
+
+    /**
      *  Gets a integer
      *
-     *@param  code  The code to look up
-     *@return       The associated integer
+     *@param  key  The code to look up
+     *@return      The associated integer
      */
-    public int getInteger(String code) {
+    public int getInteger(String key) {
         try {
-            return Integer.parseInt(getString(code));
+            return Integer.parseInt(getString(key));
         } catch (NumberFormatException mfe) {
-            throw new SettingNotFoundException(app, type, code);
+            throw new SettingNotFoundException(app, type, key);
         }
     }
 
@@ -221,15 +335,15 @@ public class FileSettings implements Settings {
     /**
      *  Gets a double
      *
-     *@param  code  The code to look up
-     *@return       The associated double
+     *@param  key  The code to look up
+     *@return      The associated double
      */
-    public double getDouble(String code) {
+    public double getDouble(String key) {
         try {
-            Double value = new Double(getString(code));
+            Double value = new Double(getString(key));
             return value.doubleValue();
         } catch (NumberFormatException mfe) {
-            throw new SettingNotFoundException(app, type, code);
+            throw new SettingNotFoundException(app, type, key);
         }
     }
 
@@ -237,15 +351,15 @@ public class FileSettings implements Settings {
     /**
      *  Gets a boolean
      *
-     *@param  code  The code to look up
-     *@return       The associated boolean
+     *@param  key  The code to look up
+     *@return      The associated boolean
      */
-    public boolean getBoolean(String code) {
+    public boolean getBoolean(String key) {
         try {
-            Boolean value = new Boolean(getString(code));
+            Boolean value = new Boolean(getString(key));
             return value.booleanValue();
         } catch (NumberFormatException mfe) {
-            throw new SettingNotFoundException(app, type, code);
+            throw new SettingNotFoundException(app, type, key);
         }
     }
 
@@ -294,9 +408,8 @@ public class FileSettings implements Settings {
         if (continuallyReload || reloadNow) {
             return (lastModified == file.lastModified());
         }
-
-        //  Assume that it is up to date
         return true;
+        //  Assume that it is up to date
     }
 
 
@@ -308,6 +421,7 @@ public class FileSettings implements Settings {
 
         props = new Properties();
 
+        // FIXME? use Properties.load()
         try {
             BufferedReader input = new BufferedReader(new FileReader(file));
             String line = input.readLine();
@@ -326,6 +440,27 @@ public class FileSettings implements Settings {
             }
 
             input.close();
+            //System.out.println("  - loaded OK");
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            ExceptionPrinter.print(ioe, false);
+        }
+
+        setReloadNow(false);
+        lastModified = file.lastModified();
+    }
+
+
+    /**
+     *  Stores all the settings from the file
+     */
+    public synchronized void save() {
+        System.out.println("Saving to:  " + file.getPath());
+        props.list(new java.io.PrintWriter(System.out));
+
+        try {
+            props.store(new java.io.FileOutputStream(file), app + " property file");
+            //System.out.println("  - saved OK");
         } catch (IOException ioe) {
             ExceptionPrinter.print(ioe, false);
         }
@@ -426,48 +561,63 @@ public class FileSettings implements Settings {
     /**
      *  Factory method to create FileSettings objects
      *
+     *@param  project  The name of the project
+     *@param  app      The name of the application
+     *@param  name     The name of the specific settings
+     *@return          A settings object
+     */
+    public static FileSettings getSettings(String project, String app, String name) {
+        //System.out.println("getSettings(" + project + "," + app + "," + name + ")");
+        initIfNecessary();
+
+        String key = (project == null) ? "default" : project;
+        key = key + "::" + app + "::" + name;
+        FileSettings result = null;
+        result = (FileSettings) map.get(key);
+        //System.out.println("  map.get(" + key + ") -> " + result);
+        if (result == null) {
+            result = new FileSettings(project, app, name);
+            map.put(key, result);
+            //System.out.println("  map.put(" + key + "," + result + ")");
+        }
+        return result;
+    }
+
+
+    /**
+     *  Factory method to create FileSettings objects
+     *
      *@param  app   The name of the application
      *@param  name  The name of the specific settings
      *@return       A settings object
      */
     public static FileSettings getSettings(String app, String name) {
-        if (map == null) {
-            init();
-        }
-
-        String key = app + "::" + name;
-        FileSettings result = (FileSettings) map.get(key);
-        if (result == null) {
-            result = new FileSettings(app, name);
-            map.put(key, result);
-        }
-
-        return result;
+        return getSettings(Project.getCurrentProjectName(), app, name);
     }
-    
+
+
     /**
-     *  Factory method to create FileSettings objects.
-     *
-     * Equivalent to getSettings("Refactory",name)
+     *  Factory method to create FileSettings objects. Equivalent to
+     *  getSettings("Refactory",name)
      *
      *@param  name  The name of the specific settings
      *@return       A settings object
      *@since        2.7.04
      */
     public static FileSettings getRefactorySettings(String name) {
-        return getSettings("Refactory",name);
+        return getSettings("Refactory", name);
     }
-    
+
+
     /**
-     *  Factory method to create FileSettings objects.
-     *
-     * Equivalent to getSettings("Refactory","pretty")
+     *  Factory method to create FileSettings objects. Equivalent to
+     *  getSettings("Refactory","pretty")
      *
      *@return    A settings object
      *@since     2.7.04
      */
     public static FileSettings getRefactoryPrettySettings() {
-        return getSettings("Refactory","pretty");
+        return getSettings("Refactory", "pretty");
     }
 
 
@@ -479,7 +629,7 @@ public class FileSettings implements Settings {
      */
     public static File getRefactorySettingsRoot() {
         if (refactorySettingsRoot == null) {
-            refactorySettingsRoot =  new File(settingsRoot, ".Refactory");
+            refactorySettingsRoot = new File(settingsRoot, ".Refactory");
         }
 
         return refactorySettingsRoot;
@@ -524,14 +674,19 @@ public class FileSettings implements Settings {
             app = args[2];
         }
 
-        System.out.println("Found:  " + (new FileSettings(app, type)).getString(key));
+        String project = "JRefactory";
+        if (args.length > 3) {
+            project = args[3];
+        }
+
+        System.out.println("Found:  " + (new FileSettings(project, app, type)).getString(key));
     }
 
 
     /**
      *  Initializes static variables
      */
-    private static synchronized void init() {
+    private static synchronized void initIfNecessary() {
         if (map == null) {
             map = new Hashtable();
             initRootDir();
@@ -590,4 +745,26 @@ public class FileSettings implements Settings {
     public File getFile() {
         return file;
     }
+
+
+    /**
+     *  Description of the Method
+     */
+    private void reloadIfNecessary() {
+        if (!isUpToDate()) {
+            load();
+        }
+        reloadNow = false;
+    }
+
+
+    /**
+     *  Description of the Method
+     *
+     *@return    Description of the Return Value
+     */
+    public String toString() {
+        return project + "::" + app + "::" + type + ", parent=" + parent;
+    }
 }
+

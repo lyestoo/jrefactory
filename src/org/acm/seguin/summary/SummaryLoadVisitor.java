@@ -140,16 +140,15 @@ import org.acm.seguin.parser.ast.ASTArrayDimsAndInits;
 import org.acm.seguin.parser.ast.ASTName;
 import java.io.*;
 import java.util.Enumeration;
-import org.acm.seguin.pretty.ModifierHolder;
 
 import org.acm.seguin.parser.ast.ASTTypeParameterList;
 import org.acm.seguin.parser.ast.ASTTypeParameter;
 import org.acm.seguin.parser.ast.ASTTypeArguments;
 import org.acm.seguin.parser.ast.ASTReferenceTypeList;
 import org.acm.seguin.parser.ast.ASTReferenceType;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
 import org.acm.seguin.parser.ast.ASTTypeParameters;
 import org.acm.seguin.parser.ast.ASTGenericNameList;
-import org.acm.seguin.parser.ast.ASTVariance;
 import org.acm.seguin.parser.ast.ASTEnumDeclaration;
 import org.acm.seguin.parser.ast.ASTEnumElement;
 import org.acm.seguin.parser.ast.ASTIdentifier;
@@ -207,7 +206,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         SummaryLoaderState state = (SummaryLoaderState) data;
 
         //  Get the name
-        ASTName name = (ASTName) node.jjtGetChild(0);
+        ASTName name = (ASTName) node.jjtGetFirstChild();
 
         //  Lookup the summary
         PackageSummary packageSummary = PackageSummary.getPackageSummary(name.getName());
@@ -317,7 +316,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         TypeSummary current = (TypeSummary) state.getCurrentSummary();
 
         //  Save the modifiers
-        current.setModifiers(node.getModifiers());
+        current.copyModifiers(node);
 
         //  Traverse the children
         return super.visit(node, data);
@@ -443,7 +442,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         state.setCode(SummaryLoaderState.LOAD_TYPE);
 
         //  Save the modifiers
-        nested.setModifiers(node.getModifiers());
+        nested.copyModifiers(node);
 
         //  Traverse the children
         super.visit(node, data);
@@ -482,7 +481,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         TypeSummary current = (TypeSummary) state.getCurrentSummary();
 
         //  Save the modifiers
-        current.setModifiers(node.getModifiers());
+        current.copyModifiers(node);
 
         //  Traverse the children
         return super.visit(node, data);
@@ -526,7 +525,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         state.setCode(SummaryLoaderState.LOAD_TYPE);
 
         //  Save the modifiers
-        nested.setModifiers(node.getModifiers());
+        nested.copyModifiers(node);
 
         //  Traverse the children
         super.visit(node, data);
@@ -647,6 +646,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         int code = state.getCode();
         state.setCode(SummaryLoaderState.IGNORE);
         countFieldStart(node, data);
+        
         state.setCode(code);
 
         //  Get the current type summary
@@ -655,28 +655,28 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         //  Local Variables
         FieldSummary result = null;
         int last = node.jjtGetNumChildren();
-        ASTType type = (ASTType) node.jjtGetChild(0);
+        ASTType type = (ASTType) node.jjtGetFirstChild();
 
         //  Create a summary for each field
         for (int ndx = 1; ndx < last; ndx++) {
             Node next = node.jjtGetChild(ndx);
             result = new FieldSummary(current, type,
-                    (ASTVariableDeclaratorId) next.jjtGetChild(0));
+                    (ASTVariableDeclaratorId) next.jjtGetFirstChild());
 
             //  Count anything on the declarator
             state.setCode(SummaryLoaderState.IGNORE);
-            next.jjtGetChild(0).jjtAccept(this, data);
+            next.jjtGetFirstChild().jjtAccept(this, data);
             state.setCode(code);
 
             //  Continue setting up the field summary
-            result.setModifiers(node.getModifiers());
+            result.copyModifiers(node);
             result.setStartLine(start);
 
             //  Load the initializer
             if (next.jjtGetNumChildren() > 1) {
                 loadInitializer(current, state,
                         (SimpleNode) next.jjtGetChild(1),
-                        node.getModifiers().isStatic());
+                        node.isStatic());
             }
 
             //  Finish setting variables for the field summary
@@ -729,7 +729,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
 
             //  Load the method summary
             //  Remember the modifiers
-            methodSummary.setModifiers(node.getModifiers());
+            methodSummary.copyModifiers(node);
 
             //  Load the method names
             methodSummary.setName(decl.getName());
@@ -772,7 +772,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         if (childCount==2) {            
             MethodSummary methodSummary = (MethodSummary) state.getCurrentSummary();
             ASTReferenceType reference = (ASTReferenceType)node.jjtGetChild(1);
-            methodSummary.addDependency(new TypeDeclSummary(methodSummary, (ASTName)reference.jjtGetChild(0)));
+            methodSummary.addDependency(new TypeDeclSummary(methodSummary, (ASTName)reference.jjtGetFirstChild()));
         }
 
         return super.visit(node, data);
@@ -802,7 +802,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
             MethodSummary methodSummary = (MethodSummary) state.getCurrentSummary();
 
             //  For each variable create a summary
-            methodSummary.add(new ParameterSummary(methodSummary, (ASTType) node.jjtGetChild(0),
+            methodSummary.add(new ParameterSummary(methodSummary, (ASTType) node.jjtGetFirstChild(),
                     (ASTVariableDeclaratorId) node.jjtGetChild(1)));
 
             //  Continue with the state
@@ -812,7 +812,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
             MethodSummary parent = (MethodSummary) state.getCurrentSummary();
 
             //  Add the dependency
-            parent.addDependency(new ParameterSummary(parent, (ASTType) node.jjtGetChild(0),
+            parent.addDependency(new ParameterSummary(parent, (ASTType) node.jjtGetFirstChild(),
                     (ASTVariableDeclaratorId) node.jjtGetChild(1)));
 
             //  Return something
@@ -853,7 +853,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
 
             //  Load the constructor
             //  Remember the modifiers
-            methodSummary.setModifiers(node.getModifiers());
+            methodSummary.copyModifiers(node);
 
             //  Load the method names
             methodSummary.setName(node.getName());
@@ -959,10 +959,9 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         MethodSummary parent = (MethodSummary) state.getCurrentSummary();
 
         //  Add the dependency
-        if (node.jjtGetChild(0) instanceof ASTReferenceType) {
+        if (node.jjtGetFirstChild() instanceof ASTReferenceType) {
             // reference type dependencies are handled by their own visitor.
-            //parent.addDependency(TypeDeclSummary.getTypeDeclSummary(parent, (ASTReferenceType)node.jjtGetChild(0)));
-        } else if (node.jjtGetChild(0) instanceof ASTPrimitiveType) {
+        } else if (node.jjtGetFirstChild() instanceof ASTPrimitiveType) {
             parent.addDependency(TypeDeclSummary.getTypeDeclSummary(parent, node));
         }
 
@@ -1029,6 +1028,33 @@ public class SummaryLoadVisitor extends LineCountVisitor {
     /**
      *  Visit a name
      *
+     *@param  node  the node we are visiting
+     *@param  data  the state we are in
+     *@return       nothing of interest
+     */
+    public Object visit(ASTClassOrInterfaceType node, Object data) {
+        //  Convert the data into the correct form
+        SummaryLoaderState state = (SummaryLoaderState) data;
+
+        if (state.getCode() == SummaryLoaderState.IGNORE) {
+            return super.visit(node, data);
+        }
+
+        int code = state.getCode();
+
+        //  Get the current type summary
+        if (code == SummaryLoaderState.LOAD_TYPE) {
+            TypeSummary current = (TypeSummary) state.getCurrentSummary();
+            current.setParentClass(new TypeDeclSummary(current, node));
+        }
+
+        return super.visit(node, data);
+    }
+
+
+    /**
+     *  Visit a name
+     *  // FIXME? is this required?
      *@param  node  the node we are visiting
      *@param  data  the state we are in
      *@return       nothing of interest
@@ -1138,12 +1164,12 @@ public class SummaryLoadVisitor extends LineCountVisitor {
             //  For each interface it implements create a summary
             state.setCode(SummaryLoaderState.IGNORE);
             for (int ndx = 0; ndx < last; ndx++) {
-                if (node.jjtGetChild(ndx) instanceof ASTName) {
+                Node child = node.jjtGetChild(ndx);
+                if (child instanceof ASTClassOrInterfaceType) {
                     countLines(node.getSpecial("comma." + (ndx - 1)));
-                    ASTName next = (ASTName) node.jjtGetChild(ndx);
-                    current.add(new TypeDeclSummary(current, next));
+                    current.add(new TypeDeclSummary(current, (ASTClassOrInterfaceType) child));
                 }
-                node.jjtGetChild(ndx).jjtAccept(this, data);
+                child.jjtAccept(this, data);
             }
             state.setCode(code);
 
@@ -1156,12 +1182,12 @@ public class SummaryLoadVisitor extends LineCountVisitor {
             //  For each variable create a summary
             state.setCode(SummaryLoaderState.IGNORE);
             for (int ndx = 0; ndx < last; ndx++) {
-                if (node.jjtGetChild(ndx) instanceof ASTName) {
+                Node child = node.jjtGetChild(ndx);
+                if (child instanceof ASTClassOrInterfaceType) {
                     countLines(node.getSpecial("comma." + (ndx - 1)));
-                    ASTName next = (ASTName) node.jjtGetChild(ndx);
-                    methodSummary.add(new TypeDeclSummary(methodSummary, next));
+                    methodSummary.add(new TypeDeclSummary(methodSummary, (ASTClassOrInterfaceType)child));
                 }
-                node.jjtGetChild(ndx).jjtAccept(this, data);
+                child.jjtAccept(this, data);
             }
             state.setCode(code);
 
@@ -1191,10 +1217,10 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         int start = getLineCount() + 1;
 
         //  Local Variables
-        ASTName name;
+        ASTName name = null;
 
         //  Check out the prefix
-        ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetChild(0);
+        ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetFirstChild();
         if (!prefix.hasAnyChildren()) {
             //  Count the lines
             countLines(node.getSpecial("this"));
@@ -1204,16 +1230,17 @@ public class SummaryLoadVisitor extends LineCountVisitor {
             String prefixName = prefix.getName();
 
             //  Create the name
-            name = new ASTName(0);
+            name = new ASTName();
 
             //  Check out the name
             if (prefixName.equals("this")) {
                 name.addNamePart(prefixName);
             } else {
+                // FIXME name could be of the form "super" ("." "super")*
                 name.addNamePart("super");
                 name.addNamePart(prefixName.substring(7, prefixName.length()));
             }
-        } else if (prefix.jjtGetChild(0) instanceof ASTName) {
+        } else if (prefix.jjtGetFirstChild() instanceof ASTName) {
             //  Count the items in the name
             int code = state.getCode();
             state.setCode(SummaryLoaderState.IGNORE);
@@ -1221,7 +1248,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
             state.setCode(code);
 
             //  Remember the name
-            name = (ASTName) prefix.jjtGetChild(0);
+            name = (ASTName) prefix.jjtGetFirstChild();
         } else {
             //  Our work is done here
             return super.visit(node, data);
@@ -1242,13 +1269,21 @@ public class SummaryLoadVisitor extends LineCountVisitor {
                     countLines(node.getSpecial("dot"));
                     countLines(node.getSpecial("id"));
 
-                    name = new ASTName(0);
+                    name = new ASTName();
                     name.addNamePart(suffix.getName());
                     sentLast = false;
-                } else if (suffix.jjtGetChild(0) instanceof ASTArguments) {
+                } else if (suffix.jjtGetFirstChild() instanceof ASTArguments) {
                     addAccess(parent, name, true);
                     sentLast = true;
-                    super.visit((SimpleNode) suffix.jjtGetChild(0), data);
+                    super.visit((SimpleNode) suffix.jjtGetFirstChild(), data);
+                } else if (suffix.jjtGetFirstChild() instanceof ASTReferenceTypeList) {
+                    if (suffix.getName()!=null && !suffix.getName().equals("")) {
+                        if (name==null) {
+                            name = new ASTName();
+                        }
+                        name.addNamePart(suffix.getName());
+                    }
+                    super.visit((SimpleNode) suffix.jjtGetFirstChild(), data);
                 } else if (!sentLast) {
                     addAccess(parent, name, false);
                     sentLast = true;
@@ -1259,7 +1294,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
                     countLines(node.getSpecial("dot"));
                     countLines(node.getSpecial("id"));
 
-                    super.visit((SimpleNode) suffix.jjtGetChild(0), data);
+                    super.visit((SimpleNode) suffix.jjtGetFirstChild(), data);
                 }
             }
         }
@@ -1294,10 +1329,10 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         MethodSummary parent = (MethodSummary) state.getCurrentSummary();
 
         //  Add the dependency
-        Node child = node.jjtGetChild(0);
+        Node child = node.jjtGetFirstChild();
         TypeDeclSummary parentClass = null;
-        if (child instanceof ASTName) {
-            parentClass = new TypeDeclSummary(parent, (ASTName) child);
+        if (child instanceof ASTClassOrInterfaceType) {
+            parentClass = new TypeDeclSummary(parent, (ASTClassOrInterfaceType) child);
         } else if (child instanceof ASTPrimitiveType) {
             parentClass = new TypeDeclSummary(parent, (ASTPrimitiveType) child);
         }
@@ -1363,7 +1398,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
             return super.visit(node, data);
         }
 
-        Node child = node.jjtGetChild(0);
+        Node child = node.jjtGetFirstChild();
         if (child instanceof ASTBlock) {
             //  Don't count blocks as statements
         } else {
@@ -1595,7 +1630,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         countLines(node.getSpecial("private"));
 
         //  Handle the first two children (which are required)
-        Node next = node.jjtGetChild(0);
+        Node next = node.jjtGetFirstChild();
         next.jjtAccept(this, data);
     }
 
@@ -1615,7 +1650,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         countLines(node.getSpecial("final"));
         countLines(node.getSpecial("native"));
         countLines(node.getSpecial("synchronized"));
-        Node child = node.jjtGetChild(0);
+        Node child = node.jjtGetFirstChild();
         if (child instanceof ASTTypeParameters) {
             countLines(getInitialToken((ASTTypeParameters)child));
             child = node.jjtGetChild(1);
@@ -1648,7 +1683,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
      *@param  state  Description of Parameter
      */
     private void loadMethodParams(SimpleNode decl, SummaryLoaderState state) {
-        Node child = decl.jjtGetChild(0);
+        Node child = decl.jjtGetFirstChild();
         if (child instanceof ASTTypeParameters) {
             child = decl.jjtGetChild(1);
         }
@@ -1735,7 +1770,7 @@ public class SummaryLoadVisitor extends LineCountVisitor {
         //  The first child is special - it is the type
         int code = state.getCode();
         state.setCode(SummaryLoaderState.IGNORE);
-        node.jjtGetChild(0).jjtAccept(this, data);
+        node.jjtGetFirstChild().jjtAccept(this, data);
         state.setCode(code);
 
         //  Traverse the rest of the children

@@ -49,4 +49,22 @@ public class ASTTryStatement extends SimpleNode {
 	public Object jjtAccept(JavaParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
+    private boolean hasCatch;
+    private boolean hasFinally;
+
+    public void setHasCatch() {
+        hasCatch = true;
+    }
+
+    public void setHasFinally() {
+        hasFinally = true;
+    }
+
+    public boolean hasCatch() {
+        return hasCatch;
+    }
+
+    public boolean hasFinally() {
+        return hasFinally;
+    }
 }

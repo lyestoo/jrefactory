@@ -111,13 +111,13 @@ public class LocalVariableSummary extends VariableSummary {
         //  Local Variables
         int last = field.jjtGetNumChildren();
         LocalVariableSummary[] result = new LocalVariableSummary[last - 1];
-        ASTType type = (ASTType) field.jjtGetChild(0);
+        ASTType type = (ASTType) field.jjtGetFirstChild();
 
         //  Create a summary for each field
         for (int ndx = 1; ndx < last; ndx++) {
             Node next = field.jjtGetChild(ndx);
             result[ndx - 1] = new LocalVariableSummary(parentSummary, type,
-                    (ASTVariableDeclaratorId) next.jjtGetChild(0));
+                    (ASTVariableDeclaratorId) next.jjtGetFirstChild());
         }
 
         //  Return the result

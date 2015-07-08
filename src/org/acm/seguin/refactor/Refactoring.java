@@ -246,9 +246,7 @@ public abstract class Refactoring {
 	private void recordUsage()
 	{
 		try {
-			//String dir = FileSettings.getSettingsRoot();
-			//FileWriter fileWriter = new FileWriter(dir + File.separator + ".Refactory" + File.separator + "log.txt", true);
-         File dir = new File(FileSettings.getRefactorySettingsRoot(), "log.txt");
+			File dir = new File(FileSettings.getRefactorySettingsRoot(), "log.txt");
 			FileWriter fileWriter = new FileWriter(dir, true);
 			PrintWriter output = new PrintWriter(fileWriter);
 			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);

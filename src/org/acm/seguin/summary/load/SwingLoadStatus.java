@@ -58,7 +58,7 @@ import javax.swing.JFrame;
 import javax.swing.JDialog;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
-import org.acm.seguin.tools.install.RefactoryStorage;
+import org.acm.seguin.tools.RefactoryStorage;
 
 /**
  *  Reports to the user the status of the loading using stdout

@@ -1,6 +1,5 @@
 package org.acm.seguin.refactor.field;
 
-import org.acm.seguin.parser.ast.ASTFieldDeclaration;
 import org.acm.seguin.parser.ast.SimpleNode;
 import org.acm.seguin.refactor.TransformAST;
 

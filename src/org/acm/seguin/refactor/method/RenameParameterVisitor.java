@@ -124,7 +124,7 @@ class RenameParameterVisitor extends IdentifyMethodVisitor {
 	{
 		RenameParameterTransform rpt = (RenameParameterTransform) data;
 		if (rpt.isRightTree()) {
-			Node child = node.jjtGetChild(0);
+			Node child = node.jjtGetFirstChild();
 			if ((child instanceof ASTUnmodifiedClassDeclaration) ||
 					(child instanceof ASTUnmodifiedInterfaceDeclaration)) {
 				return null;
@@ -146,15 +146,15 @@ class RenameParameterVisitor extends IdentifyMethodVisitor {
 	{
 		RenameParameterTransform rpt = (RenameParameterTransform) data;
 		if (rpt.isRightTree()) {
-			ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetChild(0);
+			ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetFirstChild();
 			ASTPrimarySuffix suffix = null;
 			if (node.jjtGetNumChildren() > 1) {
 				suffix = (ASTPrimarySuffix) node.jjtGetChild(1);
 			}
 
-			if ((prefix.jjtGetNumChildren() > 0) && (prefix.jjtGetChild(0) instanceof ASTName) &&
+			if ((prefix.jjtGetNumChildren() > 0) && (prefix.jjtGetFirstChild() instanceof ASTName) &&
 					((suffix == null) || (suffix.jjtGetNumChildren() == 0) || !isMethodCall(prefix, suffix))) {
-				ASTName name = (ASTName) prefix.jjtGetChild(0);
+				ASTName name = (ASTName) prefix.jjtGetFirstChild();
 				if (name.getNamePart(0).equals(rpt.getParameter().getName())) {
 					name.setNamePart(0, rpt.getNewName());
 				}
@@ -166,10 +166,10 @@ class RenameParameterVisitor extends IdentifyMethodVisitor {
 
 	private boolean isMethodCall(ASTPrimaryPrefix prefix, ASTPrimarySuffix suffix)
 	{
-		if (!(suffix.jjtGetChild(0) instanceof ASTArguments))
+		if (!(suffix.jjtGetFirstChild() instanceof ASTArguments))
 			return false;
 
-		ASTName name = (ASTName) prefix.jjtGetChild(0);
+		ASTName name = (ASTName) prefix.jjtGetFirstChild();
 		return (name.getNameSize() == 1);
 	}
 }

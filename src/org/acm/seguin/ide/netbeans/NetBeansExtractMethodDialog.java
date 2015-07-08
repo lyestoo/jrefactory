@@ -173,4 +173,3 @@ public class NetBeansExtractMethodDialog extends ExtractMethodDialog {
     }
 
 }
-//  EOF

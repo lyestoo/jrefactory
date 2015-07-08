@@ -9,7 +9,7 @@
 package org.acm.seguin.refactor.method;
 
 import org.acm.seguin.summary.MethodSummary;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 
 /**
  *  Adds an abstract method to the class
@@ -33,9 +33,9 @@ public class AddAbstractMethod extends AddNewMethod {
 	 *@param  source  the source holder
 	 *@param  dest    the destination holder
 	 */
-	protected void setupModifiers(ModifierHolder source, ModifierHolder dest) {
-		super.setupModifiers(source, dest);
-		dest.add("abstract");
+	protected void copyModifiers(ModifierHolder source, ModifierHolder dest) {
+		dest.copyModifiers(source);
+		dest.setAbstract(true);
 		if (dest.isPrivate()) {
 			dest.setPrivate(false);
 			dest.setProtected(true);

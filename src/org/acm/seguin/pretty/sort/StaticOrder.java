@@ -56,12 +56,12 @@ public class StaticOrder extends Ordering {
 	 *@return         the objects index if it is found or 7 if it is not
 	 */
 	protected int getIndex(Object object) {
-		Object data = ((SimpleNode) object).jjtGetChild(0);
+		Object data = ((SimpleNode) object).jjtGetFirstChild();
 		if (data instanceof ASTClassBodyDeclaration) {
-			data = ((ASTClassBodyDeclaration) data).jjtGetChild(0);
+			data = ((ASTClassBodyDeclaration) data).jjtGetFirstChild();
 		}
 		else if (data instanceof ASTInterfaceMemberDeclaration) {
-			data = ((ASTInterfaceMemberDeclaration) data).jjtGetChild(0);
+			data = ((ASTInterfaceMemberDeclaration) data).jjtGetFirstChild();
 		}
 
 		boolean currentIsStatic = false;

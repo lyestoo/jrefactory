@@ -40,6 +40,13 @@ public class ASTArguments extends SimpleNode {
 	}
 
 
+    public int getArgumentCount() {
+        if (this.jjtGetNumChildren() == 0) {
+            return 0;
+        }
+        return this.jjtGetFirstChild().jjtGetNumChildren();
+    }
+
 	/**
 	 *  Accept the visitor.
 	 *

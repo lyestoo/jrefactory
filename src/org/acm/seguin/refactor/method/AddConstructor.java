@@ -28,14 +28,16 @@ import org.acm.seguin.parser.ast.ASTTypeDeclaration;
 import org.acm.seguin.parser.ast.ASTVariableDeclaratorId;
 import org.acm.seguin.parser.ast.SimpleNode;
 import org.acm.seguin.parser.build.BuildExpression;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.refactor.TransformAST;
 import org.acm.seguin.summary.MethodSummary;
 import org.acm.seguin.summary.ParameterSummary;
 import org.acm.seguin.summary.TypeDeclSummary;
 
 import org.acm.seguin.parser.ast.ASTReferenceType;
-import org.acm.seguin.parser.ast.ASTVariance;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
+import org.acm.seguin.parser.JavaParserTreeConstants;
+
 
 /**
  *  A series of transformations taht adds a new constructor to a class.
@@ -81,16 +83,6 @@ public class AddConstructor extends TransformAST {
 	}
 
 
-	/**
-	 *  Sets up the modifiers
-	 *
-	 *@param  source  the source holder
-	 *@param  dest    the destination holder
-	 */
-	protected void setupModifiers(ModifierHolder source, ModifierHolder dest) {
-		dest.copy(source);
-	}
-
 
 	/**
 	 *  Determines if the method is abstract
@@ -98,7 +90,7 @@ public class AddConstructor extends TransformAST {
 	 *@return    true if the method is abstract
 	 */
 	protected boolean isAbstract() {
-		return methodSummary.getModifiers().isAbstract();
+		return methodSummary.isAbstract();
 	}
 
 
@@ -109,7 +101,7 @@ public class AddConstructor extends TransformAST {
 	 *@param  index       The feature to be added to the Return attribute
 	 */
 	protected void addReturn(SimpleNode methodDecl, int index) {
-		ASTResultType result = new ASTResultType(0);
+		ASTResultType result = new ASTResultType(JavaParserTreeConstants.JJTRESULTTYPE);
 		TypeDeclSummary returnType = methodSummary.getReturnType();
 		if ((returnType != null) && !returnType.getType().equals("void")) {
 			ASTType type = buildType(returnType);
@@ -125,16 +117,16 @@ public class AddConstructor extends TransformAST {
 	 *@return    Description of the Returned Value
 	 */
 	protected ASTFormalParameters createParameters() {
-		ASTFormalParameters params = new ASTFormalParameters(0);
+		ASTFormalParameters params = new ASTFormalParameters(JavaParserTreeConstants.JJTFORMALPARAMETERS);
 		Iterator iter = methodSummary.getParameters();
 		if (iter != null) {
 			int paramCount = 0;
 			while (iter.hasNext()) {
 				ParameterSummary paramSummary = (ParameterSummary) iter.next();
-				ASTFormalParameter nextParam = new ASTFormalParameter(0);
+				ASTFormalParameter nextParam = new ASTFormalParameter(JavaParserTreeConstants.JJTFORMALPARAMETER);
 				ASTType type = buildType(paramSummary.getTypeDecl());
 				nextParam.jjtAddChild(type, 0);
-				ASTVariableDeclaratorId paramDeclID = new ASTVariableDeclaratorId(0);
+				ASTVariableDeclaratorId paramDeclID = new ASTVariableDeclaratorId(JavaParserTreeConstants.JJTVARIABLEDECLARATORID);
 				paramDeclID.setName(paramSummary.getName());
 				nextParam.jjtAddChild(paramDeclID, 1);
 				params.jjtAddChild(nextParam, paramCount);
@@ -152,7 +144,7 @@ public class AddConstructor extends TransformAST {
 	 *@return       Description of the Returned Value
 	 */
 	protected ASTNameList createExceptions(Iterator iter) {
-		ASTNameList list = new ASTNameList(0);
+		ASTNameList list = new ASTNameList(JavaParserTreeConstants.JJTNAMELIST);
 		int ndx = 0;
 		while (iter.hasNext()) {
 			TypeDeclSummary next = (TypeDeclSummary) iter.next();
@@ -188,13 +180,13 @@ public class AddConstructor extends TransformAST {
 	 *@param  index       The feature to be added to the Body attribute
 	 */
 	protected void addBody(SimpleNode methodDecl, int index) {
-		ASTExplicitConstructorInvocation eci = new ASTExplicitConstructorInvocation(0);
+		ASTExplicitConstructorInvocation eci = new ASTExplicitConstructorInvocation(JavaParserTreeConstants.JJTEXPLICITCONSTRUCTORINVOCATION);
 		eci.setName("super");
 
-		ASTArguments args = new ASTArguments(0);
+		ASTArguments args = new ASTArguments(JavaParserTreeConstants.JJTARGUMENTS);
 		eci.jjtAddChild(args, 0);
 
-		ASTArgumentList argList = new ASTArgumentList(0);
+		ASTArgumentList argList = new ASTArgumentList(JavaParserTreeConstants.JJTARGUMENTLIST);
 		args.jjtAddChild(argList, 0);
 
 		Iterator iter = methodSummary.getParameters();
@@ -218,13 +210,13 @@ public class AddConstructor extends TransformAST {
 	 *@param  node  the type syntax tree node that is being modified
 	 */
 	private void drillIntoType(SimpleNode node) {
-		ASTClassDeclaration classDecl = (ASTClassDeclaration) node.jjtGetChild(0);
+		ASTClassDeclaration classDecl = (ASTClassDeclaration) node.jjtGetFirstChild();
 		if (isAbstract()) {
-			classDecl.addModifier("abstract");
+			classDecl.setAbstract(true);
 		}
-		SimpleNode unmodified = (SimpleNode) classDecl.jjtGetChild(0);
+		SimpleNode unmodified = (SimpleNode) classDecl.jjtGetFirstChild();
 		SimpleNode classBody = (SimpleNode) unmodified.jjtGetChild(unmodified.jjtGetNumChildren() - 1);
-		ASTClassBodyDeclaration decl = new ASTClassBodyDeclaration(0);
+		ASTClassBodyDeclaration decl = new ASTClassBodyDeclaration(JavaParserTreeConstants.JJTCLASSBODYDECLARATION);
 		decl.jjtAddChild(build(), 0);
 		classBody.jjtAddChild(decl, classBody.jjtGetNumChildren());
 	}
@@ -239,8 +231,7 @@ public class AddConstructor extends TransformAST {
 		ASTConstructorDeclaration methodDecl = new ASTConstructorDeclaration(0);
 
 		//  Set the modifiers
-		setupModifiers(methodSummary.getModifiers(),
-				methodDecl.getModifiers());
+		copyModifiers(methodSummary,methodDecl);
 
 		//  Set the declaration
 		methodDecl.setName(typeName);
@@ -264,7 +255,7 @@ public class AddConstructor extends TransformAST {
 	 *@return          the AST type node
 	 */
 	private ASTType buildType(TypeDeclSummary summary) {
-		ASTType type = new ASTType(0);
+		ASTType type = new ASTType(JavaParserTreeConstants.JJTTYPE);
 		if (summary.getArrayCount()==0 && summary.isPrimitive()) {
 			type.jjtAddChild(buildPrimitive(summary), 0);
 		} else {
@@ -281,7 +272,20 @@ public class AddConstructor extends TransformAST {
 	 *@return          the name node
 	 */
 	private ASTName buildName(TypeDeclSummary summary) {
-		ASTName name = new ASTName(0);
+		ASTName name = new ASTName();
+		name.fromString(summary.getLongName());
+		return name;
+	}
+        
+        
+	/**
+	 *  Builds the name of the type from the type decl summary
+	 *
+	 *@param  summary  the summary
+	 *@return          the name node
+	 */
+	private ASTClassOrInterfaceType buildClassName(TypeDeclSummary summary) {
+		ASTClassOrInterfaceType name = new ASTClassOrInterfaceType(JavaParserTreeConstants.JJTCLASSORINTERFACETYPE);
 		name.fromString(summary.getLongName());
 		return name;
 	}
@@ -294,7 +298,7 @@ public class AddConstructor extends TransformAST {
 	 *@return          the name node
 	 */
 	private ASTPrimitiveType buildPrimitive(TypeDeclSummary summary) {
-		ASTPrimitiveType primitive = new ASTPrimitiveType(0);
+		ASTPrimitiveType primitive = new ASTPrimitiveType(JavaParserTreeConstants.JJTPRIMITIVETYPE);
 		primitive.setName(summary.getLongName());
 		return primitive;
 	}
@@ -307,16 +311,12 @@ public class AddConstructor extends TransformAST {
 	 *@return          the name node
 	 */
 	private ASTReferenceType buildReferenceType(TypeDeclSummary summary) {
-                ASTReferenceType reference = new ASTReferenceType(0);
+                ASTReferenceType reference = new ASTReferenceType(JavaParserTreeConstants.JJTREFERENCETYPE);
 		if (summary.isPrimitive()) {
 			reference.jjtAddChild(buildPrimitive(summary), 0);
 		} else {
-                        reference.jjtAddChild(buildName(summary), 0);
+                        reference.jjtAddChild(buildClassName(summary), 0);
 		}
-                for (int ndx = 0; ndx<summary.getArrayCount(); ndx++) {
-                        ASTVariance variance = new ASTVariance(0);
-                        reference.jjtAddChild(variance, ndx+1);
-                }
                 reference.setArrayCount(summary.getArrayCount());
 		return reference;
 	}

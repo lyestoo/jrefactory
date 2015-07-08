@@ -1,15 +1,15 @@
 package org.acm.seguin.parser.factory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.Reader;
+import java.io.InputStreamReader;
 
 /**
  *  Generates new parsers for standard input 
  *
- *@author    Chris Seguin 
+ *@author     Chris Seguin 
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: StdInParserFactory.java,v 1.2 2003/07/29 20:51:55 mikeatkinson Exp $ 
  */
 public class StdInParserFactory extends ParserFactory {
 	/**
@@ -24,8 +24,8 @@ public class StdInParserFactory extends ParserFactory {
 	 *
 	 *@return    the input stream 
 	 */
-	protected InputStream getInputStream() {
-		return System.in;
+	protected Reader getReader() {
+		return new InputStreamReader(System.in);
 	}
 
 

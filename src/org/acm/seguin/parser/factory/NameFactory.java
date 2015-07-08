@@ -36,7 +36,7 @@ public class NameFactory {
 	public static ASTName getName(String packageName, String className) {
 		StringTokenizer tok = new StringTokenizer(packageName, ".");
 
-		ASTName result = new ASTName(0);
+		ASTName result = new ASTName();
 
 		while (tok.hasMoreTokens()) {
 			result.addNamePart(tok.nextToken());

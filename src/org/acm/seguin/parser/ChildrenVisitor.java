@@ -102,10 +102,10 @@ import org.acm.seguin.parser.ast.ASTTypeParameter;
 import org.acm.seguin.parser.ast.ASTTypeArguments;
 import org.acm.seguin.parser.ast.ASTReferenceTypeList;
 import org.acm.seguin.parser.ast.ASTReferenceType;
-import org.acm.seguin.parser.ast.ASTReferenceVariance;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
+import org.acm.seguin.parser.ast.ASTActualTypeArgument;
 import org.acm.seguin.parser.ast.ASTTypeParameters;
 import org.acm.seguin.parser.ast.ASTGenericNameList;
-import org.acm.seguin.parser.ast.ASTVariance;
 import org.acm.seguin.parser.ast.ASTEnumDeclaration;
 import org.acm.seguin.parser.ast.ASTEnumElement;
 import org.acm.seguin.parser.ast.ASTIdentifier;
@@ -188,6 +188,18 @@ public class ChildrenVisitor implements JavaParserVisitor {
 	 *@return       The rename type data
          *@since        JRefactory 2.7.00
 	 */
+        public Object visit(ASTClassOrInterfaceType node, Object data) {
+		return node.childrenAccept(this, data);
+        }
+
+	/**
+	 *  To visit a node
+	 *
+	 *@param  node  The node we are visiting
+	 *@param  data  The rename type data
+	 *@return       The rename type data
+         *@since        JRefactory 2.7.00
+	 */
         public Object visit(ASTReferenceType node, Object data) {
 		return node.childrenAccept(this, data);
         }
@@ -200,7 +212,7 @@ public class ChildrenVisitor implements JavaParserVisitor {
 	 *@return       The rename type data
          *@since        JRefactory 2.7.00
 	 */
-        public Object visit(ASTReferenceVariance node, Object data) {
+        public Object visit(ASTActualTypeArgument node, Object data) {
 		return node.childrenAccept(this, data);
         }
 
@@ -228,17 +240,6 @@ public class ChildrenVisitor implements JavaParserVisitor {
 		return node.childrenAccept(this, data);
         }
 
-	/**
-	 *  To visit a node
-	 *
-	 *@param  node  The node we are visiting
-	 *@param  data  The rename type data
-	 *@return       The rename type data
-         *@since        JRefactory 2.7.00
-	 */
-        public Object visit(ASTVariance node, Object data) {
-		return node.childrenAccept(this, data);
-        }
 
 	/**
 	 *  To visit a node

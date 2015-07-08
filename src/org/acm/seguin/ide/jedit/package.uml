@@ -1,0 +1,13 @@
+V[1.1:org.acm.seguin.ide.jedit]
+S[org.acm.seguin.ide.jedit:JEditEditorOperations,org.acm.seguin.ide.common:EditorOperations]{2:(883,360),(883,278)}
+S[org.acm.seguin.ide.jedit:JEditPackageSelectorPanel,org.acm.seguin.ide.command:PackageSelectorPanel]{2:(403,622),(340,530)}
+S[org.acm.seguin.ide.jedit:JEditPackageSelectorPanel,java.awt.event:ActionListener]{2:(503,622),(620,311)}
+S[org.acm.seguin.ide.jedit:JEditPackageSelectorPanel,org.acm.seguin.io:Saveable]{2:(548,622),(635,521)}
+S[org.acm.seguin.ide.jedit:JEditPackageSelectorPanel,org.acm.seguin.uml.loader:Reloader]{2:(462,622),(452,446)}
+P[org.acm.seguin.ide.jedit:JEditEditorOperations]{784,360}
+P[org.acm.seguin.ide.jedit:JEditPackageSelectorPanel]{311,621}
+P[org.acm.seguin.ide.common:EditorOperations]{778,14}
+P[org.acm.seguin.ide.command:PackageSelectorPanel]{6,4}
+P[java.awt.event:ActionListener]{538,200}
+P[org.acm.seguin.io:Saveable]{615,410}
+P[org.acm.seguin.uml.loader:Reloader]{361,335}

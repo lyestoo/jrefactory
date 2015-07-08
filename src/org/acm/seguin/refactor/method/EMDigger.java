@@ -7,9 +7,9 @@ import org.acm.seguin.parser.Node;
 class EMDigger {
 	Node dig(ASTMethodDeclaration start) {
 		ASTBlock block = (ASTBlock) start.jjtGetChild(start.jjtGetNumChildren() - 1);
-		Node current = block.jjtGetChild(0);
+		Node current = block.jjtGetFirstChild();
 		while (current.jjtGetNumChildren() == 1) {
-			current = current.jjtGetChild(0);
+			current = current.jjtGetFirstChild();
 		}
 		return current;
 	}

@@ -208,7 +208,11 @@ public class SummaryTraversal extends DirectoryTreeTraversal {
 
             Thread.currentThread().yield();
         } catch (Throwable oops) {
-            System.out.println("\nError loading:  " + currentFile.getName());
+            try {
+               System.out.println("\nError loading:  " + currentFile.getCanonicalPath());
+            } catch (Exception e) {
+               System.out.println("\nError loading:  " + currentFile.getName());
+            }
             oops.printStackTrace(System.out);
         }
     }

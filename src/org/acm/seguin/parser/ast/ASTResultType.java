@@ -40,6 +40,10 @@ public class ASTResultType extends SimpleNode {
 	}
 
 
+    public boolean isVoid() {
+        return jjtGetNumChildren() == 0;
+    }
+
 	/**
 	 *  Accept the visitor.
 	 *

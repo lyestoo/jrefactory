@@ -8,7 +8,6 @@
  */
 package org.acm.seguin.pretty.sort;
 
-//import org.acm.seguin.util.Comparator;
 
 /**
  *  Does not change the order

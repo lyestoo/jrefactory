@@ -13,8 +13,8 @@ import org.acm.seguin.parser.ast.ASTLocalVariableDeclaration;
 import org.acm.seguin.parser.ast.ASTName;
 import org.acm.seguin.parser.ast.ASTPrimitiveType;
 import org.acm.seguin.parser.ast.ASTReferenceType;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
 import org.acm.seguin.parser.ast.ASTTypeArguments;
-import org.acm.seguin.parser.ast.ASTVariance;
 import org.acm.seguin.parser.ast.ASTType;
 import org.acm.seguin.parser.ast.ASTVariableDeclaratorId;
 import org.acm.seguin.parser.ast.SimpleNode;
@@ -50,8 +50,8 @@ class LocalVariableLookAhead {
 		for (int ndx = 0; ndx < last; ndx++) {
 			SimpleNode child = (SimpleNode) body.jjtGetChild(ndx);
 			if ((child instanceof ASTBlockStatement) &&
-					(child.jjtGetChild(0) instanceof ASTLocalVariableDeclaration)) {
-				ASTLocalVariableDeclaration localVariable = (ASTLocalVariableDeclaration) child.jjtGetChild(0);
+					(child.jjtGetFirstChild() instanceof ASTLocalVariableDeclaration)) {
+				ASTLocalVariableDeclaration localVariable = (ASTLocalVariableDeclaration) child.jjtGetFirstChild();
 				int equalsLength = computeEqualsLength(localVariable);
 				size.setMinimumEquals(equalsLength);
 			}
@@ -85,18 +85,15 @@ class LocalVariableLookAhead {
 	 */
 	public int computeTypeLength(SimpleNode localVariable)
 	{
-		ASTType typeNode = (ASTType) localVariable.jjtGetChild(0);
+		ASTType typeNode = (ASTType) localVariable.jjtGetFirstChild();
 		int typeLength = 0; //2 * typeNode.getArrayCount();
-		if (typeNode.jjtGetChild(0) instanceof ASTPrimitiveType) {
-			ASTPrimitiveType primitive = (ASTPrimitiveType) typeNode.jjtGetChild(0);
+		if (typeNode.jjtGetFirstChild() instanceof ASTPrimitiveType) {
+			ASTPrimitiveType primitive = (ASTPrimitiveType) typeNode.jjtGetFirstChild();
 			typeLength += primitive.getName().length();
-		}
-		else if (typeNode.jjtGetChild(0) instanceof ASTReferenceType) {
-                        typeLength += computeReferenceTypeLength((ASTReferenceType) typeNode.jjtGetChild(0));
-		}
-		else {
-                    System.out.println("LocalVariableLookAhead.computeTypeLength(): ASTName: typeNode.jjtGetChild(0)="+typeNode.jjtGetChild(0));
-			ASTName name = (ASTName) typeNode.jjtGetChild(0);
+		} else if (typeNode.jjtGetFirstChild() instanceof ASTReferenceType) {
+                        typeLength += computeReferenceTypeLength((ASTReferenceType) typeNode.jjtGetFirstChild());
+		} else {
+			ASTName name = (ASTName) typeNode.jjtGetFirstChild();
 			typeLength += name.getName().length();
 		}
 		size.setTypeLength(typeLength);
@@ -113,23 +110,17 @@ class LocalVariableLookAhead {
 	public int computeReferenceTypeLength(ASTReferenceType reference)
 	{
                 int typeLength = 0;
-                if (reference.jjtGetChild(0) instanceof ASTPrimitiveType) {
-                        ASTPrimitiveType primitive = (ASTPrimitiveType) reference.jjtGetChild(0);
+                if (reference.jjtGetFirstChild() instanceof ASTPrimitiveType) {
+                        ASTPrimitiveType primitive = (ASTPrimitiveType) reference.jjtGetFirstChild();
                         typeLength += primitive.getName().length();
-                } else {
-                        ASTName name = (ASTName) reference.jjtGetChild(0);
+                } else if (reference.jjtGetFirstChild() instanceof ASTClassOrInterfaceType) {
+                        ASTClassOrInterfaceType name = (ASTClassOrInterfaceType) reference.jjtGetFirstChild();
                         typeLength += name.getName().length();
+                } else {
+                    // FIXME: sometimes the child is a CompilationUnit which should not be a child of a ASTReferenceType
+                    //System.out.println("LocalVariableLookAhead.computeReferenceTypeLength: Error: reference.jjtGetFirstChild()="+reference.jjtGetFirstChild());
                 }
-                int last = reference.jjtGetNumChildren();
-                for (int ndx = 1; ndx < last; ndx++) {
-                        if (reference.jjtGetChild(ndx) instanceof ASTVariance) {
-                                ASTVariance variance = (ASTVariance)reference.jjtGetChild(ndx);
-                                typeLength += 2 + variance.getName().length();
-                        } else if (reference.jjtGetChild(ndx) instanceof ASTTypeArguments) {
-                                // FIXME: handle TypeArguments length
-                        }
-                }
-                                
+                typeLength += reference.getArrayCount()*2;       
                 return typeLength;
         }
 
@@ -155,7 +146,7 @@ class LocalVariableLookAhead {
 	 */
 	private int computeNameLength(ASTLocalVariableDeclaration localVariable)
 	{
-		ASTVariableDeclaratorId id = (ASTVariableDeclaratorId) localVariable.jjtGetChild(1).jjtGetChild(0);
+		ASTVariableDeclaratorId id = (ASTVariableDeclaratorId) localVariable.jjtGetChild(1).jjtGetFirstChild();
 		int nameLength = id.getName().length();
 		size.setNameLength(nameLength);
 		return nameLength;

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
+<attributes version="1.0">
+
+    <fileobject name="JRefactory.java">
+        <attr name="class_dependency_org.openide.windows.TopComponent" stringvalue="JRefactory"/>
+    </fileobject>
+
+    <fileobject name="CSCheckDirAction.java">
+        <attr name="class_dependency_org.openide.util.actions.CallableSystemAction" stringvalue="CSCheckDirAction"/>
+    </fileobject>
+    <fileobject name="OptionsAction.java">
+        <attr name="class_dependency_org.openide.util.actions.CallableSystemAction" stringvalue="OptionsAction"/>
+        <attr name="class_dependency_org.openide.util.actions.Presenter.Menu" stringvalue="OptionsAction"/>
+    </fileobject>
+    <fileobject name="CSCheckBufferAction.java">
+        <attr name="class_dependency_org.openide.util.actions.CookieAction" stringvalue="CSCheckBufferAction"/>
+    </fileobject>
+    <fileobject name="JRefactory.java">
+        <attr name="class_dependency_org.openide.windows.TopComponent" stringvalue="JRefactory"/>
+        <attr name="class_dependency_javax.swing.JPanel" stringvalue="JRefactory.ReloadChooserPanel"/>
+    </fileobject>
+    <fileobject name="CPDCheckDirAction.java">
+        <attr name="class_dependency_org.openide.util.actions.CallableSystemAction" stringvalue="CPDCheckDirAction"/>
+    </fileobject>
+    <fileobject name="CSCheckDirRecursiveAction.java">
+        <attr name="class_dependency_org.openide.util.actions.CallableSystemAction" stringvalue="CSCheckDirRecursiveAction"/>
+    </fileobject>
+    <fileobject name="CPDCheckDirRecursiveAction.java">
+        <attr name="class_dependency_org.openide.util.actions.CookieAction" stringvalue="CPDCheckDirRecursiveAction"/>
+    </fileobject>
+    <fileobject name="CPDCheckAllBuffersAction.java">
+        <attr name="class_dependency_org.openide.util.actions.CallableSystemAction" stringvalue="CPDCheckAllBuffersAction"/>
+    </fileobject>
+    <fileobject name="ExtractMethodAction.java">
+        <attr name="class_dependency_org.openide.util.actions.CookieAction" stringvalue="ExtractMethodAction"/>
+    </fileobject>
+    <fileobject name="JRefactoryAction.java">
+        <attr name="class_dependency_org.openide.util.actions.Presenter.Menu" stringvalue="JRefactoryAction"/>
+        <attr name="class_dependency_org.openide.util.actions.CookieAction" stringvalue="JRefactoryAction"/>
+    </fileobject>
+    <fileobject name="CSCheckAllBuffersAction.java">
+        <attr name="class_dependency_org.openide.util.actions.CookieAction" stringvalue="CSCheckAllBuffersAction"/>
+    </fileobject>
+</attributes>

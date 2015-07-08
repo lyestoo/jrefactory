@@ -103,10 +103,10 @@ import org.acm.seguin.parser.ast.ASTTypeParameter;
 import org.acm.seguin.parser.ast.ASTTypeArguments;
 import org.acm.seguin.parser.ast.ASTReferenceTypeList;
 import org.acm.seguin.parser.ast.ASTReferenceType;
-import org.acm.seguin.parser.ast.ASTReferenceVariance;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
+import org.acm.seguin.parser.ast.ASTActualTypeArgument;
 import org.acm.seguin.parser.ast.ASTTypeParameters;
 import org.acm.seguin.parser.ast.ASTGenericNameList;
-import org.acm.seguin.parser.ast.ASTVariance;
 import org.acm.seguin.parser.ast.ASTEnumDeclaration;
 import org.acm.seguin.parser.ast.ASTEnumElement;
 import org.acm.seguin.parser.ast.ASTIdentifier;
@@ -220,7 +220,21 @@ class CompareParseTreeVisitor implements JavaParserVisitor {
 	 *@return       Boolean.TRUE or Boolean.FALSE
          *@since        JRefactory 2.7.00
          */
-        public Object visit(ASTReferenceVariance node, Object data) {
+        public Object visit(ASTClassOrInterfaceType node, Object data) {
+		return defaultComparison(node, data);
+        }
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTActualTypeArgument node, Object data) {
 		return defaultComparison(node, data);
         }
 
@@ -252,19 +266,6 @@ class CompareParseTreeVisitor implements JavaParserVisitor {
 		return defaultComparison(node, data);
         }  
 
-	/**
-	 *  Visit a node, comparing it with that supplied in data.
-	 *
-         *  It used the defaultComparison() method to do the comparison.
-	 *  
-	 *@param  node  The node we are visiting
-	 *@param  data  The simple node to compare
-	 *@return       Boolean.TRUE or Boolean.FALSE
-         *@since        JRefactory 2.7.00
-         */
-        public Object visit(ASTVariance node, Object data) {
-		return defaultComparison(node, data);
-        }
 
 	/**
 	 *  Visit a node, comparing it with that supplied in data.

@@ -10,7 +10,6 @@ package org.acm.seguin.refactor.method;
 
 import org.acm.seguin.parser.ast.ASTMethodDeclaration;
 import org.acm.seguin.parser.ast.SimpleNode;
-import org.acm.seguin.pretty.ModifierHolder;
 import org.acm.seguin.refactor.ComplexTransform;
 import org.acm.seguin.refactor.Refactoring;
 import org.acm.seguin.refactor.RefactoringException;

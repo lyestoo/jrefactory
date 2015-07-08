@@ -50,7 +50,7 @@
  * <http://www.sourceforge.org/projects/jrefactory>.
  */
 package org.acm.seguin.ide.elixir.version;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 
 import java.io.File;
 import java.io.IOException;

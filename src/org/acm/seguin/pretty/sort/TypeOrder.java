@@ -102,12 +102,12 @@ public class TypeOrder extends Ordering {
 	 */
 	protected int getIndex(Object object)
 	{
-		Object data = ((SimpleNode) object).jjtGetChild(0);
+		Object data = ((SimpleNode) object).jjtGetFirstChild();
 		if (data instanceof ASTClassBodyDeclaration) {
-			data = ((ASTClassBodyDeclaration) data).jjtGetChild(0);
+			data = ((ASTClassBodyDeclaration) data).jjtGetFirstChild();
 		}
 		else if (data instanceof ASTInterfaceMemberDeclaration) {
-			data = ((ASTInterfaceMemberDeclaration) data).jjtGetChild(0);
+			data = ((ASTInterfaceMemberDeclaration) data).jjtGetFirstChild();
 		}
 
 		Class type = data.getClass();
@@ -136,12 +136,12 @@ public class TypeOrder extends Ordering {
 			if (type.equals(ASTMethodDeclaration.class)) {
                             ASTMethodDeclaration declaration = (ASTMethodDeclaration) data;
                             int child = 1;
-                            if (declaration.jjtGetChild(0) instanceof ASTTypeParameters) {
+                            if (declaration.jjtGetFirstChild() instanceof ASTTypeParameters) {
                                 child++;
                             }                            
                             ASTMethodDeclarator declar = (ASTMethodDeclarator) (declaration.jjtGetChild(child));
                             String name = declar.getName();
-                            return name.equals("main") && declaration.getModifiers().isStatic();
+                            return name.equals("main") && declaration.isStatic();
 			}
 
 			return false;

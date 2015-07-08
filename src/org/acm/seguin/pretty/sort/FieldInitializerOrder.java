@@ -11,7 +11,6 @@ package org.acm.seguin.pretty.sort;
 import org.acm.seguin.parser.ast.ASTFieldDeclaration;
 import org.acm.seguin.parser.ast.ASTVariableDeclarator;
 import org.acm.seguin.parser.ast.SimpleNode;
-//import org.acm.seguin.util.Comparator;
 
 /**
  *  The ordering is the basic tool to determine if the parse tree node is in
@@ -53,7 +52,7 @@ public class FieldInitializerOrder extends Ordering {
 	 */
 	protected int getIndex(Object object)
 	{
-		Object data = ((SimpleNode) object).jjtGetChild(0);
+		Object data = ((SimpleNode) object).jjtGetFirstChild();
 		if (data instanceof ASTFieldDeclaration) {
 			ASTFieldDeclaration fieldDecl = (ASTFieldDeclaration) data;
 

@@ -54,6 +54,7 @@ package org.acm.seguin.uml.line;
 import java.awt.LayoutManager;
 import java.awt.Point;
 import javax.swing.JPanel;
+import java.util.List;
 import java.util.LinkedList;
 import java.util.Iterator;
 
@@ -146,6 +147,11 @@ public abstract class LinedPanel extends JPanel {
         super.add(panel);
     }
 
+    public void remove(EndPointPanel panel) {
+       endPoints.remove(panel);
+       super.remove(panel);
+    }
+
 
     /**
      *  Description of the Method
@@ -154,6 +160,16 @@ public abstract class LinedPanel extends JPanel {
      */
     public void add(SegmentedLine value) {
         lineList.add(value);
+    }
+
+
+    /**
+     *  Description of the Method
+     *
+     *@param  value  Description of Parameter
+     */
+    public void remove(SegmentedLine value) {
+        lineList.remove(value);
     }
 
 
@@ -215,7 +231,7 @@ public abstract class LinedPanel extends JPanel {
      *  Deselects all the end points
      */
     public void deselectAll() {
-        Iterator iter = getEndPoints();
+        Iterator iter = getEndPointIterator();
         while (iter.hasNext()) {
             ((EndPointPanel) iter.next()).setSelected(false);
         }
@@ -227,7 +243,17 @@ public abstract class LinedPanel extends JPanel {
      *
      *@return    the lines
      */
-    public Iterator getLines() {
+    public List getLines() {
+        return lineList;
+    }
+
+
+    /**
+     *  Returns an iterator into the list of lines
+     *
+     *@return    the lines
+     */
+    public Iterator getLineIterator() {
         return lineList.iterator();
     }
 
@@ -237,7 +263,17 @@ public abstract class LinedPanel extends JPanel {
      *
      *@return    the panels
      */
-    protected Iterator getEndPoints() {
+    protected List getEndPoints() {
+        return endPoints;
+    }
+
+
+    /**
+     *  Return an iterator into the list of panels
+     *
+     *@return    the panels
+     */
+    protected Iterator getEndPointIterator() {
         return endPoints.iterator();
     }
 }

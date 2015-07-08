@@ -51,10 +51,9 @@
  */
 package org.acm.seguin.summary;
 
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.parser.Node;
 import org.acm.seguin.parser.ast.ASTType;
-import org.acm.seguin.parser.ast.ASTFieldDeclaration;
 import org.acm.seguin.parser.ast.ASTVariableDeclaratorId;
 
 /**
@@ -81,12 +80,14 @@ public class FieldSummary extends VariableSummary {
 
 
     /**
-     *  Returns the modifier holder
+     *  Creates a parameter summary
      *
-     *@return    the holder
+     *@param  parentSummary  the parent summary
+     *@param  type           the type of parameter
+     *@param  name           the name of the parameter
      */
-    public ModifierHolder getModifiers() {
-        return modifiers;
+    public FieldSummary(Summary parentSummary, TypeDeclSummary type, String name) {
+        super(parentSummary, type, name);
     }
 
 
@@ -107,7 +108,7 @@ public class FieldSummary extends VariableSummary {
      *
      *@param  mod  the holder
      */
-    protected void setModifiers(ModifierHolder mod) {
-        modifiers = mod;
-    }
+    //protected void setModifiers(ModifierHolder mod) {
+    //    modifiers = mod;
+    //}
 }

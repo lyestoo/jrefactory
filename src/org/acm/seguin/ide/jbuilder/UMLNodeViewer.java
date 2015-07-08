@@ -54,9 +54,9 @@ package org.acm.seguin.ide.jbuilder;
 import com.borland.primetime.ide.Context;
 import com.borland.primetime.node.Node;
 import com.borland.primetime.viewer.AbstractNodeViewer;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import org.acm.seguin.awt.ExceptionPrinter;
@@ -69,6 +69,8 @@ import org.acm.seguin.uml.UMLPackage;
  *  Stores a view of a UML class diagram
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: UMLNodeViewer.java,v 1.4 2003/07/29 20:51:52 mikeatkinson Exp $ 
  *@created    October 18, 2001
  */
 public class UMLNodeViewer extends AbstractNodeViewer {
@@ -105,7 +107,7 @@ public class UMLNodeViewer extends AbstractNodeViewer {
             diagram = umlNode.getDiagram();
             if (diagram == null) {
                 try {
-                    diagram = new UMLPackage(umlNode.getInputStream());
+                    diagram = new UMLPackage(new InputStreamReader(umlNode.getInputStream()));
                 }
                 catch (IOException ioe) {
                     ExceptionPrinter.print(ioe, false);

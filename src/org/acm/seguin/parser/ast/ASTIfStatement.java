@@ -41,6 +41,16 @@ public class ASTIfStatement extends SimpleNode {
 	}
 
 
+    private boolean hasElse;
+
+    public void setHasElse() {
+        this.hasElse = true;
+    }
+
+    public boolean hasElse() {
+        return this.hasElse;
+    }
+
 	/**
 	 *  Accept the visitor.
 	 *

@@ -15,7 +15,6 @@ import java.io.ObjectInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Stack;
 import org.acm.seguin.refactor.Refactoring;
@@ -30,8 +29,8 @@ import org.acm.seguin.util.FileSettings;
  *  responsible for storing the refactorings that can be undone.
  *
  *@author    Chris Seguin
- *@author     Mike Atkinson (<a href="mailto:javastyle@ladyshot.demon.co.uk">Mike</a>)
- *@version    $Version: $
+ *@author     <a href="mailto:JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: UndoStack.java,v 1.5 2003/09/01 00:25:32 mikeatkinson Exp $
  */
 public class UndoStack {
 	/**
@@ -164,7 +163,6 @@ public class UndoStack {
 	 *@return    The File value
 	 */
 	private File getFile() {
-		//File dir = new File(FileSettings.getSettingsRoot() + File.separator + ".Refactory");
 		return new File(FileSettings.getRefactorySettingsRoot(), "undo.stk");
 	}
 

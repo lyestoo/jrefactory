@@ -262,56 +262,6 @@ public class TextStructureDelegate extends TextStructure {
      *
      *@param  p0  Description of the Parameter
      */
-    //public void mouseClicked(MouseEvent p0) {
-    //    delegate.mouseClicked(p0);
-    //}
-
-
-    /**
-     *  Description of the Method
-     *
-     *@param  p0  Description of the Parameter
-     */
-    //public void mouseEntered(MouseEvent p0) {
-    //    delegate.mouseEntered(p0);
-    //}
-
-
-    /**
-     *  Description of the Method
-     *
-     *@param  p0  Description of the Parameter
-     */
-    //public void mouseExited(MouseEvent p0) {
-    //    delegate.mouseExited(p0);
-    //}
-
-
-    /**
-     *  Description of the Method
-     *
-     *@param  p0  Description of the Parameter
-     */
-    //public void mousePressed(MouseEvent p0) {
-    //    delegate.mousePressed(p0);
-    //}
-
-
-    /**
-     *  Description of the Method
-     *
-     *@param  p0  Description of the Parameter
-     */
-    //public void mouseReleased(MouseEvent p0) {
-    //    delegate.mouseReleased(p0);
-    //}
-
-
-    /**
-     *  Description of the Method
-     *
-     *@param  p0  Description of the Parameter
-     */
     public void nodeActivated(DefaultMutableTreeNode p0) {
         delegate.nodeActivated(p0);
     }
@@ -336,4 +286,4 @@ public class TextStructureDelegate extends TextStructure {
         delegate.updateStructure(p0);
     }
 }
-//  EOF
+

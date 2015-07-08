@@ -53,7 +53,7 @@ package org.acm.seguin.summary;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -70,6 +70,8 @@ import org.acm.seguin.parser.factory.ParserFactory;
  *  Stores a summary of a java file
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: FileSummary.java,v 1.4 2003/07/29 20:51:57 mikeatkinson Exp $ 
  *@created    June 6, 1999
  *@since      2.6.31
  */
@@ -496,7 +498,7 @@ public class FileSummary extends Summary {
      *@param  input  the input stream
      *@return        the file summary loaded
      */
-    public static FileSummary reloadFromBuffer(File file, InputStream input) {
+    public static FileSummary reloadFromBuffer(File file, Reader input) {
         if (fileMap == null) {
             init();
         }

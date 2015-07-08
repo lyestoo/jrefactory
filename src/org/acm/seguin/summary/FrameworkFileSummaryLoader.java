@@ -80,16 +80,12 @@ public class FrameworkFileSummaryLoader extends FrameworkLoader {
      */
     public FrameworkFileSummaryLoader(LoadStatus init) {
         status = init;
-        String home;
         try {
             FileSettings umlBundle = FileSettings.getRefactorySettings("uml");
             directory = new File(umlBundle.getString("stub.dir") + File.separator + ".Refactory");
         } catch (MissingSettingsException mse) {
-            //home = System.getProperty("user.home");
             directory = FileSettings.getRefactorySettingsRoot();
         }
-
-        //directory = home + File.separator + ".Refactory";
         loaded = false;
     }
 
@@ -109,7 +105,6 @@ public class FrameworkFileSummaryLoader extends FrameworkLoader {
         StubFile.waitForCreation();
 
         loaded = true;
-        //File dir = new File(directory);
         String[] filenames = directory.list();
         if (filenames == null) {
             return;

@@ -180,18 +180,15 @@ public class SegmentedLine implements ComponentListener {
      */
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        //vertices[0].paint(g);
         for (int ndx = 0; ndx < vertices.length; ndx++) {
             Xs[ndx] = vertices[ndx].getX();
             Ys[ndx] = vertices[ndx].getY();
             vertices[ndx].paint(g);
         }
-        //vertices[vertices.length - 1].paint(g);
         Point shortPoint = getShortPoint();
         Xs[vertices.length - 1] = shortPoint.x;
         Ys[vertices.length - 1] = shortPoint.y;
 
-        //paintCentral(g, Xs, Ys, vertices.length - 2);
         //  Use a dashed stroke
         Stroke stroke = g2d.getStroke();
         g2d.setStroke(getStroke());
@@ -202,13 +199,7 @@ public class SegmentedLine implements ComponentListener {
 
         //  Reset the stroke
         g2d.setStroke(stroke);
-
-        //if (vertices.length == 2) {
-        //    drawSingleSegment(g);
-        //} else {
-        //    drawStartSegment(g);
-            drawArrow(g2d);
-        //}
+        drawArrow(g2d);
     }
 
     protected Stroke getStroke() {
@@ -496,40 +487,6 @@ public class SegmentedLine implements ComponentListener {
 
 
 
-    ///**
-    // *  Draws the arrow and the last segment and anything special at the start
-    // *
-    // *@param  g  the graphics object
-    // */
-    //protected void drawSingleSegment(Graphics g) {
-    //    drawArrow(g);
-    //}
-
-
-    ///**
-    // *  Draws anything special at the start
-    // *
-    // *@param  g  the graphics object
-    // */
-    //protected void drawStartSegment(Graphics g) {
-    //    Point start = vertices[0].getPoint();
-    //    Point end = vertices[1].getPoint();
-    //    g.drawLine((int) start.getX(), (int) start.getY(), (int) end.getX(), (int) end.getY());
-    //}
-
-
-    ///**
-    // *  Draw central portion of the segmented line
-    // *
-    // *@param  g    the graphics object
-    // *@param  Xs   the X coordinates
-    // *@param  Ys   the Y coordinates
-    // *@param  len  the number of coordinates
-    // */
-    //protected void paintCentral(Graphics g, int[] Xs, int[] Ys, int len) {
-    //    g.setColor(Color.black);
-    //    g.drawPolyline(Xs, Ys, len);
-    //}
 
     protected Color getColor() {
        return Color.BLACK;
@@ -544,9 +501,6 @@ public class SegmentedLine implements ComponentListener {
         Point shortPt = getShortPoint();
 
         int last = vertices.length;
-        //double X0 = vertices[last - 2].getPoint().getX();
-        //double Y0 = vertices[last - 2].getPoint().getY();
-        //g.drawLine((int) X0, (int) Y0, (int) shortPt.getX(), (int) shortPt.getY());
 
         Point end = vertices[last - 1].getPoint();
         Point above = getArrowPointAbove();

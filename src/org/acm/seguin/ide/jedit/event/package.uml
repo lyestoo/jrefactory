@@ -1,0 +1,9 @@
+V[1.1:jrefactory.event]
+S[jrefactory.event:JRefactoryEvent,java.util:EventObject]{2:(480,428),(480,164)}
+S[jrefactory.event:JRefactoryListener,java.util:EventListener]{2:(168,212),(168,136)}
+S[jrefactory.event:JRefactoryAdapter,jrefactory.event:JRefactoryListener]{2:(164,428),(168,344)}
+P[jrefactory.event:JRefactoryEvent]{312,428}
+P[jrefactory.event:JRefactoryListener]{56,212}
+P[jrefactory.event:JRefactoryAdapter]{44,428}
+P[java.util:EventObject]{404,32}
+P[java.util:EventListener]{120,28}

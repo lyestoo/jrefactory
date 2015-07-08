@@ -131,7 +131,7 @@ public class LookupVariable {
 
         while (iter.hasNext()) {
             FieldSummary next = (FieldSummary) iter.next();
-            if (!isPrivateAllowed || next.getModifiers().isPrivate()) {
+            if (!isPrivateAllowed || next.isPrivate()) {
                 if (next.getName().equals(name)) {
                     return next;
                 }

@@ -51,17 +51,21 @@
  */
 package org.acm.seguin.tools.stub;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Enumeration;
-import java.util.zip.*;
-import org.acm.seguin.summary.load.LoadStatus;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.acm.seguin.summary.load.SwingLoadStatus;
 
 /**
  *  Generates a stub set from a file
  *
  *@author     Chris Seguin
- *@author     Mike Atkinson
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: StubGenFromZip.java,v 1.4 2003/07/29 20:51:57 mikeatkinson Exp $ 
  *@created    September 12, 2001
  */
 class StubGenFromZip implements Runnable {
@@ -99,7 +103,7 @@ class StubGenFromZip implements Runnable {
                 ZipEntry entry = (ZipEntry) entryEnum.nextElement();
                 if (applies(entry)) {
                     InputStream input = zipfile.getInputStream(entry);
-                    generateStub(input, entry.getName());
+                    generateStub(new InputStreamReader(input), entry.getName());
                     input.close();
                 }
             }
@@ -129,7 +133,7 @@ class StubGenFromZip implements Runnable {
      *@param  input     the input stream
      *@param  filename  the filename
      */
-    private void generateStub(InputStream input, String filename) {
+    private void generateStub(Reader input, String filename) {
         System.out.println("Generating a stub for:  " + filename);
         status.setCurrentFile(filename);
         sf.apply(input, filename);

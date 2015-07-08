@@ -59,6 +59,7 @@ import javax.swing.JOptionPane;
 import org.acm.seguin.awt.ExceptionPrinter;
 import org.acm.seguin.io.FileCopy;
 import org.acm.seguin.print.PrintingSettings;
+import org.acm.seguin.project.Project;
 import org.acm.seguin.tools.stub.StubPrompter;
 import org.acm.seguin.util.FileSettings;
 import org.acm.seguin.util.MissingSettingsException;
@@ -97,8 +98,6 @@ public class RefactoryInstaller implements Runnable {
     public void run() {
         try {
             File homeDir = FileSettings.getSettingsRoot();
-            //String dir = home + File.separator + ".Refactory";
-            //File directory = new File(dir);
             File directory = FileSettings.getRefactorySettingsRoot();
             if (!directory.exists()) {
                 directory.mkdirs();
@@ -118,7 +117,6 @@ public class RefactoryInstaller implements Runnable {
             	oldLogFile.delete();
             }
 
-            //String filename = dir + File.separator + "pretty.settings";
             File file = new File(directory, "pretty.settings");
             FileWriter output;
             PrintWriter printer;
@@ -131,7 +129,6 @@ public class RefactoryInstaller implements Runnable {
                 printer.close();
                 output.close();
 
-                //System.out.println("Length:  " + file.length());
                 FileSettings bundle = FileSettings.getRefactoryPrettySettings();
                 bundle.setReloadNow(true);
             } else {
@@ -157,14 +154,11 @@ public class RefactoryInstaller implements Runnable {
                     output.flush();
                     printer.close();
                     output.close();
-
-                    //System.out.println("Length:  " + file.length());
                 }
 
                 bundle.setReloadNow(true);
             }
 
-            //filename = dir + File.separator + "uml.settings";
             file = new File(directory, "uml.settings");
             if (!file.exists()) {
                 output = new FileWriter(file);
@@ -196,13 +190,11 @@ public class RefactoryInstaller implements Runnable {
                 }
             }
 
-            //filename = dir + File.separator + "printing.settings";
             file = new File(directory, "printing.settings");
             if (!file.exists()) {
                 (new PrintingSettings()).save();
             }
 
-            //filename = dir + File.separator + "vss.settings";
             file = new File(directory, "vss.settings");
             if (!file.exists()) {
                 output = new FileWriter(file);
@@ -212,7 +204,6 @@ public class RefactoryInstaller implements Runnable {
                 output.close();
             }
 
-            //filename = dir + File.separator + "process.settings";
             file = new File(directory, "process.settings");
             if (!file.exists()) {
                 output = new FileWriter(file);
@@ -222,7 +213,6 @@ public class RefactoryInstaller implements Runnable {
                 output.close();
             }
 
-            //filename = dir + File.separator + "creation.txt";
             file = new File(directory, "creation.txt");
             if (!file.exists()) {
                 generateCreationText(file);
@@ -254,6 +244,12 @@ public class RefactoryInstaller implements Runnable {
                             "Research request",
                             JOptionPane.QUESTION_MESSAGE);
                 }
+            }
+            file = new File(directory, "projects");
+            if (!file.exists()) {
+                Project.storeProjects();
+            } else {
+                Project.loadProjects();
             }
         } catch (IOException ioe) {
             ExceptionPrinter.print(ioe, false);
@@ -438,25 +434,20 @@ public class RefactoryInstaller implements Runnable {
         FileSettings bundle = FileSettings.getRefactoryPrettySettings();
         bundle.setContinuallyReload(true);
 
-        //String home;
         File directory;
         try {
             FileSettings umlBundle = FileSettings.getRefactorySettings("uml");
-            //home = umlBundle.getString("stub.dir");
             directory = new File(umlBundle.getString("stub.dir") + File.separator + ".Refactory");
         } catch (MissingSettingsException mse) {
-            //home = System.getProperty("user.home");
             directory = FileSettings.getRefactorySettingsRoot();
         }
 
-        //File directory = new File(home + File.separator + ".Refactory");
         if (!directory.exists()) {
             directory.mkdirs();
         }
 
         File outFile = new File(directory, "JDK.stub");
         if (!outFile.exists()) {
-            //System.out.println("Creating:  " + outFile.getPath());
             (new StubPrompter(null, outFile, true)).setVisible(true);
         }
 

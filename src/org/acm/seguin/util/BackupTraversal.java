@@ -51,7 +51,7 @@
  */
 package org.acm.seguin.util;
 
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 import java.io.*;
 import org.acm.seguin.io.DirectoryTreeTraversal;
 import org.acm.seguin.io.FileCopy;

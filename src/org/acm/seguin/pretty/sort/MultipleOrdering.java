@@ -10,7 +10,6 @@ package org.acm.seguin.pretty.sort;
 
 import java.util.Comparator;
 import java.util.StringTokenizer;
-//import org.acm.seguin.util.Comparator;
 import org.acm.seguin.util.MissingSettingsException;
 import org.acm.seguin.util.Settings;
 

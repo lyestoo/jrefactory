@@ -8,7 +8,7 @@
  */
 package org.acm.seguin.refactor.method;
 
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.refactor.ComplexTransform;
 import org.acm.seguin.summary.FileSummary;
 import org.acm.seguin.summary.TypeDeclSummary;
@@ -50,8 +50,8 @@ public class PushUpAbstractMethodRefactoring extends PushUpMethodRefactoring
 		FileSummary fileSummary;
 		TypeSummary typeSummary = (TypeSummary) methodSummary.getParent();
 
-		ModifierHolder holder = methodSummary.getModifiers();
-		if (!(holder.isPublic() || holder.isProtected()))
+		//ModifierHolder holder = methodSummary.getModifiers();
+		if (!(methodSummary.isPublic() || methodSummary.isProtected()))
 		{
 			transform.add(new ChangeMethodScopeTransform(methodSummary, ChangeMethodScopeVisitor.PROTECTED));
 			fileSummary = (FileSummary) typeSummary.getParent();

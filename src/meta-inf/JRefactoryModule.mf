@@ -7,7 +7,7 @@ OpenIDE-Module-Implementation-Version: build 2
 OpenIDE-Module-Long-Description: Java refactoring tool plugin for Netb
  eans
 Created-By: NetBeans
-Class-Path: ext\jrefactory.jar
+Class-Path: ext/jrefactory.jar;ext/bcel.jar;ext/dom4j-full.jar;ext/findbugs.jar;ext/findbugsGUI.jar;ext/coreplugin.jar;ext/jaxen-core-1.0-fcs.jar;ext/saxpath-1.0-fcs.jar
 OpenIDE-Module-Specification-Version: 0.2
 OpenIDE-Module: org.acm.seguin.ide.netbeans.JRefactoryModule
 

@@ -55,11 +55,9 @@ import com.borland.jbuilder.node.JavaFileNode;
 import com.borland.primetime.ide.Browser;
 import com.borland.primetime.node.Node;
 import com.borland.primetime.vfs.Buffer;
-import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.io.IOException;
-import org.acm.seguin.ide.common.MultipleDirClassDiagramReloader;
 import org.acm.seguin.ide.common.action.SelectedFileSet;
-import org.acm.seguin.ide.jbuilder.UMLNodeViewerFactory;
 import org.acm.seguin.summary.FileSummary;
 import org.acm.seguin.summary.TypeSummary;
 
@@ -67,6 +65,8 @@ import org.acm.seguin.summary.TypeSummary;
  *  The concrete implementation of this class for JBuilder
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: JBuilderSelectedFileSet.java,v 1.3 2003/07/29 20:51:52 mikeatkinson Exp $ 
  *@created    October 18, 2001
  */
 public class JBuilderSelectedFileSet extends SelectedFileSet {
@@ -182,9 +182,9 @@ public class JBuilderSelectedFileSet extends SelectedFileSet {
 
                 Buffer buffer = jtn.getBuffer();
                 byte[] contents = buffer.getContent();
-                ByteArrayInputStream bais = new ByteArrayInputStream(contents);
+                StringReader reader = new StringReader(new String(contents));
 
-                return reloadFile(jtn.getUrl().getFileObject(), bais);
+                return reloadFile(jtn.getUrl().getFileObject(), reader);
             }
         }
         catch (IOException ioe) {

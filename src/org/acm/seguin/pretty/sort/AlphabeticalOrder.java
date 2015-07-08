@@ -69,31 +69,31 @@ class AlphabeticalOrder extends Ordering {
 	 */
 	private String getName(Object object)
 	{
-		Object data = ((SimpleNode) object).jjtGetChild(0);
+		Object data = ((SimpleNode) object).jjtGetFirstChild();
 		if (data instanceof ASTClassBodyDeclaration) {
-			data = ((ASTClassBodyDeclaration) data).jjtGetChild(0);
+			data = ((ASTClassBodyDeclaration) data).jjtGetFirstChild();
 		}
 		else if (data instanceof ASTInterfaceMemberDeclaration) {
-			data = ((ASTInterfaceMemberDeclaration) data).jjtGetChild(0);
+			data = ((ASTInterfaceMemberDeclaration) data).jjtGetFirstChild();
 		}
 
 		//  Now that we have data, determine the type of data
 		if (data instanceof ASTEnumDeclaration) {
 			ASTEnumDeclaration field = (ASTEnumDeclaration) data;
-			ASTLiteral id = (ASTLiteral) field.jjtGetChild(0);
+			ASTLiteral id = (ASTLiteral) field.jjtGetFirstChild();
 			return id.getName();
 		}
 		else if (data instanceof ASTFieldDeclaration) {
 			ASTFieldDeclaration field = (ASTFieldDeclaration) data;
 			ASTVariableDeclarator declar = (ASTVariableDeclarator) field.jjtGetChild(1);
-			return ((ASTVariableDeclaratorId) declar.jjtGetChild(0)).getName();
+			return ((ASTVariableDeclaratorId) declar.jjtGetFirstChild()).getName();
 		}
 		else if (data instanceof ASTConstructorDeclaration) {
 			return "";
 		}
 		else if (data instanceof ASTMethodDeclaration) {
 			ASTMethodDeclaration method = (ASTMethodDeclaration) data;
-                        if (method.jjtGetChild(0) instanceof ASTTypeParameters) {
+                        if (method.jjtGetFirstChild() instanceof ASTTypeParameters) {
 			   ASTMethodDeclarator decl = (ASTMethodDeclarator) method.jjtGetChild(2);
 			   return decl.getName();
                         } else {
@@ -103,12 +103,12 @@ class AlphabeticalOrder extends Ordering {
 		}
 		else if (data instanceof ASTNestedInterfaceDeclaration) {
 			ASTNestedInterfaceDeclaration nestedInterface = (ASTNestedInterfaceDeclaration) data;
-			ASTUnmodifiedInterfaceDeclaration unmodified = (ASTUnmodifiedInterfaceDeclaration) nestedInterface.jjtGetChild(0);
+			ASTUnmodifiedInterfaceDeclaration unmodified = (ASTUnmodifiedInterfaceDeclaration) nestedInterface.jjtGetFirstChild();
 			return unmodified.getName();
 		}
 		else if (data instanceof ASTNestedClassDeclaration) {
 			ASTNestedClassDeclaration nestedClass = (ASTNestedClassDeclaration) data;
-			ASTUnmodifiedClassDeclaration unmodified = (ASTUnmodifiedClassDeclaration) nestedClass.jjtGetChild(0);
+			ASTUnmodifiedClassDeclaration unmodified = (ASTUnmodifiedClassDeclaration) nestedClass.jjtGetFirstChild();
 			return unmodified.getName();
 		}
 		else {

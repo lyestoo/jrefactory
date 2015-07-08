@@ -1,0 +1,14 @@
+V[1.1:jrefactory.action]
+S[jrefactory.action:ReloadAllAction,jrefactory.action:Action]{2:(183,353),(261,303)}
+S[jrefactory.action:ReloadAction,jrefactory.action:Action]{2:(141,585),(290,349)}
+S[jrefactory.action:ShowAction,jrefactory.action:Action]{2:(323,485),(342,349)}
+S[jrefactory.action:HideAction,jrefactory.action:Action]{2:(428,385),(410,349)}
+S[jrefactory.action:Action,java.awt.event:ActionListener]{2:(261,172),(193,124)}
+S[jrefactory.action:Action,java.lang:Cloneable]{2:(453,139),(475,116)}
+P[jrefactory.action:Action]{261,137}
+P[jrefactory.action:ReloadAllAction]{9,353}
+P[jrefactory.action:ReloadAction]{8,585}
+P[jrefactory.action:ShowAction]{213,485}
+P[jrefactory.action:HideAction]{349,385}
+P[java.awt.event:ActionListener]{17,17}
+P[java.lang:Cloneable]{475,15}

@@ -54,8 +54,8 @@ public class RemoveImportTransform extends TransformAST {
 	 *@param  summary  Description of Parameter 
 	 */
 	public RemoveImportTransform(PackageSummary summary) {
-		this.name = new ASTName(0);
-		this.name.fromString(summary.getName());
+		name = new ASTName();
+		name.fromString(summary.getName());
 		packageImport = true;
 	}
 
@@ -96,10 +96,10 @@ public class RemoveImportTransform extends TransformAST {
 
 			//  Check each of the targets
 			if (!packageImport) {
-				return importDecl.jjtGetChild(0).equals(name);
+				return importDecl.jjtGetFirstChild().equals(name);
 			}
 			else {
-				ASTName nameNode = (ASTName) importDecl.jjtGetChild(0);
+				ASTName nameNode = (ASTName) importDecl.jjtGetFirstChild();
 				String code = nameNode.getName();
 				String packageName = name.getName();
 				return (code.equals(packageName));

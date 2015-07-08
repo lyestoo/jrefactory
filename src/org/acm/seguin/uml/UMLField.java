@@ -57,7 +57,7 @@ import org.acm.seguin.summary.TypeSummary;
 import org.acm.seguin.summary.TypeDeclSummary;
 import org.acm.seguin.uml.line.DragPanelAdapter;
 import org.acm.seguin.summary.query.GetTypeSummary;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 
 /**
  *  Displays a single UML field in a line
@@ -91,10 +91,11 @@ public class UMLField extends UMLLine implements ISourceful {
         association = false;
 
         //  Reset the parent data
-        ModifierHolder modifiers = summary.getModifiers();
-        setProtection(UMLLine.getProtectionCode(modifiers));
+        //ModifierHolder modifiers = summary.getModifiers();
+        //setProtection(UMLLine.getProtectionCode(modifiers));
+        setProtection(UMLLine.getProtectionCode(summary));
         setLabelText(summary.toString());
-        setLabelFont(UMLLine.getProtectionFont(false, modifiers));
+        setLabelFont(UMLLine.getProtectionFont(false, summary));
 
         //  Reset the size
         setSize(getPreferredSize());

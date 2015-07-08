@@ -73,6 +73,17 @@ public class ParameterSummary extends VariableSummary {
 
 
     /**
+     *  Creates a parameter summary
+     *
+     *@param  parentSummary  the parent summary
+     *@param  type           the type of parameter
+     *@param  name           the name of the parameter
+     */
+    public ParameterSummary(Summary parentSummary, TypeDeclSummary type, String name) {
+        super(parentSummary, type, name);
+    }
+
+    /**
      *  Provide method to visit a node
      *
      *@param  visitor  the visitor

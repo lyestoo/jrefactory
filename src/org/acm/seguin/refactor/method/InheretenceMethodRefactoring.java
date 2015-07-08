@@ -4,7 +4,7 @@ import org.acm.seguin.refactor.Refactoring;
 import org.acm.seguin.summary.MethodSummary;
 import org.acm.seguin.summary.TypeSummary;
 import org.acm.seguin.refactor.RefactoringException;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.refactor.RefactoringException;
 import org.acm.seguin.summary.query.SameMethod;
 import org.acm.seguin.parser.ast.ASTMethodDeclaration;
@@ -44,8 +44,8 @@ abstract class InheretenceMethodRefactoring extends MethodRefactoring {
 	protected void checkDestination(TypeSummary dest) throws RefactoringException {
 		MethodSummary alternate = SameMethod.find(dest, methodSummary);
 		if (alternate != null) {
-			ModifierHolder holder = alternate.getModifiers();
-			if (!holder.isAbstract()) {
+			//ModifierHolder holder = alternate.getModifiers();
+			if (!alternate.isAbstract()) {
 				throw new RefactoringException("A method with the same signature (name and parameter types) already exists in the " + dest.getName() + " class");
 			}
 		}
@@ -62,11 +62,11 @@ abstract class InheretenceMethodRefactoring extends MethodRefactoring {
 	 *@return             Description of the Returned Value
 	 */
 	protected ASTMethodDeclaration updateMethod(SimpleNode methodDecl) {
-		ASTMethodDeclaration decl = (ASTMethodDeclaration) methodDecl.jjtGetChild(0);
-		ModifierHolder holder = decl.getModifiers();
-		if (!holder.isPublic()) {
-			holder.setPrivate(false);
-			holder.setProtected(true);
+		ASTMethodDeclaration decl = (ASTMethodDeclaration) methodDecl.jjtGetFirstChild();
+		//ModifierHolder holder = decl.getModifiers();
+		if (!decl.isPublic()) {
+			decl.setPrivate(false);
+			decl.setProtected(true);
 		}
 		return decl;
 	}

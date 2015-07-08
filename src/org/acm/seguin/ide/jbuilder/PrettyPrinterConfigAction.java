@@ -62,7 +62,8 @@ import org.acm.seguin.tools.install.PrettyPrinterConfigGUI;
  *@created    October 18, 2001
  */
 public class PrettyPrinterConfigAction extends JBuilderAction {
-    private PrettyPrinterConfigGUI gui;
+    //private PrettyPrinterConfigGUI gui;
+
 
 
     /**
@@ -73,7 +74,7 @@ public class PrettyPrinterConfigAction extends JBuilderAction {
         putValue(SHORT_DESCRIPTION, "Pretty Printer Configuration");
         putValue(LONG_DESCRIPTION, "GUI that allows the user to configure the pretty printer");
 
-        gui = new PrettyPrinterConfigGUI(false);
+        //gui = new PrettyPrinterConfigGUI(false);
     }
 
 
@@ -93,7 +94,10 @@ public class PrettyPrinterConfigAction extends JBuilderAction {
      *@param  evt  the action that occurred
      */
     public void actionPerformed(ActionEvent evt) {
-        gui.run();
+        //gui.run();
+        Object source = evt.getSource();
+        JRefactory.log("event source="+source);
+        new org.acm.seguin.ide.common.options.JSOptionDialog((java.awt.Frame)source);
     }
 }
-//  EOF
+

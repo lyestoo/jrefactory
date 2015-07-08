@@ -113,10 +113,10 @@ public class RenameFieldRefactoring extends FieldRefactoring {
 		transform.add(rft);
 		transform.apply(fileSummary.getFile(), fileSummary.getFile());
 
-		if (oldField.getModifiers().isPrivate()) {
+		if (oldField.isPrivate()) {
 			//  We are done
 		}
-		else if (oldField.getModifiers().isPackage()) {
+		else if (oldField.isPackage()) {
 			RenameSystemTraversal rsv = new RenameSystemTraversal();
 			rsv.visit(getPackage(), new RenameFieldData(oldField, newName, transform));
 		}

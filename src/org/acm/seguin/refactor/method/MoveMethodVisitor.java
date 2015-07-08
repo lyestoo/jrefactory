@@ -5,6 +5,7 @@ import org.acm.seguin.summary.*;
 import org.acm.seguin.summary.query.FieldQuery;
 import org.acm.seguin.parser.ast.*;
 import org.acm.seguin.parser.ChildrenVisitor;
+import org.acm.seguin.parser.JavaParserTreeConstants;
 
 /**
  *  Visitor that prepares a method for being incorporated into another class.
@@ -78,14 +79,17 @@ public class MoveMethodVisitor extends ChildrenVisitor {
 			}
 
 			if (ObjectReference.isReferenced(methodSummary)) {
-				ASTFormalParameter newParam = new ASTFormalParameter(0);
-				ASTType type = new ASTType(0);
+				ASTFormalParameter newParam = new ASTFormalParameter(JavaParserTreeConstants.JJTFORMALPARAMETER);
+				ASTType type = new ASTType(JavaParserTreeConstants.JJTTYPE);
 				newParam.jjtAddChild(type, 0);
-				ASTName nameNode = new ASTName(0);
+                                ASTClassOrInterfaceType nameNode = new ASTClassOrInterfaceType(0);
+                                //nameNode.fromString(typeDecl.getLongName());
+
+                                //ASTName nameNode = new ASTName();
 				String typeName = typeSummary.getName();
 				nameNode.addNamePart(typeName);
 				type.jjtAddChild(nameNode, 0);
-				ASTVariableDeclaratorId id = new ASTVariableDeclaratorId(0);
+				ASTVariableDeclaratorId id = new ASTVariableDeclaratorId(JavaParserTreeConstants.JJTVARIABLEDECLARATORID);
 				id.setName(typeName.substring(0, 1).toLowerCase() + typeName.substring(1));
 				newParam.jjtAddChild(id, 1);
 
@@ -110,7 +114,7 @@ public class MoveMethodVisitor extends ChildrenVisitor {
 			Object result = super.visit(node, Boolean.TRUE);
 			if (result != null) {
 				ASTArguments args = (ASTArguments) result;
-				ASTArgumentList list = new ASTArgumentList(0);
+				ASTArgumentList list = new ASTArgumentList(JavaParserTreeConstants.JJTARGUMENTLIST);
 				args.jjtAddChild(list, 0);
 				list.jjtAddChild(node.jjtGetChild(2), 0);
 				node.jjtDeleteChild(2);
@@ -137,9 +141,9 @@ public class MoveMethodVisitor extends ChildrenVisitor {
 		if (destination instanceof ParameterSummary) {
 			String parameterName = destination.getName();
 
-			ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetChild(0);
+			ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetFirstChild();
 			if ("this".equals(prefix.getName())) {
-				ASTName nameNode = new ASTName(0);
+				ASTName nameNode = new ASTName();
 				nameNode.addNamePart(getReplacementVariableName());
 				prefix.jjtAddChild(nameNode, 0);
 			}
@@ -147,7 +151,7 @@ public class MoveMethodVisitor extends ChildrenVisitor {
 				updatePrimaryPrefix(prefix, parameterName);
 			}
 			else if (isVariable(node, prefix)) {
-				ASTName nameNode = (ASTName) prefix.jjtGetChild(0);
+				ASTName nameNode = (ASTName) prefix.jjtGetFirstChild();
 				if (!isLocalVariable(nameNode.getNamePart(0))) {
 					Boolean value = (Boolean) data;
 					result = updatePrivateField(node, prefix, nameNode, parameterName, value.booleanValue());
@@ -170,8 +174,8 @@ public class MoveMethodVisitor extends ChildrenVisitor {
 	 */
 	private boolean isMethod(ASTPrimaryExpression node, ASTPrimaryPrefix prefix) {
 		return (node.jjtGetNumChildren() > 1) &&
-				(node.jjtGetChild(1).jjtGetChild(0) instanceof ASTArguments) &&
-				(prefix.jjtGetChild(0) instanceof ASTName);
+				(node.jjtGetChild(1).jjtGetFirstChild() instanceof ASTArguments) &&
+				(prefix.jjtGetFirstChild() instanceof ASTName);
 	}
 
 
@@ -184,7 +188,7 @@ public class MoveMethodVisitor extends ChildrenVisitor {
 	 */
 	private boolean isVariable(ASTPrimaryExpression node, ASTPrimaryPrefix prefix) {
 		return (node.jjtGetNumChildren() == 1) &&
-				(prefix.jjtGetChild(0) instanceof ASTName);
+				(prefix.jjtGetFirstChild() instanceof ASTName);
 	}
 
 
@@ -250,7 +254,7 @@ public class MoveMethodVisitor extends ChildrenVisitor {
 	 *@param  parameterName  Description of Parameter
 	 */
 	private void updatePrimaryPrefix(ASTPrimaryPrefix prefix, String parameterName) {
-		ASTName nameNode = (ASTName) prefix.jjtGetChild(0);
+		ASTName nameNode = (ASTName) prefix.jjtGetFirstChild();
 
 		if (nameNode.getNameSize() == 1) {
 			updateLocalReferences(prefix, nameNode);
@@ -269,7 +273,7 @@ public class MoveMethodVisitor extends ChildrenVisitor {
 	 */
 	private void updateLocalReferences(ASTPrimaryPrefix prefix,
 			ASTName nameNode) {
-		ASTName newName = new ASTName(0);
+		ASTName newName = new ASTName();
 		newName.addNamePart(getReplacementVariableName());
 		newName.addNamePart(nameNode.getNamePart(0));
 		prefix.jjtAddChild(newName, 0);
@@ -293,7 +297,7 @@ public class MoveMethodVisitor extends ChildrenVisitor {
 	 *@param  nameNode  Description of Parameter
 	 */
 	private void updateParameterReferences(ASTPrimaryPrefix prefix, ASTName nameNode) {
-		ASTName newName = new ASTName(0);
+		ASTName newName = new ASTName();
 		newName.addNamePart(nameNode.getNamePart(1));
 		prefix.jjtAddChild(newName, 0);
 	}
@@ -315,14 +319,14 @@ public class MoveMethodVisitor extends ChildrenVisitor {
 		if (nameNode.getNameSize() == 1) {
 			String name = nameNode.getNamePart(0);
 			FieldSummary field = FieldQuery.find(typeSummary, name);
-			if (field.getModifiers().isPrivate()) {
-				ASTName newName = new ASTName(0);
+			if (field.isPrivate()) {
+				ASTName newName = new ASTName();
 				newName.addNamePart(getReplacementVariableName());
 				newName.addNamePart(isSetter ? getFieldSetter(field) : getFieldGetter(field));
 				prefix.jjtAddChild(newName, 0);
 
-				ASTPrimarySuffix suffix = new ASTPrimarySuffix(0);
-				ASTArguments args = new ASTArguments(0);
+				ASTPrimarySuffix suffix = new ASTPrimarySuffix(JavaParserTreeConstants.JJTPRIMARYSUFFIX);
+				ASTArguments args = new ASTArguments(JavaParserTreeConstants.JJTARGUMENTS);
 				suffix.jjtAddChild(args, 0);
 				primary.jjtInsertChild(suffix, 1);
 

@@ -4,7 +4,7 @@ package org.acm.seguin.tools.builder;
 import org.acm.seguin.refactor.RefactoringException;
 import org.acm.seguin.refactor.RefactoringFactory;
 import org.acm.seguin.refactor.type.RenameClassRefactoring;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 import org.acm.seguin.util.FileSettings;
 
 

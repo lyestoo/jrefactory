@@ -48,7 +48,7 @@ class FindLocalVariableDeclVisitor extends ChildrenVisitor
 	 */
 	public Object visit(ASTBlockStatement node, Object data)
 	{
-		Node child = node.jjtGetChild(0);
+		Node child = node.jjtGetFirstChild();
 		if ((child instanceof ASTUnmodifiedClassDeclaration) ||
 				(child instanceof ASTUnmodifiedInterfaceDeclaration))
 		{
@@ -73,7 +73,7 @@ class FindLocalVariableDeclVisitor extends ChildrenVisitor
 		for (int ndx = 1; ndx < node.jjtGetNumChildren(); ndx++)
 		{
 			ASTVariableDeclarator next = (ASTVariableDeclarator) node.jjtGetChild(ndx);
-			ASTVariableDeclaratorId id = (ASTVariableDeclaratorId) next.jjtGetChild(0);
+			ASTVariableDeclaratorId id = (ASTVariableDeclaratorId) next.jjtGetFirstChild();
 			if (id.getName().equals(var.getName()))
 			{
 				found = true;

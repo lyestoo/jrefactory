@@ -10,7 +10,7 @@ package org.acm.seguin.metrics;
 
 import java.io.*;
 import org.acm.seguin.io.DirectoryTreeTraversal;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 
 /**
  *  Counts the number of lines in a file

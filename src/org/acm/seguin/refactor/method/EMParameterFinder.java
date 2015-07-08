@@ -199,17 +199,17 @@ public class EMParameterFinder
 	 */
 	private boolean isSame(MethodSummary methodSummary, ASTClassBodyDeclaration classBodyDecl)
 	{
-		Node child = classBodyDecl.jjtGetChild(0);
+		Node child = classBodyDecl.jjtGetFirstChild();
 		if (child instanceof ASTMethodDeclaration)
 		{
 			ASTMethodDeclarator decl = (ASTMethodDeclarator) child.jjtGetChild(1);
 			if (decl.getName().equals(methodSummary.getName()))
 			{
-                            if (decl.jjtGetChild(0) instanceof ASTTypeParameters) {
+                            if (decl.jjtGetFirstChild() instanceof ASTTypeParameters) {
                                     ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetChild(1);
                                     return isParametersSame(params, methodSummary);
                             } else {
-                                    ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetChild(0);
+                                    ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetFirstChild();
                                     return isParametersSame(params, methodSummary);
                             }
 			}
@@ -221,7 +221,7 @@ public class EMParameterFinder
 			ASTConstructorDeclaration decl = (ASTConstructorDeclaration) child;
 			if (methodSummary.isConstructor())
 			{
-				ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetChild(0);
+				ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetFirstChild();
 				return isParametersSame(params, methodSummary);
 			}
 			return false;

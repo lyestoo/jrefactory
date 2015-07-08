@@ -61,7 +61,7 @@ import com.elixirtech.msg.Message;
 import com.elixirtech.msg.MsgType;
 import com.elixirtech.msg.ApplicationBus;
 import com.elixirtech.ide.project.Folder;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 import org.acm.seguin.ide.common.SingleDirClassDiagramReloader;
 import org.acm.seguin.uml.loader.ReloaderSingleton;
 import org.acm.seguin.ide.common.SourceBrowser;

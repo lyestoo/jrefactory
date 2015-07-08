@@ -56,7 +56,7 @@ public class RenameFieldVisitor extends ChildrenVisitor {
 	{
 		RenameFieldData rfd = (RenameFieldData) data;
 
-		ASTName name = (ASTName) node.jjtGetChild(0);
+		ASTName name = (ASTName) node.jjtGetFirstChild();
 		PackageSummary packageSummary = PackageSummary.getPackageSummary(name.getName());
 		rfd.setCurrentSummary(packageSummary);
 
@@ -142,7 +142,7 @@ public class RenameFieldVisitor extends ChildrenVisitor {
 		if (rfd.getCurrentSummary() == rfd.getTypeSummary()) {
 			for (int ndx = 1; ndx < node.jjtGetNumChildren(); ndx++) {
 				ASTVariableDeclarator next = (ASTVariableDeclarator) node.jjtGetChild(ndx);
-				ASTVariableDeclaratorId id = (ASTVariableDeclaratorId) next.jjtGetChild(0);
+				ASTVariableDeclaratorId id = (ASTVariableDeclaratorId) next.jjtGetFirstChild();
 				if (id.getName().equals(rfd.getOldName())) {
 					id.setName(rfd.getNewName());
 				}
@@ -163,11 +163,11 @@ public class RenameFieldVisitor extends ChildrenVisitor {
 	public Object visit(ASTPrimaryExpression node, Object data)
 	{
 		RenameFieldData rfd = (RenameFieldData) data;
-		ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetChild(0);
+		ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetFirstChild();
 		if ("this".equals(prefix.getName())) {
 			processThisExpression(rfd, node, prefix);
 		}
-		else if ((prefix.jjtGetNumChildren() >= 1) && (prefix.jjtGetChild(0) instanceof ASTName)) {
+		else if ((prefix.jjtGetNumChildren() >= 1) && (prefix.jjtGetFirstChild() instanceof ASTName)) {
 			processNameExpression(rfd, node, prefix);
 		}
 
@@ -331,7 +331,7 @@ public class RenameFieldVisitor extends ChildrenVisitor {
 
 				if (node.jjtGetNumChildren() >= 3) {
 					ASTPrimarySuffix next = (ASTPrimarySuffix) node.jjtGetChild(2);
-					if ((next.jjtGetChild(0) != null) && (next.jjtGetChild(0) instanceof ASTArguments)) {
+					if ((next.jjtGetFirstChild() != null) && (next.jjtGetFirstChild() instanceof ASTArguments)) {
 						change = false;
 					}
 				}
@@ -353,14 +353,14 @@ public class RenameFieldVisitor extends ChildrenVisitor {
 	 */
 	private void processNameExpression(RenameFieldData rfd, ASTPrimaryExpression node, ASTPrimaryPrefix prefix)
 	{
-		ASTName name = (ASTName) prefix.jjtGetChild(0);
+		ASTName name = (ASTName) prefix.jjtGetFirstChild();
 
 		if (!rfd.isThisRequired()) {
 			boolean hasSuffixArguments = false;
 
 			if (node.jjtGetNumChildren() >= 2) {
 				ASTPrimarySuffix next = (ASTPrimarySuffix) node.jjtGetChild(1);
-				if ((next.jjtGetChild(0) != null) && (next.jjtGetChild(0) instanceof ASTArguments)) {
+				if ((next.jjtGetFirstChild() != null) && (next.jjtGetFirstChild() instanceof ASTArguments)) {
 					hasSuffixArguments = true;
 				}
 			}
@@ -381,7 +381,7 @@ public class RenameFieldVisitor extends ChildrenVisitor {
 			}
 		}
 
-		if (rfd.getOldField().getModifiers().isStatic()) {
+		if (rfd.getOldField().isStatic()) {
 			String nameString = name.getName();
 			if (nameString.startsWith(rfd.getFullName())) {
 				replaceNamePart(name, rfd.getFullName(), rfd.getNewName());

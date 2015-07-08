@@ -51,29 +51,35 @@
  */
 package org.acm.seguin.uml;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.print.PageFormat;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.io.PrintWriter;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Random;
-import javax.swing.*;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 import org.acm.seguin.awt.ExceptionPrinter;
 import org.acm.seguin.ide.common.ClassListPanel;
 import org.acm.seguin.io.Saveable;
-import org.acm.seguin.summary.*;
+import org.acm.seguin.summary.TypeSummary;
+import org.acm.seguin.summary.PackageSummary;
 import org.acm.seguin.uml.line.AssociationRelationship;
 import org.acm.seguin.uml.line.LineMouseAdapter;
 import org.acm.seguin.uml.line.LinedPanel;
 import org.acm.seguin.uml.line.SegmentedLine;
 import org.acm.seguin.uml.line.Vertex;
-import org.acm.seguin.uml.print.PrintAdapter;
 import org.acm.seguin.uml.print.UMLPagePrinter;
 import org.acm.seguin.util.FileSettings;
 import org.acm.seguin.util.MissingSettingsException;
@@ -85,6 +91,8 @@ import org.acm.seguin.uml.line.EndPointPanel;
  *  Draws a UML diagram for all the classes in a package
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: UMLPackage.java,v 1.6 2003/09/01 00:25:32 mikeatkinson Exp $ 
  *@created    September 12, 2001
  */
 public class UMLPackage extends LinedPanel implements Saveable {
@@ -125,7 +133,7 @@ public class UMLPackage extends LinedPanel implements Saveable {
      *
      *@param  input  the input stream
      */
-    public UMLPackage(InputStream input) {
+    public UMLPackage(Reader input) {
         initialise(new PackageLoader(this, input));
     }
 
@@ -319,7 +327,9 @@ public class UMLPackage extends LinedPanel implements Saveable {
      *@param  field  Description of Parameter
      */
     public void removeAssociation(UMLField field) {
-        Iterator iter = getLines();
+        System.out.println("removeAssociation("+field+")");
+        EndPointPanel end = null;
+        Iterator iter = getLineIterator();
         while (iter.hasNext()) {
             Object next = iter.next();
             if (next instanceof AssociationRelationship) {
@@ -327,12 +337,49 @@ public class UMLPackage extends LinedPanel implements Saveable {
                 if (assoc.getField().equals(field)) {
                     assoc.delete();
                     iter.remove();
-                    return;
+                    end = assoc.getEndPanel();
+                    System.out.println("endPanel="+end);
+                    break;
+                }
+            }
+        }
+        // check to see whether the end of the association is used elsewhere.
+        boolean found = false;
+        if (end != null) {
+            iter = getLineIterator();
+            while (iter.hasNext()) {
+                Object next = iter.next();
+                if (next instanceof SegmentedLine) {
+                    SegmentedLine line = (SegmentedLine) next;
+                    if (end == line.getStartPanel()) {
+                        System.out.println(" found start line from "+end);
+                        found = true;
+                        break;
+                    } else if (end == line.getEndPanel()) {
+                        System.out.println(" found start line from "+end);
+                        found = true;
+                        break;
+                    }
+                }
+            }
+        }
+        // If the end does not occur in any other association then, if it is a Type
+        // and does not belong in this package we can remove it.
+        if (!found) {
+            System.out.println("not found");
+            if (end instanceof UMLType) {
+                System.out.println(" end is of type UMLType");
+                UMLType type = (UMLType)end;
+                TypeSummary ts = (TypeSummary)type.getSourceSummary();
+                PackageSummary ps = ts.getPackageSummary();
+                System.out.println(" ts="+ts+", ps="+ps+", summary="+summary);
+                if (ps != summary) {
+                   System.out.println(" end.getPackage() == this");
+                   remove(end);
                 }
             }
         }
     }
-
 
     /**
      *  Paint this object
@@ -367,7 +414,7 @@ public class UMLPackage extends LinedPanel implements Saveable {
         }
 
         //  Draw the segmented lines
-        Iterator iter = getLines();
+        Iterator iter = getLineIterator();
         while (iter.hasNext()) {
             ((SegmentedLine) iter.next()).paint(g);
         }
@@ -398,7 +445,7 @@ public class UMLPackage extends LinedPanel implements Saveable {
             }
         }
 
-        Iterator iter = getLines();
+        Iterator iter = getLineIterator();
         while (iter.hasNext()) {
             ((SegmentedLine) iter.next()).paint(g);
         }
@@ -446,7 +493,7 @@ public class UMLPackage extends LinedPanel implements Saveable {
      */
     public void hit(Point actual) {
         currentLine = null;
-        Iterator iter = getLines();
+        Iterator iter = getLineIterator();
         while ((currentLine == null) && iter.hasNext()) {
             SegmentedLine next = (SegmentedLine) iter.next();
             if (next.hit(actual)) {
@@ -508,22 +555,12 @@ public class UMLPackage extends LinedPanel implements Saveable {
         int last = children.length;
 
         File outputFile = PackageLoader.getFile(summary);
-        //File dir = summary.getDirectory();
-        //File outputFile;
-        //if (dir == null) {
-        //    dir = new File(FileSettings.getRefactorySettingsRoot(), "UML");
-        //    dir.mkdirs();
-        //    outputFile = new File(dir +
-        //            File.separator + summary.getName() + ".uml");
-        //} else {
-        //    outputFile = new File(summary.getDirectory(), "package.uml");
-        //}
         PrintWriter output = new PrintWriter(new FileWriter(outputFile));
 
         output.println("V[1.1:" + summary.getName() + "]");
 
         //  Save the line segments
-        Iterator iter = getLines();
+        Iterator iter = getLineIterator();
         while (iter.hasNext()) {
             ((SegmentedLine) iter.next()).save(output);
         }
@@ -641,7 +678,7 @@ public class UMLPackage extends LinedPanel implements Saveable {
             return null;
         }
 
-        Iterator iter = getLines();
+        Iterator iter = getLineIterator();
         while (iter.hasNext()) {
             SegmentedLine line = (SegmentedLine) iter.next();
             if (line.match(first, second)) {
@@ -769,7 +806,7 @@ public class UMLPackage extends LinedPanel implements Saveable {
                 types[i].shift(r.nextInt(temperature)/(times*times), r.nextInt(temperature)/(times*times*times));
             }
             forces = new HashMap();
-            Iterator iter = getLines();
+            Iterator iter = getLineIterator();
             while (iter.hasNext()) {
                 SegmentedLine line = (SegmentedLine) iter.next();
                 EndPointPanel start = line.getStartPanel();
@@ -918,7 +955,7 @@ public class UMLPackage extends LinedPanel implements Saveable {
         for (int i=0; i<types.length; i++) {
             groups.put(types[i], new Integer(i));
         }
-        Iterator iter = getLines();
+        Iterator iter = getLineIterator();
         while (iter.hasNext()) {
             SegmentedLine line = (SegmentedLine) iter.next();
             EndPointPanel start = line.getStartPanel();

@@ -97,7 +97,6 @@ public class CleanClassFiles extends DirectoryTreeTraversal {
      */
     protected void visit(File currentFile) {
         String parentString = currentFile.getParent();
-        //System.out.println("Parent:  " + parentString);
         if (!directoryList.contains(parentString)) {
             directoryList.add(parentString);
             output.println("del " + parentString +

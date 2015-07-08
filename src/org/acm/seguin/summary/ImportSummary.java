@@ -76,7 +76,7 @@ public class ImportSummary extends Summary {
         super(parentSummary);
 
         //  Local Variables
-        ASTName name = (ASTName) importDecl.jjtGetChild(0);
+        ASTName name = (ASTName) importDecl.jjtGetFirstChild();
 
         if (importDecl.isImportingPackage()) {
             type = null;

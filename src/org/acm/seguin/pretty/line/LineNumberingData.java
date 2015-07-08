@@ -9,7 +9,7 @@
 package org.acm.seguin.pretty.line;
 
 import org.acm.seguin.pretty.PrintData;
-import java.io.OutputStream;
+import java.io.Writer;
 import java.io.PrintWriter;
 import org.acm.seguin.pretty.LineQueue;
 
@@ -17,6 +17,8 @@ import org.acm.seguin.pretty.LineQueue;
  *  The line number data
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: LineNumberingData.java,v 1.2 2003/07/29 20:51:56 mikeatkinson Exp $ 
  *@created    October 14, 1999
  */
 public class LineNumberingData extends PrintData {
@@ -33,7 +35,7 @@ public class LineNumberingData extends PrintData {
 	 *
 	 *@param  out  the output stream
 	 */
-	public LineNumberingData(OutputStream out) {
+	public LineNumberingData(Writer out) {
 		super(out);
 	}
 

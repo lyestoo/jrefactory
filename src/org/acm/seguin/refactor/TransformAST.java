@@ -9,6 +9,7 @@
 package org.acm.seguin.refactor;
 
 import org.acm.seguin.parser.ast.SimpleNode;
+import org.acm.seguin.parser.ast.ModifierHolder;
 
 /**
  *  This is the base class for any algorithm that updates the syntax tree. 
@@ -24,4 +25,14 @@ public abstract class TransformAST {
 	 *@param  root  the root of the syntax tree 
 	 */
 	public abstract void update(SimpleNode root);
+        
+	/**
+	 *  Sets up the modifiers
+	 *
+	 *@param  source  the source holder
+	 *@param  dest    the destination holder
+	 */
+	protected void copyModifiers(ModifierHolder source, ModifierHolder dest) {
+		dest.copyModifiers(source);
+        }
 }

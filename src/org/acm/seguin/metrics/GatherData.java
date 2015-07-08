@@ -151,7 +151,7 @@ public class GatherData implements SummaryVisitor {
 		if (iter != null) {
 			while (iter.hasNext()) {
 				FieldSummary next = (FieldSummary) iter.next();
-				if (next.getModifiers().isStatic()) {
+				if (next.isStatic()) {
 					typeData.incrClassVariableCount();
 				}
 				else {
@@ -167,10 +167,10 @@ public class GatherData implements SummaryVisitor {
 				MethodSummary next = (MethodSummary) iter.next();
 				next.accept(this, typeData);
 
-				if (next.getModifiers().isStatic()) {
+				if (next.isStatic()) {
 					typeData.incrClassMethodCount();
 				}
-				else if (next.getModifiers().isPublic()) {
+				else if (next.isPublic()) {
 					typeData.incrPublicMethodCount();
 				}
 				else {
@@ -196,7 +196,7 @@ public class GatherData implements SummaryVisitor {
 		//  Update the totals
 		packageData.add(typeData);
 
-		if (node.getModifiers().isAbstract()) {
+		if (node.isAbstract()) {
 			packageData.incrAbstractClassCount();
 		}
 

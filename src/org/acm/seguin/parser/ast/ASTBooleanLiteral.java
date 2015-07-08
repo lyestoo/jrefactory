@@ -64,16 +64,6 @@ public class ASTBooleanLiteral extends SimpleNode {
 
 
 	/**
-	 *  Convert this object to a string
-	 *
-	 *@return    a string representing this object
-	 */
-	public String toString() {
-		return super.toString() + " [" + getName() + "]";
-	}
-
-
-	/**
 	 *  Accept the visitor.
 	 *
 	 *@param  visitor  Description of Parameter

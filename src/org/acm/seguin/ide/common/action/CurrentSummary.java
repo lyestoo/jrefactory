@@ -51,7 +51,7 @@
  */
 package org.acm.seguin.ide.common.action;
 
-import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -70,6 +70,8 @@ import org.acm.seguin.ide.common.MultipleDirClassDiagramReloader;
  *  IDE.
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: CurrentSummary.java,v 1.3 2003/07/29 20:51:52 mikeatkinson Exp $ 
  *@created    October 18, 2001
  */
 public abstract class CurrentSummary extends Object implements DocumentListener {
@@ -401,9 +403,9 @@ public abstract class CurrentSummary extends Object implements DocumentListener 
     private FileSummary reloadNode() throws IOException {
         if (EditorOperations.get().isJavaFile()) {
             String contents = EditorOperations.get().getStringFromIDE();
-            ByteArrayInputStream bais = new ByteArrayInputStream(contents.getBytes());
+            StringReader reader = new StringReader(contents);
 
-            return FileSummary.reloadFromBuffer(EditorOperations.get().getFile(), bais);
+            return FileSummary.reloadFromBuffer(EditorOperations.get().getFile(), reader);
         }
 
         return null;

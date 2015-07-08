@@ -57,7 +57,7 @@ public class RenameTypeTransform extends TransformAST {
 	 */
 	public RenameTypeTransform(String oldPackageName, ASTName newValue, TypeSummary init) {
 		newName = newValue;
-		oldName = new ASTName(0);
+		oldName = new ASTName();
 		oldName.fromString(oldPackageName);
 		oldName.addNamePart(newName.getNamePart(newName.getNameSize() - 1));
 		summary = init;

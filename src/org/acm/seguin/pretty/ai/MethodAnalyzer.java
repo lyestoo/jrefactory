@@ -26,7 +26,7 @@ import org.acm.seguin.pretty.DescriptionPadder;
 import org.acm.seguin.pretty.JavadocTags;
 
 import org.acm.seguin.parser.ast.ASTReferenceType;
-import org.acm.seguin.parser.ast.ASTVariance;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
 import org.acm.seguin.parser.ast.ASTTypeParameters;
 import org.acm.seguin.parser.ast.ASTAttribute;
 
@@ -166,16 +166,16 @@ public class MethodAnalyzer
 		}
 
                 // If it has JDK 1.5 type parameters it cannot be a main() method.
-                if (node.jjtGetChild(0) instanceof ASTTypeParameters) {
+                if (node.jjtGetFirstChild() instanceof ASTTypeParameters) {
 			return false;
                 }
                 // If it has JDK 1.5 attributes it cannot be a main() method.
-                if (node.jjtGetChild(0) instanceof ASTAttribute) {
+                if (node.jjtGetFirstChild() instanceof ASTAttribute) {
 			return false;
                 }
                 
 		//  Check for the void return type
-		ASTResultType result = (ASTResultType) node.jjtGetChild(0);
+		ASTResultType result = (ASTResultType) node.jjtGetFirstChild();
 		if (result.hasAnyChildren())
 		{
 			return false;
@@ -183,28 +183,28 @@ public class MethodAnalyzer
 
 		//  Check the parameters
 		ASTMethodDeclarator decl = (ASTMethodDeclarator) node.jjtGetChild(1);
-		ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetChild(0);
+		ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetFirstChild();
 		int childCount = params.jjtGetNumChildren();
 		if (childCount != 1)
 		{
 			return false;
 		}
 
-		ASTFormalParameter nextParam = (ASTFormalParameter) params.jjtGetChild(0);
-		ASTType type = (ASTType) nextParam.jjtGetChild(0);
-		Node child = type.jjtGetChild(0);
+		ASTFormalParameter nextParam = (ASTFormalParameter) params.jjtGetFirstChild();
+		ASTType type = (ASTType) nextParam.jjtGetFirstChild();
+		Node child = type.jjtGetFirstChild();
 		if (child instanceof ASTReferenceType) {
                         ASTReferenceType reference = (ASTReferenceType)child;
                         childCount = reference.jjtGetNumChildren();
-                        if (childCount != 2) {
+                        if (childCount != 1) {
                             return false;
                         }
-                        if (reference.jjtGetChild(0) instanceof ASTName) {
-                                ASTName nameNode = (ASTName) reference.jjtGetChild(0);
+                        if (reference.jjtGetFirstChild() instanceof ASTClassOrInterfaceType) {
+                                ASTClassOrInterfaceType nameNode = (ASTClassOrInterfaceType) reference.jjtGetFirstChild();
                                 if (nameNode.getName().equals("String") || nameNode.getName().equals("java.lang.String")) {
-                                        if (reference.jjtGetChild(1) instanceof ASTVariance) {
+                                    if (reference.getArrayCount()==1) {
                                                 return true;
-                                        }
+                                    }
                                 }
                         }
 		}
@@ -269,7 +269,7 @@ public class MethodAnalyzer
 	private String getName()
 	{
                 int child = 0;
-                if (node.jjtGetChild(0) instanceof ASTAttribute) {
+                if (node.jjtGetFirstChild() instanceof ASTAttribute) {
                     child = 1;
                 }
                 if (node.jjtGetChild(child) instanceof ASTTypeParameters) {
@@ -373,7 +373,7 @@ public class MethodAnalyzer
 	private void finishReturn(FileSettings bundle)
 	{
             int child = 0;
-            if (node.jjtGetChild(0) instanceof ASTAttribute) {
+            if (node.jjtGetFirstChild() instanceof ASTAttribute) {
                 child++;
             }
             if (node.jjtGetChild(child) instanceof ASTTypeParameters) {
@@ -398,14 +398,14 @@ public class MethodAnalyzer
 	private void finishParameters(FileSettings bundle)
 	{
                 int child = 0;
-                if (node.jjtGetChild(0) instanceof ASTAttribute) {
+                if (node.jjtGetFirstChild() instanceof ASTAttribute) {
                     child++;
                 }
                 if (node.jjtGetChild(child++) instanceof ASTTypeParameters) {
                     child++;
                 }
                 ASTMethodDeclarator decl = (ASTMethodDeclarator) node.jjtGetChild(child);
-                ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetChild(0);
+                ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetFirstChild();
                 
 		int childCount = params.jjtGetNumChildren();
 		for (int ndx = 0; ndx < childCount; ndx++)
@@ -428,14 +428,14 @@ public class MethodAnalyzer
 	private void sortParameters()
 	{
                 int child = 0;
-                if (node.jjtGetChild(0) instanceof ASTAttribute) {
+                if (node.jjtGetFirstChild() instanceof ASTAttribute) {
                     child = 1;
                 }
                 if (node.jjtGetChild(child++) instanceof ASTTypeParameters) {
                     child++;
                 }
                 ASTMethodDeclarator decl = (ASTMethodDeclarator) node.jjtGetChild(child);
-                ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetChild(0);
+                ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetFirstChild();
                 
 		int childCount = params.jjtGetNumChildren();
                 String[] methodParams = new String[childCount];
@@ -560,7 +560,11 @@ public class MethodAnalyzer
 		}
 
 		String message = createDescription(pattern, getAttributeName(), className);
-		message = DescriptionPadder.padBuffer(message, bundle);
+      if (bundle.getInteger("javadoc.indent")<1) {
+         message = " "+message;
+      } else {
+         message = DescriptionPadder.padBuffer(message, bundle);
+      }
 		jdi.require("", message);
 	}
 

@@ -106,16 +106,6 @@ public class AssociationRelationship extends SegmentedLine {
     }
 
 
-    ///**
-    // *  Draws the segmented line
-    // *
-    // *@param  g  Description of Parameter
-    // */
-    //public void paint(Graphics g) {
-    //    super.paint(g);
-    //}
-
-
     /**
      *  Saves a segmented to the output stream
      *

@@ -283,7 +283,7 @@ public class MoveMethodRefactoring extends MethodRefactoring
 			FieldSummary field = FieldQuery.find(typeSummary, fas.getFieldName());
 			if (field != null)
 			{
-				if (field.getModifiers().isPrivate())
+				if (field.isPrivate())
 				{
 					checkForMethod(fas, field);
 				}
@@ -351,14 +351,14 @@ public class MoveMethodRefactoring extends MethodRefactoring
 						mss.getMessageName() + ") in " + typeSummary.getName());
 			}
 
-			if (method.getModifiers().isPrivate())
+			if (method.isPrivate())
 			{
 				throw new RefactoringException("Moving a method (" +
 						mss.getMessageName() + ") from " + typeSummary.getName() +
 						" that requires private access is illegal");
 			}
 
-			if (method.getModifiers().isPackage())
+			if (method.isPackage())
 			{
 				TypeSummary destType;
 				if (destination instanceof VariableSummary)

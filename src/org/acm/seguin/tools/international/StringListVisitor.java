@@ -90,9 +90,9 @@ public class StringListVisitor extends ChildrenVisitor {
      *@return       The rename type data
      */
     public Object visit(ASTPrimaryExpression node, Object data) {
-        ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetChild(0);
-        if (prefix.jjtGetChild(0) instanceof ASTName) {
-            ASTName name = (ASTName) prefix.jjtGetChild(0);
+        ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetFirstChild();
+        if (prefix.jjtGetFirstChild() instanceof ASTName) {
+            ASTName name = (ASTName) prefix.jjtGetFirstChild();
             int count = name.getNameSize();
             if (name.getNamePart(0).equals("Debug")) {
                 return data;

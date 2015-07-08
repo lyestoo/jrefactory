@@ -51,7 +51,7 @@
  */
 package org.acm.seguin.summary;
 
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import java.util.LinkedList;
 import java.util.Iterator;
 import org.acm.seguin.summary.query.GetTypeSummary;
@@ -69,7 +69,6 @@ public class MethodSummary extends Summary {
     private LinkedList parameterList = null;
     private LinkedList exceptionList = null;
     private LinkedList dependencyList = null;
-    private ModifierHolder modifiers;
     private int statementCount = 0;
     private int blockDepth = 0;
     private int maxBlockDepth = 0;
@@ -82,9 +81,7 @@ public class MethodSummary extends Summary {
      *@param  parent  Description of Parameter
      */
     public MethodSummary(Summary parent) {
-        //  Initialize the parent class
         super(parent);
-
         returnType = null;
     }
 
@@ -193,16 +190,6 @@ public class MethodSummary extends Summary {
         }
 
         return dependencyList.iterator();
-    }
-
-
-    /**
-     *  Returns the modifier holder
-     *
-     *@return    the holder
-     */
-    public ModifierHolder getModifiers() {
-        return modifiers;
     }
 
 
@@ -394,15 +381,6 @@ public class MethodSummary extends Summary {
     }
 
 
-    /**
-     *  Sets the modifier holder
-     *
-     *@param  mod  the holder
-     */
-    protected void setModifiers(ModifierHolder mod) {
-        modifiers = mod;
-    }
-
 
     /**
      *  Add the formal parameters
@@ -497,12 +475,12 @@ public class MethodSummary extends Summary {
      *@return        Description of the Returned Value
      */
     private boolean checkProtection(MethodSummary other) {
-        ModifierHolder mh1 = getModifiers();
-        ModifierHolder mh2 = other.getModifiers();
+        //ModifierHolder mh1 = getModifiers();
+        //ModifierHolder mh2 = other.getModifiers();
 
-        return (mh1.isPublic() == mh2.isPublic()) &&
-                (mh1.isProtected() == mh2.isProtected()) &&
-                (mh1.isPackage() == mh2.isPackage()) &&
-                (mh1.isPrivate() == mh2.isPrivate());
+        return (isPublic() == other.isPublic()) &&
+                (isProtected() == other.isProtected()) &&
+                (isPackage() == other.isPackage()) &&
+                (isPrivate() == other.isPrivate());
     }
 }

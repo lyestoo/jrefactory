@@ -1,0 +1,1130 @@
+common.ok=OK
+common.cancel=Cancel
+common.apply=Apply
+
+
+options.javastyle.label=JavaStyle
+options.javastyle.general.label=General
+options.javastyle.general.code=new org.acm.seguin.ide.jedit.JSOptionPane(0);
+options.javastyle.indenting.label=Indenting
+options.javastyle.indenting.code=new org.acm.seguin.ide.jedit.JSOptionPane(1);
+options.javastyle.spacing.label=Spacing
+options.javastyle.spacing.code=new org.acm.seguin.ide.jedit.JSOptionPane(2);
+options.javastyle.alignment.label=Alignment
+options.javastyle.alignment.code=new org.acm.seguin.ide.jedit.JSOptionPane(3);
+options.javastyle.sorting.label=Sorting
+options.javastyle.sorting.code=new org.acm.seguin.ide.jedit.JSOptionPane(4);
+options.javastyle.javadoc.label=JavaDoc comments
+options.javastyle.javadoc.code=new org.acm.seguin.ide.jedit.JSOptionPane(5);
+options.javastyle.stubs.label=JavaDoc stubs
+options.javastyle.stubs.code=new org.acm.seguin.ide.jedit.JSOptionPane(6);
+options.javastyle.stubs_junit.label=JavaDoc JUnit stubs
+options.javastyle.stubs_junit.code=new org.acm.seguin.ide.jedit.JSOptionPane(7);
+options.javastyle.tags.label=JavaDoc tags
+options.javastyle.tags.code=new org.acm.seguin.ide.jedit.JSOptionPane(8);
+options.javastyle.comments.label=Other comments
+options.javastyle.comments.code=new org.acm.seguin.ide.jedit.JSOptionPane(9);
+options.javastyle.pmd.label=Coding Standards
+options.javastyle.pmd.code=new org.acm.seguin.ide.jedit.JSOptionPane(10);
+
+options.javastyle.helpArea=Help
+
+#
+# Default user properties
+#
+
+javastyle.sort.type=Field,Constructor,Method,NestedClass,NestedInterface,Initializer
+javastyle.sort.class=Instance
+javastyle.sort.final=bottom
+javastyle.sort.protection=public
+javastyle.sort.method=Setter,Getter,Other
+
+#
+# Option pane properties
+#
+
+# 0. General option pane
+options.javastyle.project.local=Local Option
+options.javastyle.project.local.tooltip=\
+        If checked, this option is set for the project (which may be different \
+	from the "default" project).
+
+#	
+# 1. General option pane
+#
+
+options.javastyle.formatOnSave=Reformat when buffer is saved
+options.javastyle.formatOnSave.tooltip=\
+	If checked, the current buffer will automatically be formatted by \
+	JavaStyle when the buffer is saved.\n\
+	\n\
+	This applies to buffers containing Java source code only, ie. \
+	buffers whose current mode is "java" or buffers whose filename ends \
+	with ".java".
+
+options.javastyle.checkOnSave=Perform coding standards check when buffer is saved
+options.javastyle.checkOnSave.tooltip=\
+	If checked, the current buffer will automatically be checked by \
+	the Coding Standards Checker when the buffer is saved.\n\
+	\n\
+	This applies to buffers containing Java source code only, ie. \
+	buffers whose current mode is "java" or buffers whose filename ends \
+	with ".java".
+
+options.javastyle.jdk=JDK version:
+options.javastyle.jdk.tooltip=This is the Java Development Kit version \
+   (e.g. "1.4.2") to use as the target (this may be different than the \
+   JDK running the application).
+
+
+#
+# 2. Indenting options
+#
+
+options.javastyle.elseStartLine="else" starts on a new line
+options.javastyle.elseStartLine.tooltip=\
+	If checked, "else" statements look like this:\n\
+	\n\
+	\  if (expr) {\n\
+	\    // something here\n\
+	\  }\n\
+	\  else {\n\
+	\    // something there\n\
+	\  }\n\
+	\n\
+	Otherwise, they look like this:\n\
+	\n\
+	\  if (expr) {\n\
+	\    // something here\n\
+	\  } else {\n\
+	\    // something there\n\
+	\  }
+
+options.javastyle.catchStartLine="catch" starts on a new line
+options.javastyle.catchStartLine.tooltip=\
+	If checked, "catch" statements look like this:\n\
+	\n\
+	\  try {\n\
+	\    // something here\n\
+	\  }\n\
+	\  catch (Exception e) {\n\
+	\    // something there\n\
+	\  }\n\
+	\n\
+	Otherwise, they look like this:\n\
+	\n\
+	\  try {\n\
+	\    // something here\n\
+	\  } catch (Exception e) {\n\
+	\    // something there\n\
+	\  }
+
+options.javastyle.throwsStartLine="throws" starts on a new line
+options.javastyle.throwsStartLine.tooltip=\
+	If checked, the "throws" part of a method/constructor declaration is \
+	always on it's own line. The "throws" keyword is indented one step, \
+	like this:\n\
+	\n\
+	\  public int getValue()\n\
+	\    throws Exception\n\
+	\  { ... }\n\
+	\n\
+	Otherwise, the "throws" part is put on the same line, like this:\n\
+	\n\
+	\  public int getValue() throws Exception\n\
+	\  { ... }
+
+options.javastyle.indentContinuedLines=Indent continued lines
+options.javastyle.indentContinuedLines.tooltip=\
+	How to indent the continuing lines in multi-line statements:\n\
+	\n\
+	* "single":\n\
+	\  Just indent the code a single level.\n\
+	\n\
+	\  public void method(int code,\n\
+	\    int code2)\n\
+	\  {\n\
+	\    int value = compute(code,\n\
+	\      code2,\n\
+	\      code1 + code2);\n\
+	\n\
+	\    System.out.println("computing " +\n\
+	\      code + " and " +\n\
+	\      code2 + " gives " +\n\
+	\      value);\n\
+	\  }\n\
+	\n\
+	* "double":\n\
+	\  Put two indents before the new code.\n\
+	\n\
+	\  public void method(int code,\n\
+	\      int code2)\n\
+	\  {\n\
+	\    int value = compute(code,\n\
+	\        code2,\n\
+	\        code1 + code2);\n\
+	\n\
+	\    System.out.println("computing " +\n\
+	\        code + " and " +\n\
+	\        code2 + " gives " +\n\
+	\        value);\n\
+	\  }\n\
+	\n\
+	* "param":\n\
+	\  Works like single, except that for arguments to a method definition, \
+	they are aligned to match the location of the "(":\n\
+	\n\
+	\  public void method(int code,\n\
+	\                     int code2)\n\
+	\  {\n\
+	\    int value = compute(code,\n\
+	\      code2,\n\
+	\      code1 + code2);\n\
+	\n\
+	\    System.out.println("computing " +\n\
+	\      code + " and " +\n\
+	\      code2 + " gives " +\n\
+	\      value);\n\
+	\  }
+
+options.javastyle.brackets=Brackets \{ \} :
+
+options.javastyle.brackets.classes=Bracket style for classes:
+options.javastyle.brackets.classes.tooltip=\
+	Choose a bracket style for class definition blocks:\n\
+	\n\
+	* C style brackets:\n\
+	\n\
+	\  public class HelloWorld {\n\
+	\    // something here\n\
+	\  }\n\
+	\n\
+	* PASCAL style brackets:\n\
+	\n\
+	\  public class HelloWorld\n\
+	\  {\n\
+	\    // something here\n\
+	\  }\n\
+	\n\
+	* EMACS style brackets:\n\
+	\n\
+	\  public class HelloWorld\n\
+	\    {\n\
+	\      // something here\n\
+	\    }
+
+options.javastyle.brackets.enums=Bracket style for enumerations:
+options.javastyle.brackets.enums.tooltip=\
+	Choose a bracket style for enumeration definition blocks:\n\
+	\n\
+	* C style brackets:\n\
+	\n\
+	\  public enum Quarks {\n\
+	\    UP,\n\
+	\    // other quarks\n\
+	\  }\n\
+	\n\
+	* PASCAL style brackets:\n\
+	\n\
+	\  public enum Quarks\n\
+	\  {\n\
+	\    UP,\n\
+	\    // other quarks\n\
+	\  }\n\
+	\n\
+	* EMACS style brackets:\n\
+	\n\
+	\  public enum Quarks\n\
+	\    {\n\
+	\    UP,\n\
+	\    // other quarks\n\
+	\    }
+
+options.javastyle.brackets.methods=Bracket style for methods:
+options.javastyle.brackets.methods.tooltip=\
+	This is the same as the previous option, but this time it is for method \
+	definitions. This option allows you to set the method style different from \
+	the rest, to follow Sun's coding standard more closely.\n\
+	\n\
+	* C style brackets:\n\
+	\n\
+	\  public String toString() {\n\
+	\    return "Hello World.";\n\
+	\  }\n\
+	\n\
+	* PASCAL style brackets:\n\
+	\n\
+	\  public String toString()\n\
+	\  {\n\
+	\    return "Hello World.";\n\
+	\  }\n\
+	\n\
+	* EMACS style brackets:\n\
+	\n\
+	\  public String toString()\n\
+	\    {\n\
+	\      return "Hello World.";\n\
+	\    }
+
+options.javastyle.brackets.other=Bracket style for other blocks:
+options.javastyle.brackets.other.tooltip=\
+	This is the same as the previous option, but this time it is for code \
+	blocks like "if", "while", "for" and other block statements.\n\
+	\n\
+	* C style brackets:\n\
+	\n\
+	\  if (expr) {\n\
+	\    return "Hello World.";\n\
+	\  }\n\
+	\n\
+	* PASCAL style brackets:\n\
+	\n\
+	\  if (expr)\n\
+	\  {\n\
+	\    return "Hello World.";\n\
+	\  }\n\
+	\n\
+	* EMACS style brackets:\n\
+	\n\
+	\  if (expr)\n\
+	\    {\n\
+	\      return "Hello World.";\n\
+	\    }
+
+options.javastyle.forceBlocks=Create brackets around single-line blocks
+options.javastyle.forceBlocks.tooltip=\
+	If checked, JavaStyle creates brackets around blocks that consist of \
+	only one statement. This applies to "if", "while" and "for" statements. \
+	For example, \n\
+	\n\
+	\  for(int i = 0; i < 10; ++i)\n\
+	\    System.out.println(i);\n\
+	\n\
+	becomes:\n\
+	\n\
+	\  for(int i = 0; i < 10; ++i) {\n\
+	\    System.out.println(i);\n\
+	\  }\n\
+	\n\
+	Note that if you uncheck this option, existing brackets around \
+	single-line blocks are NOT removed.
+
+options.javastyle.removeBlocks=Remove brackets around single-line blocks
+options.javastyle.removeBlocks.tooltip=\
+	If checked, JavaStyle removes excess brackets around blocks that \
+	consist of only one statement. This applies to "if", "while" and "for" \
+	statements. For example, \n\
+	\n\
+	\  for(int i = 0; i < 10; ++i) {\n\
+	\    System.out.println(i);\n\
+	\  }\n\
+	\n\
+	becomes:\n\
+	\n\
+	\  for(int i = 0; i < 10; ++i)\n\
+	\    System.out.println(i);\n\
+
+options.javastyle.emptyBlocks=Put empty methods and constructors on a single line
+options.javastyle.emptyBlocks.tooltip=\
+	If checked, empty blocks are put on a single line.\n\
+	Otherwise empty blocks span two lines.
+
+options.javastyle.caseIndent=Indent case statements:
+options.javastyle.caseIndent.tooltip=\
+	The amount to indent a case statement\n\
+	(in terms of the indent char, which is either space or tab,\
+	subject to the buffer option "Soft (emulated with spaces) tabs".)
+
+
+# 3. Spacing options
+
+options.javastyle.linesAfterPackage=Lines after package statement:\ 
+options.javastyle.linesAfterPackage.tooltip=\
+	How many blank lines should JavaStyle insert after it sees \
+	the package statement.
+
+options.javastyle.linesBeforeClass=Lines before class statement:\ 
+options.javastyle.linesBeforeClass.tooltip=\
+	How many blank lines should JavaStyle insert before any class statement.
+
+options.javastyle.linesBetween=Min. lines between methods & classes:\ 
+options.javastyle.linesBetween.tooltip=\
+	This is the minimum number of blank lines between methods, nested \
+	classes, and nested interfaces.\n\
+	It is also the number of lines before and after field declarations, \
+	though field declarations will have whatever spacing you used.\n\
+	Note that this is a minimum.\n\
+	If your code already has more space between methods, then it won't \
+	shrink the number of blank lines.
+
+options.javastyle.spaceCasts=Additional space after casts
+options.javastyle.spaceCasts.tooltip=\
+	If checked, a space is inserted after a cast:\n\
+	\n\
+	\  String newVar = (String) someObject;\n\
+	\n\
+	Otherwise, the space is removed:\n\
+	\n\
+	\  String newVar = (String)someObject;
+
+options.javastyle.spaceKeywords=Additional space after keywords (if, while, etc.)
+options.javastyle.spaceKeywords.tooltip=\
+	If checked, a space is inserted after keywords like "if", \
+	"while", etc.:\n\
+	\n\
+	\  if (expr)\n\
+	\  while (expr)\n\
+	\n\
+	Otherwise, the space is removed:\n\
+	\n\
+	\  if(expr)\n\
+	\  while(expr)
+
+options.javastyle.spaceParens=Additional space in parenthesized expressions
+options.javastyle.spaceParens.tooltip=\
+	If checked, spaces are inserted before and after an expression \
+	in parentheses:\n\
+	\n\
+	\  if ( x == y )\n\
+	\n\
+	Otherwise, these spaces are removed:\n\
+	\n\
+	\  if (x == y)
+
+options.javastyle.spaceNotInCasts=...but not in casts
+options.javastyle.spaceNotInCasts.tooltip=\
+	Normally, if "Additional space in parenthesized expressions" is \
+	selected, casts would get the additional space, too:\n\
+	\n\
+	\  String s = ( String ) code;\n\
+	\n\
+	If you check this option, casts do not get extra space:\n\
+	\n\
+	\  String s = (String) code;
+
+options.javastyle.spaceLocals=Additional blank lines before and after local variable declarations
+options.javastyle.spaceLocals.tooltip=\
+	If checked, JavaStyle inserts a blank line before and after each block
+	of local variable declarations.
+
+
+# 4. JavaDoc comments option pane
+
+options.javastyle.jdocKeepAll=Keep all JavaDoc comments
+options.javastyle.jdocKeepAll.tooltip=\
+	Include javadoc comments where ever they appear.\n\
+	Javadoc comments were originally only allowed to occur at a few places: \
+	immediately before a method, immediately before a field, and immediately \
+	before a class or interface. Since it is also common for people to \
+	include the /*** pattern at the beginning of a file, this will be \
+	preserved as well.\n\
+	\n\
+	This was the case until JBuilder pressed the javadoc style comment into \
+	a new line of work - handling @todo tags. Suddenly it was permissible \
+	to include javadoc comments anywhere in the file.\n\
+	\n\
+	With this option set to false, you get the original behavior. All javadoc \
+	comments that were not in the correct place were cleaned up for you. \
+	With this set to true, you can place the @todo tags wherever you please.
+
+options.javastyle.jdocInnerClasses=Create JavaDoc comments for inner classes
+options.javastyle.jdocInnerClasses.tooltip=\
+	Create JavaDoc stubs on inner classes, even though they don't appear \
+	on the generated JavaDoc HTML pages.
+
+options.javastyle.jdocSingleLine=Allow single line JavaDoc comments
+options.javastyle.jdocSingleLine.tooltip=\
+	If checked, JavaDoc comments fitting on a single line are allowed to \
+	stay on a single line, like this:\n\
+	\n\
+	/** this is a single line JavaDoc comment. */\n\
+	\n\
+	Otherwise, every single line JavaDoc comment will be turned into a \
+	multiline comment, like this:\n\
+	\n\
+	/**\n\
+	\ * this is a multi line JavaDoc comment.\n\
+	\ */
+
+options.javastyle.jdocCreate=Create stub JavaDoc comments, if missing, on...
+
+options.javastyle.prot.none=None
+options.javastyle.prot.public=Public
+options.javastyle.prot.protected=Protected
+options.javastyle.prot.package=Package protected
+options.javastyle.prot.all=All
+
+options.javastyle.jdocOnFields=fields:
+options.javastyle.jdocOnFields.tooltip=\
+	Limits the level that JavaDoc comments are forced into the \
+	document. The following are valid levels:\n\
+	\n\
+	* All: all fields must have JavaDoc\n\
+	* Package Protected: all fields except private ones must have JavaDoc\n\
+	* Protected: protected and public fields must have JavaDoc\n\
+	* Public: only public fields must have JavaDoc\n\
+	* None: nothing is required to have JavaDoc
+
+options.javastyle.jdocOnMethods=methods:
+options.javastyle.jdocOnMethods.tooltip=\
+	Limits the level that JavaDoc comments are forced into the \
+	document. The following are valid levels:\n\
+	\n\
+	* All: all methods must have JavaDoc\n\
+	* Package Protected: all methods except private ones must have JavaDoc\n\
+	* Protected: protected and public methods must have JavaDoc\n\
+	* Public: only public methods must have JavaDoc\n\
+	* None: nothing is required to have JavaDoc\n\
+	\n\
+	Note that this setting applies to constructors, too.
+
+options.javastyle.jdocOnClasses=classes:
+options.javastyle.jdocOnClasses.tooltip=\
+	Limits the level that JavaDoc comments are forced into the \
+	document. The following are valid levels:\n\
+	\n\
+	* All: all classes must have JavaDoc\n\
+	* Package Protected: all classes except private ones must have JavaDoc\n\
+	* Protected: protected and public classes must have JavaDoc\n\
+	* Public: only public classes must have JavaDoc\n\
+	* None: nothing is required to have JavaDoc
+
+options.javastyle.jdocOnEnums=enumerations:
+options.javastyle.jdocOnEnums.tooltip=\
+	Limits the level that JavaDoc comments are forced into the \
+	document. The following are valid levels:\n\
+	\n\
+	* All: all classes must have JavaDoc\n\
+	* Package Protected: all classes except private ones must have JavaDoc\n\
+	* Protected: protected and public classes must have JavaDoc\n\
+	* Public: only public classes must have JavaDoc\n\
+	* None: nothing is required to have JavaDoc
+
+options.javastyle.jdocReformat=Wordwrap JavaDoc comments
+options.javastyle.jdocReformat.tooltip=\
+	If checked, JavaDoc comments will be reformatted. The text inside the \
+	comments will be wordwrapped at the specified column.
+
+options.javastyle.jdocWordwrap=At column:
+options.javastyle.jdocWordwrap.tooltip=\
+	The text inside JavaDoc comments will be wordwrapped at this column.
+
+options.javastyle.jdocWordwrapIgnore=Only lines longer than:
+options.javastyle.jdocWordwrapIgnore.tooltip=\
+	Only lines with a certain amount of characters may be wordwrapped \
+	by JavaStyle.\n\
+	If you set this to 40, all JavaDoc text lines shorter than 40 characters \
+	are exempt from the wordwrap process.
+
+options.javastyle.jdocIndent=Spaces between JavaDoc star and text:
+options.javastyle.jdocIndent.tooltip=\
+	How many spaces should JavaDoc comments be indented?
+
+
+# 5. Javadoc stubs option pane
+
+options.javastyle.stubs.class=Class:
+options.javastyle.stubs.class.tooltip=Default description of the class
+
+options.javastyle.stubs.interface=Interface:
+options.javastyle.stubs.interface.tooltip=Default description of the interface
+
+options.javastyle.stubs.enum=Enum:
+options.javastyle.stubs.enum.tooltip=Default description of the enumeration
+
+options.javastyle.stubs.constructor=Constructor:
+options.javastyle.stubs.constructor.tooltip=\
+	Default description of the constructor. Insert {0} for the name of \
+	the constructor.
+
+options.javastyle.stubs.method=Method:
+options.javastyle.stubs.method.tooltip=Default description of the method
+
+options.javastyle.stubs.field=Field:
+options.javastyle.stubs.field.tooltip=Default description of the field
+
+options.javastyle.stubs.getter=Getter:
+options.javastyle.stubs.getter.tooltip=\
+	A "getter" is a method whose name starts with "get" or "is". It \
+	is usually used to retrieve the value of an attribute.\n\
+	\n\
+	{0} is the name of the attribute. The name is determined by the \
+	substring after "get"/"is".\n\
+	{1} is the name of the class.\n\
+	{2} is "class" or "object" depending on whether it is static or not.\n\
+	{3} is the name of the attribute with the first letter lowercased.\n\
+	{4} is the name of the attribute broken into words.
+
+options.javastyle.stubs.getter.return=Getter Return:
+options.javastyle.stubs.getter.return.tooltip=\
+	Return description for "getter" methods. See explanation above.\n\
+	\n\
+	{0} is the name of the attribute.\n\
+	{3} is the name of the attribute with the first letter lowercased.\n\
+	{4} is the name of the attribute broken into words.
+
+options.javastyle.stubs.setter=Setter:
+options.javastyle.stubs.setter.tooltip=\
+	A "setter" is a method whose name starts with "set". It \
+	is usually used to modify the value of an attribute.\n\
+	\n\
+	{0} is the name of the attribute. The name is determined by the \
+	substring after "set".\n\
+	{1} is the name of the class.\n\
+	{2} is "class" or "object" depending on whether it is static or not.\n\
+	{3} is the name of the attribute with the first letter lowercased.\n\
+	{4} is the name of the attribute broken into words.
+
+options.javastyle.stubs.setter.param=Setter Param:
+options.javastyle.stubs.setter.param.tooltip=\
+	Parameter description for "setter" methods. See explanation above.\n\
+	\n\
+	{0} is the name of the attribute.\n\
+	{3} is the name of the attribute with the first letter lowercased.\n\
+	{4} is the name of the attribute broken into words.
+
+options.javastyle.stubs.adder=Adder:
+options.javastyle.stubs.adder.tooltip=\
+	An "adder" is a method whose name starts with "add". It \
+	is usually used to add a feature to an attribute of a class.\n\
+	\n\
+	{0} is the name of the attribute. The name is determined by the \
+	substring after "add".\n\
+	{1} is the name of the class.\n\
+	{2} is "class" or "object" depending on whether it is static or not.\n\
+	{3} is the name of the attribute with the first letter lowercased.\n\
+	{4} is the name of the attribute broken into words.
+
+options.javastyle.stubs.adder.param=Adder Param:
+options.javastyle.stubs.adder.param.tooltip=\
+	Parameter description for "adder" methods. See explanation above.\n\
+	\n\
+	{0} is the name of the attribute.\n\
+	{3} is the name of the attribute with the first letter lowercased.\n\
+	{4} is the name of the attribute broken into words.
+
+options.javastyle.stubs.run=Run:
+options.javastyle.stubs.run.tooltip=\
+	Default description of the "run" method. Methods named "run" can \
+	get a special javadoc stub here.\n\
+	\n\
+	{0} is not applicable.\n\
+	{1} is the name of the class.\n\
+	{2} is "class" or "object" depending on whether it is static or not.
+
+options.javastyle.stubs.main=Main:
+options.javastyle.stubs.main.tooltip=\
+	Default description of the "main" method. Methods named "main" can \
+	get a special javadoc stub here.\n\
+	\n\
+	{0} is not applicable.\n\
+	{1} is the name of the class.\n\
+	{2} is "class" or "object" depending on whether it is static or not.
+
+options.javastyle.stubs.main.param=Main Params:
+options.javastyle.stubs.main.param.tooltip=\
+	Default description of the "main" method arguments.
+
+
+# 6. Javadoc stubs for JUnit methods option pane
+
+options.javastyle.stubs.junit.test=Test method:
+options.javastyle.stubs.junit.test.tooltip=\
+	Default description for a JUnit test method.\n\
+	\n\
+	JUnit has a particular format for the names of methods:\n\
+	\n\
+	The setups for the unit tests are done in a method named \
+	setUp(), the cleanup afterwards is done in tearDown(), and \
+	the unit tests all start with the word "test".  The following \
+	are the default descriptions of these methods.
+
+options.javastyle.stubs.junit.setUp=setUp():
+options.javastyle.stubs.junit.setUp.tooltip=\
+	Default description of a setUp() method.
+
+options.javastyle.stubs.junit.tearDown=tearDown():
+options.javastyle.stubs.junit.tearDown.tooltip=\
+	Default description of a tearDown() method.
+
+options.javastyle.stubs.junit.suite=Suite:
+options.javastyle.stubs.junit.suite.tooltip=\
+	Default description of a unit test suite.
+
+options.javastyle.stubs.junit.suite.return=Suite Return:
+options.javastyle.stubs.junit.suite.return.tooltip=\
+	Default description of the return value of a test suite.
+
+
+# 7. Javadoc tags option pane
+
+options.javastyle.tags.spaceBefore=Additional space before @tags
+options.javastyle.tags.spaceBefore.tooltip=\
+	If checked, an additional space is put between a JavaDoc @tag \
+	and the star at the beginning of the line, like this:\n\
+	\n\
+	\  /**\n\
+	\   * @param  i  the index\n\
+	\   */\n\
+	\n\
+	Otherwise there is no space between the star and the "@":\n\
+	\n\
+	\  /**\n\
+	\   *@param  i  the index\n\
+	\   */
+
+options.javastyle.tags.orderFor=Order of tags for:
+
+options.javastyle.tags.classTags=Class:
+options.javastyle.tags.classTags.tooltip=\
+	Enter the preferred order of tags for JavaDoc comments on classes. \
+	List the tag names, separated by commas. Example:\n\
+	\n\
+	"author,version,since"\n\
+	\n\
+	The tags you enter here will be listed in the table below, too. There \
+	you can enter a default text, so that they will be forced on every \
+	JavaDoc class comment.\n\
+	\n\
+	Other class tags not listed here will be left as is.
+
+options.javastyle.tags.enumTags=Enumeration:
+options.javastyle.tags.enumTags.tooltip=\
+	Enter the preferred order of tags for JavaDoc comments on enumerations. \
+	List the tag names, separated by commas. Example:\n\
+	\n\
+	"author,version,since"\n\
+	\n\
+	The tags you enter here will be listed in the table below, too. There \
+	you can enter a default text, so that they will be forced on every \
+	JavaDoc class comment.\n\
+	\n\
+	Other class tags not listed here will be left as is.
+
+options.javastyle.tags.methodTags=Methods:
+options.javastyle.tags.methodTags.tooltip=\
+	Enter the preferred order of tags for JavaDoc comments on methods and \
+	constructors. \
+	List the tag names, separated by commas. Example:\n\
+	\n\
+	"param,return,exception,since"\n\
+	\n\
+	The tags you enter here will be listed in the table below, too. There \
+	you can enter a default text, so that they will be forced on every \
+	JavaDoc class comment.\n\
+	\n\
+	Other method tags not listed here will be left as is.
+
+options.javastyle.tags.fieldTags=Fields:
+options.javastyle.tags.fieldTags.tooltip=\
+	Enter the preferred order of tags for JavaDoc comments on fields. \
+	List the tag names, separated by commas. Example:\n\
+	\n\
+	"since"\n\
+	\n\
+	The tags you enter here will be listed in the table below, too. There \
+	you can enter a default text, so that they will be forced on every \
+	JavaDoc class comment.\n\
+	\n\
+	Other field tags not listed here will be left as is.
+
+options.javastyle.tags.methodTags.label=Default values for method tags:
+
+options.javastyle.tags.stub.param=@param:
+options.javastyle.tags.stub.param.tooltip=\
+	Enter a default text for @param tags.\n\
+	You may use some special parameters in the default text:\n\
+	\n\
+	{0} refers to the current user\n\
+	{1} refers to the current date\n\
+	{2} refers to the name of the current object
+
+
+options.javastyle.tags.stub.return=@return:
+options.javastyle.tags.stub.return.tooltip=\
+	Enter a default text for @return tags.\n\
+	You may use some special parameters in the default text:\n\
+	\n\
+	{0} refers to the current user\n\
+	{1} refers to the current date\n\
+	{2} refers to the name of the current object
+
+options.javastyle.tags.stub.exception=@exception:
+options.javastyle.tags.stub.exception.tooltip=\
+	Enter a default text for @exception tags.\n\
+	You may use some special parameters in the default text:\n\
+	\n\
+	{0} refers to the current user\n\
+	{1} refers to the current date\n\
+	{2} refers to the name of the current object
+
+
+options.javastyle.tags.table.label=Default values for other tags:
+
+options.javastyle.tags.table.col0=Tag
+options.javastyle.tags.table.col1=Default text
+options.javastyle.tags.table.col2=Force
+options.javastyle.tags.table.tooltip=\
+	If you enter a default text for a tag, the tag will be forced on all \
+	class/method/field JavaDoc comments. You may use some \
+	special parameters in the default text:\n\
+	\n\
+	{0} refers to the current user\n\
+	{1} refers to the current date\n\
+	{2} refers to the name of the current object
+
+
+# 8. Other comments option pane
+
+options.javastyle.csFormat=Format C-style comments
+options.javastyle.csFormat.tooltip=\
+	If checked, C-style multi-line comments (/* ... */) get formatted \
+	using the options below.\n\
+	Otherwise they are just left as they are.
+
+options.javastyle.csFillWithStars=Fill C-style comments with stars on the left
+options.javastyle.csFillWithStars.tooltip=\
+	If checked, C-style comments get filled up with a row of stars to the \
+	left, like this:\n\
+	\n\
+	\  /*\n\
+	\   * This is a multi-line\n\
+	\   * C-style comment.\n\
+	\   *\n\
+	\   * Date: 2001/08/21\n\
+	\   */
+	\n\
+	The amount of spaces between the star and the text can be controlled \
+	with the option "Number of spaces to indent" below, if the option \
+	"Left-align text inside C-style comments" is on.
+
+options.javastyle.csAlign=Left-align text inside C-style comments
+options.javastyle.csAlign.tooltip=\
+	If checked, the text inside multi-line C-style comments is aligned \
+	to the left, indented with the amount of spaces specified below. \
+	Example:\n\
+	\n\
+	\  /*\n\
+	\   *   This is text inside a multi-line\n\
+	\   *   comment, left-aligned and\n\
+	\   *   indented with 3 spaces.\n\
+	\   */\n\
+	\n\
+	If unchecked, the text does not get aligned and indented, so that your \
+	own indenting is preserved. Example:\n\
+	\n\
+	\  /*\n\
+	\   * This is text inside a multi-line\n\
+	\   * comment, with a separate indented block:\n\
+	\   * <pre>\n\
+	\   *    much more indent!\n\
+	\   * </pre>
+	\   */
+
+options.javastyle.csIndentAmount=Number of spaces to indent:
+options.javastyle.csIndentAmount.tooltip=\
+	If "Left-align text in C-style comments" is checked, the text of \
+	C-style comments is indented with this amount of spaces.
+
+options.javastyle.slOwnLine=Put end-line comments on an own line
+options.javastyle.slOwnLine.tooltip=\
+	If checked, double slash comments appended at the end of a source code \
+	line are moved to a separate line. E.g. Code like this:\n\
+	\n\
+	\  String s = "hello";  // init s\n\
+	\n\
+	gets reformatted to this:\n\
+	\n\
+	\  String s = "hello";\n\
+	\  // init s
+
+options.javastyle.treatSLasCS=Treat C-Style comments as single-line: 
+options.javastyle.treatSLasCS.tooltip=\
+	If checked, C-Style comments appended at the end of a source code \
+	line are treated the same way as double slash comments. E.g. Code \
+	like this:\n\
+	\n\
+	\  String s = "hello";  /* init s */\n\
+	\n\
+	does not get formated to this:\n\
+	\n\
+	\  String s = "hello";\n\
+	\  /* init s */ \n\
+	\n\
+	if single-line comments remain at the end of the line.
+
+options.javastyle.slAppendedIndent=Indent end-line comments to a certain column
+options.javastyle.slAppendedIndent.tooltip=\
+	If checked, comments sharing a line with code are indented to a certain \
+	absolute column position, if possible.\n\
+	\n\
+	Specify the column position in "Indent to column" below (in spaces). \
+	If the code in the current line is longer than this column, the comments \
+	are merely appended directly to the code.\n\
+	\n\
+	If unchecked, the comments are appended to the code on the same line, \
+	separated by the number of spaces specified below at "Space between \
+	code and comment".
+
+options.javastyle.slOwnLineIndent=Indent single line comments to a certain column
+options.javastyle.slOwnLineIndent.tooltip=\
+	If checked, single line comments (ie. comments starting with "//") are \
+	indented to a certain absolute column position, which is specified in \
+	"Indent to column" below (in spaces).\n\
+	\n\
+	If unchecked, single line comments are indented the same amount \
+	as the current code.
+
+options.javastyle.slAbsoluteIndent=Indent to column:
+options.javastyle.slAbsoluteIndent.tooltip=\
+	Single line comments (ie. comments starting with "//") are indented \
+	to this column. The first column is 0. Both types of comments may be \
+	indented:\n\
+	\n\
+	* comments on their own line (single line comments), and\n\
+	* comments sharing the line with code (end-line comments)\n\
+	\n\
+	E.g., if the indent column is 15, it may look like this:\n\
+	\n\
+	\   int a=1;    // end-line comment\n\
+	\               // single line comment\n\
+	\   int b=2;    // end-line comment
+
+options.javastyle.slIncrementalIndent=Space between code and comment:
+options.javastyle.slIncrementalIndent.tooltip=\
+	Comments sharing the line with code (end-line comments) are \
+	separated from the code by this number of spaces.
+
+
+# 9. Sorting option pane
+
+options.javastyle.sorting.sortImports=Sort imports and top-level classes
+options.javastyle.sorting.sortImports.tooltip=\
+	If checked, imports will be sorted alphabetically, and \
+	top-level classes will be sorted by protection: \
+	public first, then protected or private classes.
+
+options.javastyle.sorting.importSortImportant.label=Sort these packages at top (comma separated):
+options.javastyle.sorting.importSortImportant=In this order:
+options.javastyle.sorting.importSortImportant.tooltip=\
+	List the prefixes of imports that should be sorted to the top.\n\
+	For instance:\n\
+	\n\
+	\  java,javax,org.w3c\n\
+	\n\
+	Note that the entries must be separated by commas.
+
+
+options.javastyle.sorting.table.tooltip=\
+	Specify the sort order of class members here.\n\
+	If you don't want to use a certain type of sort, \
+	remove the check on that row.
+
+options.javastyle.sorting.labelSortOrder=Sort order:
+options.javastyle.sorting.moveUp=Move Up
+options.javastyle.sorting.moveDown=Move Down
+options.javastyle.sorting.configPanel=Configure this sort option:
+options.javastyle.sorting.configPanel.order=Specify order:
+
+options.javastyle.sorting.description.type=by type
+options.javastyle.sorting.description.class=by member status
+options.javastyle.sorting.description.final=by final status
+options.javastyle.sorting.description.protection=by protection
+options.javastyle.sorting.description.method=by method type
+options.javastyle.sorting.description.alphabetical=alphabetical
+options.javastyle.sorting.description.fieldInitializers=field initializers
+
+options.javastyle.sorting.type.enum=Enumerations
+options.javastyle.sorting.type.field=Fields
+options.javastyle.sorting.type.main=Main Method
+options.javastyle.sorting.type.constructor=Constructors
+options.javastyle.sorting.type.method=Methods
+options.javastyle.sorting.type.nestedClass=Nested Classes
+options.javastyle.sorting.type.nestedInterface=Nested Interfaces
+options.javastyle.sorting.type.initializer=Static Initializers
+
+options.javastyle.sorting.method.setter=Set Methods
+options.javastyle.sorting.method.getter=Get or Is Methods
+options.javastyle.sorting.method.other=Other Methods
+
+options.javastyle.sorting.final.top=Move final fields and methods to the top
+options.javastyle.sorting.final.bottom=Move final fields and methods to the bottom
+
+options.javastyle.sorting.protection.public=Public first, Protected, Package, Private last
+options.javastyle.sorting.protection.private=Private first, Package, Protected, Public last
+
+options.javastyle.sorting.class.static=Static methods and variables first
+options.javastyle.sorting.class.instance=Instance methods and variables first
+
+
+# 10. Alignment option pane
+
+options.javastyle.params.lineup=Align parameters on new lines
+options.javastyle.params.lineup.tooltip=\
+	Align parameters with the first parameter\n\
+	\n\
+	public void foo(int a,\n\
+	                String b,\n\
+	                final String c) { \n\
+        }
+
+options.javastyle.lineUpFields=Line up field definitions:
+options.javastyle.lineUpFields.not=Don't align
+options.javastyle.lineUpFields.tabular=Tabular
+options.javastyle.lineUpFields.atEquals=At Equals Sign
+options.javastyle.lineUpFields.atFixedColumn=At Fixed Column
+options.javastyle.lineUpFields.tooltip=\
+	How to line up consecutive field definitions:\n\
+	\n\
+	* Don't align:\n\
+	Only a single space is been put between the modifiers, the type, the \
+	name and the initializer.\n\
+	\n\
+	* Tabular:\n\
+	Determine the spacing between the modifiers, type, name, and \
+	initializers so everything lines up. The amount of additional space \
+	may be changed with the option "Spacing between columns" below.\n\
+	\n\
+	* At Equals Sign:\n\
+	Align the equals statements of field declaration, but nothing else.\n\
+	\n\
+	* At Fixed Column:\n\
+	The field names are aligned at a certain fixed column position. \
+	Specify the column with the option "Indent field names to column" \
+	below.
+
+options.javastyle.lineUpFields.alignPrefixed=Align even if prefixed by JavaDoc
+options.javastyle.lineUpFields.alignPrefixed.tooltip=\
+	Only if tabular alignment is selected:\n\
+	\n\
+	If checked, field definitions are aligned in tabular fashion, even if \
+	they are preceded by a JavaDoc comment.\n\
+	\n\
+	If unchecked, field definitions with JavaDoc comments are omitted from \
+	the alignment process.
+
+options.javastyle.lineUpFields.alignWithBlock=Align with the block opener "{"
+options.javastyle.lineUpFields.alignWithBlock.tooltip=\
+	If checked, the local variables are aligned with the "{" and "}" \
+	block markers, like this:\n\
+	\n\
+	\  {\n\
+	\  int a = 5;\n\
+	\  int b = 6;\n\
+	\    System.out.println("a=" + a);\n\
+	\    System.out.println("b=" + b);\n\
+	\  }\n\
+	\n\
+	Otherwise, they are aligned with the code, like this:\n\
+	\n\
+	\  {\n\
+	\    int a = 5;\n\
+	\    int b = 6;\n\
+	\    System.out.println("a=" + a);\n\
+	\    System.out.println("b=" + b);\n\
+	\  }
+
+options.javastyle.lineUpFields.dynamicSpacing=Spacing between columns:
+options.javastyle.lineUpFields.dynamicSpacing.tooltip=\
+	Only if tabular alignment is selected:\n\
+	\n\
+	Specifies the number of _additional_ spaces to add between the \
+	modifiers, type, name, and initializer.\n\
+	\n\
+	Example: if set to 1, there will be two spaces between the columns \
+	of the field definitions:\n\
+	\n\
+	\  public   int     a    = 5;\n\
+	\  private  byte    b    = 3;\n\
+	\           String  def  = "blah";\n\
+
+options.javastyle.lineUpFields.fieldNameIndent=Indent field names to column:
+options.javastyle.lineUpFields.fieldNameIndent.tooltip=\
+	Only if aligment "At Fixed Column" is selected:\n\
+	\n\
+	Enter a value greater than 0 to align the field names of consecutive \
+	lines to this column.\n\
+	E.g., if the column is 20, code would look like this:\n\
+	\n\
+	\  public int        valueOne;\n\
+	\  public boolean    isOk;\n\
+	\  public String     name;\n\
+	\  public NumberFormatException nf_ex;\n\
+	\n\
+	Note that fields with longer type names do not get properly indented.
+
+options.javastyle.lineUpTags=Line up names and descriptions in JavaDoc tags
+options.javastyle.lineUpTags.tooltip=\
+	If checked, the names and descriptions in JavaDoc comments are \
+	vertically aligned to the same column. For example:\n\
+	\n\
+	\  /**\n\
+	\   *   @author              dilbert\n\
+	\   * @created    January 3, 2000\n\
+	\   */\n\
+	\n\
+	would become:\n\
+	\n\
+	\  /**\n\
+	\   * @author     dilbert\n\
+	\   * @created    January 3, 2000\n\
+	\   */
+
+
+
+
+# 10. PMD (Coding standards) Option messages
+
+options.javastyle.pmd.customRulesPath=Path to custom rules.xml files(seperated by comma)
+options.javastyle.pmd.customRulesPath.tooltip=\
+	File path to custom coding standard rules.
+
+
+options.javastyle.ui.directorypopup=Ask for directory?
+options.javastyle.ui.directorypopup.tooltip=\
+	If not selected then take the directory from the current directory\n\
+	of the file system browser (if available).\n\
+	If selected or there is no VFS browser then popup a dialog\n\
+	asking for a directory to scan
+	
+options.javastyle.cpd.defMinTileSize=Default minimum tile size
+options.javastyle.cpd.defMinTileSize.tooltip=\
+	Smaller numbers find smaller sections of matching code, values between \
+   5 and 200 seem to work best.
+
+#
+# Error messages
+#
+
+javastyle.error.noJavaBuffer.title=JavaStyle
+javastyle.error.noJavaBuffer.message=\
+	This is not a Java buffer.\n\
+	Make sure the buffer is in Java mode,\n\
+	or the filename ends with ".java".
+
+javastyle.error.other.title=JavaStyle
+javastyle.error.other.message=\
+	The PrettyPrinter was unable to reformat the current buffer.\n\
+	See the activity log for any details.
+
+javastyle.error.parse.title=JavaStyle
+javastyle.error.parse.message=\
+	An exception occurred while parsing the current buffer:\n\
+	\n\
+	{0}\n\
+	\n\
+	See the activity log for any details.
+
+javastyle.error.isNotEditable.title=JavaStyle
+javastyle.error.isNotEditable.message=\
+	Cannot reformat the current buffer, because it is not editable.
+
+	
+#
+# Coding standards (PMD) 
+javastyle.pmd.more.info=Please see http://pmd.sf.net/ for more information
+javastyle.pmd.rules=Rules
+javastyle.pmd.path=Path to custom rules.xml files(seperated by comma)
+javastyle.pmd.example=Example
+
+

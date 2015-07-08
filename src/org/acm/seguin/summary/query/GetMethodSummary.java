@@ -158,7 +158,7 @@ public class GetMethodSummary {
      */
     private static boolean isMatch(MethodSummary current, ASTMethodDeclaration decl) {
         ASTMethodDeclarator declarator;
-        if (decl.jjtGetChild(0) instanceof ASTTypeParameters) {
+        if (decl.jjtGetFirstChild() instanceof ASTTypeParameters) {
                 declarator = (ASTMethodDeclarator) decl.jjtGetChild(2);
         } else {
                 declarator = (ASTMethodDeclarator) decl.jjtGetChild(1);
@@ -167,7 +167,7 @@ public class GetMethodSummary {
             return false;
         }
 
-        ASTFormalParameters params = (ASTFormalParameters) declarator.jjtGetChild(0);
+        ASTFormalParameters params = (ASTFormalParameters) declarator.jjtGetFirstChild();
         return isParameterMatch(params, current);
     }
 

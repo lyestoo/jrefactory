@@ -217,7 +217,7 @@ public class EliminatePackageImportVisitor extends TypeChangeVisitor {
 		if (typeIterator != null) {
 			while (typeIterator.hasNext()) {
 				TypeSummary next = (TypeSummary) typeIterator.next();
-				if (next.getModifiers().isPublic() && !isInFilter(next)) {
+				if (next.isPublic() && !isInFilter(next)) {
 					list.add(next.getName());
 				}
 			}

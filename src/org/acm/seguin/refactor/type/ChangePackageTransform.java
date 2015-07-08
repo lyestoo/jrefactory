@@ -5,6 +5,7 @@ import org.acm.seguin.parser.ast.ASTPackageDeclaration;
 import org.acm.seguin.parser.ast.ASTName;
 import org.acm.seguin.parser.factory.NameFactory;
 import org.acm.seguin.refactor.TransformAST;
+import org.acm.seguin.parser.JavaParserTreeConstants;
 
 /**
  *  This object revises the package statement 
@@ -58,9 +59,9 @@ public class ChangePackageTransform extends TransformAST {
 	 *@param  root  The feature to be added to the Package attribute 
 	 */
 	private void addPackage(SimpleNode root) {
-		SimpleNode first = (SimpleNode) root.jjtGetChild(0);
+		SimpleNode first = (SimpleNode) root.jjtGetFirstChild();
 
-		ASTPackageDeclaration pack = new ASTPackageDeclaration(0);
+		ASTPackageDeclaration pack = new ASTPackageDeclaration(JavaParserTreeConstants.JJTPACKAGEDECLARATION);
 		pack.jjtAddChild(name, 0);
 
 		if (first instanceof ASTPackageDeclaration) {
@@ -78,7 +79,7 @@ public class ChangePackageTransform extends TransformAST {
 	 *@param  root  Description of Parameter 
 	 */
 	private void removePackage(SimpleNode root) {
-		SimpleNode first = (SimpleNode) root.jjtGetChild(0);
+		SimpleNode first = (SimpleNode) root.jjtGetFirstChild();
 		if (first instanceof ASTPackageDeclaration) {
 			root.jjtDeleteChild(0);
 		}

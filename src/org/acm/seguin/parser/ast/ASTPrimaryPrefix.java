@@ -67,16 +67,6 @@ public class ASTPrimaryPrefix extends SimpleNode {
 
 
 	/**
-	 *  Convert this object to a string
-	 *
-	 *@return    a string representing this object
-	 */
-	public String toString() {
-		return super.toString() + " [" + getName() + "]";
-	}
-
-
-	/**
 	 *  Accept the visitor.
 	 *
 	 *@param  visitor  Description of Parameter
@@ -89,4 +79,22 @@ public class ASTPrimaryPrefix extends SimpleNode {
 
 	public int getCount() { return count; }
 	public void setCount(int value) { count = value; }
+    private boolean usesThisModifier;
+    private boolean usesSuperModifier;
+
+    public void setUsesThisModifier() {
+        usesThisModifier = true;
+    }
+
+    public boolean usesThisModifier() {
+        return this.usesThisModifier;
+    }
+
+    public void setUsesSuperModifier() {
+        usesSuperModifier = true;
+    }
+
+    public boolean usesSuperModifier() {
+        return this.usesSuperModifier;
+    }
 }

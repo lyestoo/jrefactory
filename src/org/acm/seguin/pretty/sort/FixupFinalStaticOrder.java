@@ -17,7 +17,6 @@ import org.acm.seguin.parser.ast.ASTVariableDeclarator;
 import org.acm.seguin.parser.ast.ASTVariableDeclaratorId;
 import org.acm.seguin.parser.ast.SimpleNode;
 import org.acm.seguin.parser.Node;
-import org.acm.seguin.pretty.ModifierHolder;
 
 
 /**
@@ -58,17 +57,17 @@ public class FixupFinalStaticOrder extends Ordering {
 		boolean obj2IsFinal  = false;
 
                 // only process obj1 if it is a final static Field Declaration.
-		Object data = ((SimpleNode) obj1).jjtGetChild(0);
+		Object data = ((SimpleNode) obj1).jjtGetFirstChild();
 		if (data instanceof ASTClassBodyDeclaration) {
-			data = ((ASTClassBodyDeclaration) data).jjtGetChild(0);
+			data = ((ASTClassBodyDeclaration) data).jjtGetFirstChild();
 		} else if (data instanceof ASTInterfaceMemberDeclaration) {
-			data = ((ASTInterfaceMemberDeclaration) data).jjtGetChild(0);
+			data = ((ASTInterfaceMemberDeclaration) data).jjtGetFirstChild();
 		}
 
 		//  Now that we have data, determine the type of data
 		if (data instanceof ASTFieldDeclaration) {
 			obj1IsStatic = ((ASTFieldDeclaration) data).isStatic();
-			obj1IsFinal = getFinalCode(((ASTFieldDeclaration) data).getModifiers());
+			obj1IsFinal = ((ASTFieldDeclaration) data).isFinal();
 		} else {
 			return 0;
 		}
@@ -78,22 +77,22 @@ public class FixupFinalStaticOrder extends Ordering {
                 }
                 ASTFieldDeclaration field1 = (ASTFieldDeclaration) data;
                 ASTVariableDeclarator declar1 = (ASTVariableDeclarator) field1.jjtGetChild(1);
-                String name1 = ((ASTVariableDeclaratorId) declar1.jjtGetChild(0)).getName();
+                String name1 = ((ASTVariableDeclaratorId) declar1.jjtGetFirstChild()).getName();
 
                 
                 // only process obj2 if it is a final static Field Declaration.
-		data = ((SimpleNode) obj2).jjtGetChild(0);
+		data = ((SimpleNode) obj2).jjtGetFirstChild();
 		if (data instanceof ASTClassBodyDeclaration) {
-			data = ((ASTClassBodyDeclaration) data).jjtGetChild(0);
+			data = ((ASTClassBodyDeclaration) data).jjtGetFirstChild();
 		} else if (data instanceof ASTInterfaceMemberDeclaration) {
-			data = ((ASTInterfaceMemberDeclaration) data).jjtGetChild(0);
+			data = ((ASTInterfaceMemberDeclaration) data).jjtGetFirstChild();
 		}
 
 
 		//  Now that we have data, determine the type of data
 		if (data instanceof ASTFieldDeclaration) {
 			obj2IsStatic = ((ASTFieldDeclaration) data).isStatic();
-			obj2IsFinal = getFinalCode(((ASTFieldDeclaration) data).getModifiers());
+			obj2IsFinal = ((ASTFieldDeclaration) data).isFinal();
 		} else {
 			return 0;
 		}
@@ -104,7 +103,7 @@ public class FixupFinalStaticOrder extends Ordering {
 
                 ASTFieldDeclaration field2 = (ASTFieldDeclaration) data;
                 ASTVariableDeclarator declar2 = (ASTVariableDeclarator) field2.jjtGetChild(1);
-                String name2 = ((ASTVariableDeclaratorId) declar2.jjtGetChild(0)).getName();
+                String name2 = ((ASTVariableDeclaratorId) declar2.jjtGetFirstChild()).getName();
                 
                 // search for name1 in elements of obj2
                 for (int i=1; i<declar2.jjtGetNumChildren(); i++) {
@@ -154,19 +153,5 @@ public class FixupFinalStaticOrder extends Ordering {
             return 0;
 	}
         
-	/**
-	 *  Gets the Protection attribute of the ProtectionOrder object
-	 *
-	 *@param  mods  Description of Parameter
-	 *@return       The Protection value
-	 */
-	private boolean getFinalCode(ModifierHolder mods) {
-		if (mods.isFinal()) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
         
 }

@@ -19,6 +19,7 @@ import org.acm.seguin.parser.ast.ASTNestedInterfaceDeclaration;
 import org.acm.seguin.parser.ast.ASTVariableDeclarator;
 import org.acm.seguin.parser.ast.ASTVariableDeclaratorId;
 import org.acm.seguin.parser.ast.SimpleNode;
+import org.acm.seguin.parser.JavaParserTreeConstants;
 
 /**
  *  Visitor that traverses an AST and removes a specified field
@@ -162,7 +163,7 @@ public class RemoveFieldVisitor extends ChildrenVisitor {
 		int loop = node.jjtGetNumChildren();
 		for (int ndx = 0; ndx < loop; ndx++) {
 			SimpleNode next = (SimpleNode) node.jjtGetChild(ndx);
-			SimpleNode possible = (SimpleNode) next.jjtGetChild(0);
+			SimpleNode possible = (SimpleNode) next.jjtGetFirstChild();
 			if (isFound(possible)) {
 				if (isMultiple(possible)) {
 					removeMultiple((ASTFieldDeclaration) possible, next instanceof ASTClassBodyDeclaration);
@@ -200,18 +201,18 @@ public class RemoveFieldVisitor extends ChildrenVisitor {
 	private void removeMultiple(ASTFieldDeclaration next, boolean isClass)
 	{
 		if (isClass) {
-			fieldDecl = new ASTClassBodyDeclaration(0);
+			fieldDecl = new ASTClassBodyDeclaration(JavaParserTreeConstants.JJTCLASSBODYDECLARATION);
 		}
 		else {
-			fieldDecl = new ASTInterfaceMemberDeclaration(0);
+			fieldDecl = new ASTInterfaceMemberDeclaration(JavaParserTreeConstants.JJTINTERFACEMEMBERDECLARATION);
 		}
 
 		//  Create the field declaration
-		ASTFieldDeclaration afd = new ASTFieldDeclaration(0);
+		ASTFieldDeclaration afd = new ASTFieldDeclaration(JavaParserTreeConstants.JJTFIELDDECLARATION);
 		fieldDecl.jjtInsertChild(afd, 0);
 
 		//  Copy the type
-		afd.jjtInsertChild(next.jjtGetChild(0), 0);
+		afd.jjtInsertChild(next.jjtGetFirstChild(), 0);
 
 		//  Find the variable and remove it from the old and add it to the new
 		int loop = next.jjtGetNumChildren();
@@ -236,7 +237,7 @@ public class RemoveFieldVisitor extends ChildrenVisitor {
 	private boolean checkDeclaration(SimpleNode next, int index)
 	{
 		ASTVariableDeclarator decl = (ASTVariableDeclarator) next.jjtGetChild(index);
-		ASTVariableDeclaratorId id = (ASTVariableDeclaratorId) decl.jjtGetChild(0);
+		ASTVariableDeclaratorId id = (ASTVariableDeclaratorId) decl.jjtGetFirstChild();
 		return (id.getName().equals(fieldName));
 	}
 }

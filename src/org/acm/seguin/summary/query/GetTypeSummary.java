@@ -117,7 +117,7 @@ public class GetTypeSummary {
      *@return              the type summary if it is found and null otherwise
      */
     public static TypeSummary query(FileSummary fileSummary, String name) {
-        //System.out.println("Seaching " + fileSummary.getName() + "(FileSummary) for " + name);
+        //System.out.println("Searching " + fileSummary.getName() + "(FileSummary) for " + name);
         //  Check for null pointers
         if (name == null) {
             return null;
@@ -162,7 +162,7 @@ public class GetTypeSummary {
      *@return                 the type summary if it is found and null otherwise
      */
     public static TypeSummary query(PackageSummary packageSummary, String name) {
-        //System.out.println("Seaching " + packageSummary.getName() + "(PackageSummary) for " + name);
+        //System.out.println("Searching " + packageSummary.getName() + "(PackageSummary) for " + name);
         //  Check for null pointers
         if (name == null) {
             return null;
@@ -263,7 +263,7 @@ public class GetTypeSummary {
         if (iter != null) {
             while (iter.hasNext()) {
                 ImportSummary next = (ImportSummary) iter.next();
-                //System.out.println("Seaching " + next.getPackage().getName()
+                //System.out.println("Searching " + next.getPackage().getName()
                 //	+ ((next.getType() == null) ? ".*" : ("." + next.getType()))
                 //	+ "(ImportSummary) for " + name);
                 String nextTypeName = next.getType();
@@ -293,7 +293,7 @@ public class GetTypeSummary {
         if (typeIterator != null) {
             while (typeIterator.hasNext()) {
                 TypeSummary nextType = (TypeSummary) typeIterator.next();
-                //System.out.println("Seaching " + nextType.getName() + "(TypeSummary) for " + name);
+                //System.out.println("Searching " + nextType.getName() + "(TypeSummary) for " + name);
                 if ((nextType != null) && nextType.getName().equals(name)) {
                     return nextType;
                 }

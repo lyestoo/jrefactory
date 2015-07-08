@@ -1,6 +1,6 @@
 package org.acm.seguin.refactor.method;
 
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.summary.MethodSummary;
 
 /**
@@ -25,8 +25,8 @@ public class AddConcreteMethod extends AddNewMethod {
 	 *@param  source  the source holder
 	 *@param  dest    the destination holder
 	 */
-	protected void setupModifiers(ModifierHolder source, ModifierHolder dest) {
-		super.setupModifiers(source, dest);
+	protected void copyModifiers(ModifierHolder source, ModifierHolder dest) {
+		dest.copyModifiers(source);
 		dest.setAbstract(false);
 	}
 

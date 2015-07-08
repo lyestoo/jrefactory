@@ -85,28 +85,6 @@ public class NewClassDiagramAction extends JBuilderAction {
     }
 
 
-    ///**
-    // *  Gets the file associated with the package summary
-    // *
-    // *@param  summary  the package summary
-    // *@return          the file to get
-    // */
-    //private File getFile(PackageSummary summary) {
-    //    File dir = summary.getDirectory();
-    //    File inputFile;
-    //    if (dir == null) {
-    //        dir = new File(FileSettings.getRefactorySettingsRoot(), "UML");
-    //        dir.mkdirs();
-    //        inputFile = new File(dir, summary.getName() + ".uml");
-    //    }
-    //    else {
-    //        inputFile = new File(summary.getDirectory(), "package.uml");
-    //    }
-    //
-    //    return inputFile;
-    //}
-
-
     /**
      *  Gets the Enabled attribute of the PrettyPrinterAction object
      *

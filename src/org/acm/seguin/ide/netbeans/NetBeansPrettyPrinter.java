@@ -80,7 +80,7 @@ public class NetBeansPrettyPrinter extends PrettyPrintFromIDE {
      */
     public NetBeansPrettyPrinter(EditorCookie editorCookie) {
         super();
-
+        JRefactory.log("NetBeansPrettyPrinter("+editorCookie+")");
         _editorPane = getCurrentEditorPane(editorCookie);
     }
 
@@ -92,8 +92,7 @@ public class NetBeansPrettyPrinter extends PrettyPrintFromIDE {
      */
     protected void setLineNumber(int lineNumber) {
         if (lineNumber < 1) {
-            throw new IllegalArgumentException(
-                    "lineNumber must be 1 or greater: " + lineNumber);
+            throw new IllegalArgumentException("lineNumber must be 1 or greater: " + lineNumber);
         }
 
         int targetOffset = 0;
@@ -109,8 +108,7 @@ public class NetBeansPrettyPrinter extends PrettyPrintFromIDE {
                 lineCount++;
                 currLine = reader.readLine();
             }
-        }
-        catch (IOException ioe) {
+        } catch (IOException ioe) {
             ioe.printStackTrace();
             return;
         }
@@ -147,8 +145,11 @@ public class NetBeansPrettyPrinter extends PrettyPrintFromIDE {
      *@return         The CurrentEditorPane value
      */
     private JEditorPane getCurrentEditorPane(EditorCookie cookie) {
+        if (cookie==null) {
+           return null;
+        }
         JEditorPane[] panes = cookie.getOpenedPanes();
-        System.err.println("Panes: " + panes);
+        JRefactory.log("Panes: " + panes);
         if (panes.length == 1) {
             return panes[0];
         }
@@ -164,8 +165,7 @@ public class NetBeansPrettyPrinter extends PrettyPrintFromIDE {
      *@return    The DocumentTextReader value
      */
     private BufferedReader getDocumentTextReader() {
-        BufferedReader reader = new BufferedReader(new StringReader(
-                _editorPane.getText()));
+        BufferedReader reader = new BufferedReader(new StringReader(_editorPane.getText()));
         return reader;
     }
 
@@ -185,8 +185,7 @@ public class NetBeansPrettyPrinter extends PrettyPrintFromIDE {
             String currLine = null;
             try {
                 currLine = reader.readLine();
-            }
-            catch (IOException ioe) {
+            } catch (IOException ioe) {
                 ioe.printStackTrace();
                 return -1;
             }
@@ -208,4 +207,4 @@ public class NetBeansPrettyPrinter extends PrettyPrintFromIDE {
     }
 
 }
-//  EOF
+

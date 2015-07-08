@@ -105,10 +105,10 @@ import org.acm.seguin.parser.ast.ASTTypeParameter;
 import org.acm.seguin.parser.ast.ASTTypeArguments;
 import org.acm.seguin.parser.ast.ASTReferenceTypeList;
 import org.acm.seguin.parser.ast.ASTReferenceType;
-import org.acm.seguin.parser.ast.ASTReferenceVariance;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
+import org.acm.seguin.parser.ast.ASTActualTypeArgument;
 import org.acm.seguin.parser.ast.ASTTypeParameters;
 import org.acm.seguin.parser.ast.ASTGenericNameList;
-import org.acm.seguin.parser.ast.ASTVariance;
 import org.acm.seguin.parser.ast.ASTEnumDeclaration;
 import org.acm.seguin.parser.ast.ASTEnumElement;
 import org.acm.seguin.parser.ast.ASTIdentifier;
@@ -227,7 +227,21 @@ public class SpecialTokenVisitor implements JavaParserVisitor
 	 *@return       Updated PrintData
          *@since        JRefactory 2.7.00
 	 */
-        public Object visit(ASTReferenceVariance node, Object data) {
+        public Object visit(ASTClassOrInterfaceType node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTActualTypeArgument node, Object data) {
 		return processSpecialToken(node, data);
         }
 
@@ -259,19 +273,6 @@ public class SpecialTokenVisitor implements JavaParserVisitor
 		return processSpecialToken(node, data);
         }
 
-	/**
-	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
-	 *
-         *  It uses processSpecialToken() to do all the work.
-         *
-	 *@param  node  process this node.
-	 *@param  data  of class PrintData
-	 *@return       Updated PrintData
-         *@since        JRefactory 2.7.00
-	 */
-        public Object visit(ASTVariance node, Object data) {
-		return processSpecialToken(node, data);
-        }
 
 	/**
 	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
@@ -1546,8 +1547,9 @@ public class SpecialTokenVisitor implements JavaParserVisitor
 	 *
 	 *@param  printData  the print data
 	 */
-	public static void surpriseIndent(PrintData printData)
-	{
+	public static void surpriseIndent(PrintData printData) {
+      printData.surpriseIndent();
+/*      
 		if (printData.getSurpriseReturn() == PrintData.SINGLE_INDENT)
 		{
 			printData.incrIndent();
@@ -1571,4 +1573,6 @@ public class SpecialTokenVisitor implements JavaParserVisitor
 			printData.indent();
 		}
 	}
+*/
+   }
 }

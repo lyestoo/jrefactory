@@ -64,7 +64,7 @@ import org.acm.seguin.pretty.PrettyPrintVisitor;
 import org.acm.seguin.pretty.PrintData;
 import org.acm.seguin.pretty.line.LineNumberingData;
 import org.acm.seguin.util.FileSettings;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 
 
 /**
@@ -78,7 +78,7 @@ public class LineNumberTool
     private String dest;
     //  Instance Variables
     private ArrayList inputList;
-    private OutputStream out;
+    private Writer out;
 
 
     /**
@@ -155,22 +155,22 @@ public class LineNumberTool
      *@param  filename  the name of the file
      *@return           the output stream
      */
-    private OutputStream getOutputStream(int index, String filename)
+    private Writer getOutputStream(int index, String filename)
     {
         //  Local Variables
-        OutputStream out = null;
+        Writer out = null;
 
         //  Check the destination
         if (dest == null) {
-            out = System.out;
+            out = new OutputStreamWriter(System.out);
         }
         else {
             try {
-                out = new FileOutputStream(dest);
+                out = new FileWriter(dest);
             }
             catch (IOException ioe) {
                 //  Hmmm...  Can't create the output stream, then fall back to stdout
-                out = System.out;
+                out = new OutputStreamWriter(System.out);
             }
         }
 

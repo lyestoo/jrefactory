@@ -65,13 +65,9 @@ import com.borland.primetime.node.Project;
 import com.borland.primetime.vfs.InvalidUrlException;
 import com.borland.primetime.vfs.Url;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.KeyStroke;
-import javax.swing.text.Keymap;
 import org.acm.seguin.ide.common.action.GenericAction;
 import org.acm.seguin.ide.common.EditorOperations;
 import org.acm.seguin.ide.common.MultipleDirClassDiagramReloader;
@@ -84,8 +80,7 @@ import org.acm.seguin.ide.common.action.PrettyPrinterAction;
 import org.acm.seguin.ide.jbuilder.refactor.JBuilderCurrentSummary;
 import org.acm.seguin.ide.jbuilder.refactor.JBuilderRefactoringFactory;
 import org.acm.seguin.ide.jbuilder.refactor.MenuBuilder;
-import org.acm.seguin.summary.PackageSummary;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 import org.acm.seguin.uml.UMLPackage;
 import org.acm.seguin.util.FileSettings;
 
@@ -96,6 +91,7 @@ import org.acm.seguin.util.FileSettings;
  *@created    October 18, 2001
  */
 public class UMLNode extends FileNode {
+    public static String JAVASTYLE_DIR = "";
     private UMLPackage packageDiagram;
     private String packageName;
 
@@ -114,6 +110,8 @@ public class UMLNode extends FileNode {
              throws DuplicateNodeException {
         super(project, parent, url);
 
+        initLog();
+        log("UMLNode("+project+", "+parent+", "+url+")");
         MultipleDirClassDiagramReloader reloader = UMLNodeViewerFactory.getFactory().getReloader();
         if (!reloader.isNecessary()) {
             reloader.setNecessary(true);
@@ -122,6 +120,7 @@ public class UMLNode extends FileNode {
 
         PackageNameLoader loader = new PackageNameLoader();
         packageName = loader.load(url.getFile());
+        log("UMLNode() - OK");
     }
 
 
@@ -208,8 +207,6 @@ public class UMLNode extends FileNode {
      *  Description of the Method
      */
     private static void cleanJBuilderSetting() {
-        //String dir = FileSettings.getSettingsRoot() + File.separator + ".Refactory";
-        //String filename = dir + File.separator + "jbuilder.settings";
         File file = new File(FileSettings.getRefactorySettingsRoot(), "jbuilder.settings");
         if (file.exists()) {
             file.delete();
@@ -224,14 +221,18 @@ public class UMLNode extends FileNode {
      *@param  minorVersion  the version number
      */
     public static void initOpenTool(byte majorVersion, byte minorVersion) {
+        initLog();
+        log("initOpenTool("+majorVersion+", "+ minorVersion+")");
         if (majorVersion != PrimeTime.CURRENT_MAJOR_VERSION) {
             return;
         }
-
-        System.out.println("Version:  " + majorVersion + "." + minorVersion +
+        log("Version:  " + majorVersion + "." + minorVersion +
                 "     (Primetime:  " + PrimeTime.CURRENT_MAJOR_VERSION + "." +
                 PrimeTime.CURRENT_MINOR_VERSION + ")");
 
+        java.util.Properties props = System.getProperties();
+        JAVASTYLE_DIR = new File(props.getProperty("user.home") + File.separator + ".jbuilder" + File.separator + "javastyle").getAbsolutePath();
+        FileSettings.setSettingsRoot(JAVASTYLE_DIR);
         //  Create the property files
         (new RefactoryInstaller(true)).run();
         cleanJBuilderSetting();
@@ -261,16 +262,20 @@ public class UMLNode extends FileNode {
         Action prettyPrintAction = new PrettyPrinterAction();
         prettyPrintAction.putValue(UpdateAction.ACCELERATOR, prettyPrintAction.getValue(GenericAction.ACCELERATOR));
         group.add(prettyPrintAction);
-        group.add(new PrettyPrinterConfigAction());
+        ActionGroup refactorGroup = new ActionGroup("Refactor");
         Action extractMethodAction = new ExtractMethodAction();
         extractMethodAction.putValue(UpdateAction.ACCELERATOR, extractMethodAction.getValue(GenericAction.ACCELERATOR));
-        group.add(extractMethodAction);
-        group.add(new ReloadAction());
-        group.add(new NewClassDiagramAction());
-        group.add(MenuBuilder.build());
-        group.add(new UndoAction());
-        group.add(new PrintAction());
-        group.add(new JPGFileAction());
+        refactorGroup.add(extractMethodAction);
+        group.add(refactorGroup);
+        
+        ActionGroup umlGroup = new ActionGroup("UML");
+        umlGroup.add(new ReloadAction());
+        umlGroup.add(new NewClassDiagramAction());
+        umlGroup.add(MenuBuilder.build());
+        umlGroup.add(new UndoAction());
+        umlGroup.add(new PrintAction());
+        umlGroup.add(new JPGFileAction());
+        umlGroup.add(umlGroup);
         ActionGroup zoomGroup = new ActionGroup("Zoom");
         zoomGroup.setPopup(true);
         zoomGroup.add(new ZoomAction(0.1));
@@ -278,6 +283,7 @@ public class UMLNode extends FileNode {
         zoomGroup.add(new ZoomAction(0.5));
         zoomGroup.add(new ZoomAction(1.0));
         group.add(zoomGroup);
+        group.add(new PrettyPrinterConfigAction());
         group.add(new AboutAction());
         Browser.addMenuGroup(8, group);
 
@@ -287,7 +293,24 @@ public class UMLNode extends FileNode {
         setupKeys(prettyPrintAction, extractMethodAction);
     }
 
+    private static java.io.PrintStream logger = null;
+    public static void initLog() {
+       if (logger ==null) {
+          try {
+             logger = new java.io.PrintStream(new java.io.FileOutputStream("C:\\temp\\JBuilder.log.txt"));
+             System.setOut(logger);
+          } catch (java.io.FileNotFoundException e) {
+             e.printStackTrace(System.err);
+             logger = System.err;
+          }
+       }
+    }
 
+    public static void log(String message) {
+       logger.println(message);
+    }
+    
+    
     /**
      *  Saves the diagram to the disk
      *
@@ -314,4 +337,4 @@ public class UMLNode extends FileNode {
         save();
     }
 }
-//  EOF
+

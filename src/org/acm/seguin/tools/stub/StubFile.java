@@ -52,11 +52,11 @@
 package org.acm.seguin.tools.stub;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import javax.swing.JOptionPane;
+import java.io.Reader;
+import java.io.Writer;
+import java.io.OutputStreamWriter;
 import org.acm.seguin.parser.ast.SimpleNode;
 import org.acm.seguin.parser.factory.FileParserFactory;
 import org.acm.seguin.parser.factory.InputStreamParserFactory;
@@ -68,12 +68,14 @@ import org.acm.seguin.util.FileSettings;
  *  Holds a refactoring. Default version just pretty prints the file.
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: StubFile.java,v 1.5 2003/09/01 00:25:32 mikeatkinson Exp $ 
  *@created    May 12, 1999
  */
 public class StubFile {
     //  Instance Variables
     private ParserFactory factory;
-    private OutputStream out;
+    private Writer out;
     private String name;
     private File outputFile;
 
@@ -133,7 +135,7 @@ public class StubFile {
      *@param  inputStream  the input stream
      *@param  filename     the name of the file contained by the input stream
      */
-    public void apply(InputStream inputStream, String filename) {
+    public void apply(Reader inputStream, String filename) {
         setParserFactory(new InputStreamParserFactory(inputStream, filename));
         apply();
     }
@@ -161,14 +163,12 @@ public class StubFile {
      *@param  file  the name of the file
      *@return       the output stream
      */
-    protected OutputStream getOutputStream(File file) {
+    protected Writer getOutputStream(File file) {
         if (out != null) {
             return out;
         }
 
         if (name != null) {
-            //String home = System.getProperty("user.home");
-            //File directory = new File(home + File.separator + ".Refactory");
             File directory = FileSettings.getRefactorySettingsRoot();
             if (!directory.exists()) {
                 directory.mkdirs();
@@ -176,22 +176,19 @@ public class StubFile {
 
             try {
                 File outFile = new File(directory, name + ".stub");
-                //System.out.println("Creating output stream:  " + outFile.getPath());
-                out = new FileOutputStream(outFile.getPath(), true);
+                out = new FileWriter(outFile.getPath(), true);
             } catch (IOException ioe) {
-                out = System.out;
+                out = new OutputStreamWriter(System.out);
             }
         } else {
             try {
-                //System.out.println("Creating output stream:  " + outputFile.getPath());
-                out = new FileOutputStream(outputFile.getPath(), true);
+                out = new FileWriter(outputFile.getPath(), true);
             } catch (IOException ioe) {
-                out = System.out;
+                out = new OutputStreamWriter(System.out);
             }
         }
 
-        //  Return the output stream
-        return out;
+        return out; //  Return the output stream
     }
 
 
@@ -225,7 +222,7 @@ public class StubFile {
         //  Flush the output stream
         data.flush();
         try {
-            out.write("\n\n|\n".getBytes());
+            out.write("\n\n|\n");
         } catch (IOException ioe) {
             ioe.printStackTrace(System.out);
         }

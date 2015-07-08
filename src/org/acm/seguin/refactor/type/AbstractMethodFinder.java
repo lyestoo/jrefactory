@@ -111,7 +111,7 @@ public class AbstractMethodFinder {
 		if (iter != null) {
 			while (iter.hasNext()) {
 				MethodSummary nextMethod = (MethodSummary) iter.next();
-				if (nextMethod.getModifiers().isAbstract()) {
+				if (nextMethod.isAbstract()) {
 					add(nextMethod);
 				}
 				else {

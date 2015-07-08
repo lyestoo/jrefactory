@@ -96,12 +96,12 @@ class BeanTogetherOrder extends Ordering
      */
     private String isBean(Object object)
     {
-        Object data = ((SimpleNode) object).jjtGetChild(0);
+        Object data = ((SimpleNode) object).jjtGetFirstChild();
         if (data instanceof ASTClassBodyDeclaration) {
-            data = ((ASTClassBodyDeclaration) data).jjtGetChild(0);
+            data = ((ASTClassBodyDeclaration) data).jjtGetFirstChild();
         }
         else if (data instanceof ASTInterfaceMemberDeclaration) {
-            data = ((ASTInterfaceMemberDeclaration) data).jjtGetChild(0);
+            data = ((ASTInterfaceMemberDeclaration) data).jjtGetFirstChild();
         }
 
         //  Now that we have data, determine the type of data
@@ -117,7 +117,7 @@ class BeanTogetherOrder extends Ordering
         else if (data instanceof ASTMethodDeclaration) {
             ASTMethodDeclaration method = (ASTMethodDeclaration) data;
             String name;
-            if (method.jjtGetChild(0) instanceof ASTTypeParameters) {
+            if (method.jjtGetFirstChild() instanceof ASTTypeParameters) {
                 ASTMethodDeclarator decl = (ASTMethodDeclarator) method.jjtGetChild(2);
                 name = decl.getName();
             } else {

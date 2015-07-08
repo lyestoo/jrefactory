@@ -38,9 +38,9 @@ public class RenameTypeData {
 	 *@param  init      Description of Parameter 
 	 */
 	public RenameTypeData(String oldValue, String newValue, TypeSummary init) {
-		oldName = new ASTName(0);
+		oldName = new ASTName();
 		oldName.addNamePart(oldValue);
-		newName = new ASTName(0);
+		newName = new ASTName();
 		newName.addNamePart(newValue);
 		summary = init;
 	}

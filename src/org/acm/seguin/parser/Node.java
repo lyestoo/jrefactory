@@ -26,6 +26,31 @@ package org.acm.seguin.parser;
  */
 public interface Node
 {
+    public int getBeginLine();
+
+
+    /**
+     *  Gets the beginColumn attribute of the SimpleNode object
+     *
+     *@return    The beginColumn value
+     */
+    public int getBeginColumn();
+
+
+    /**
+     *  Gets the endLine attribute of the SimpleNode object
+     *
+     *@return    The endLine value
+     */
+    public int getEndLine();
+
+
+    /**
+     *  Gets the endColumn attribute of the SimpleNode object
+     *
+     *@return    The endColumn value
+     */
+    public int getEndColumn();
 
     /**
      *  This method is called after the node has been made the current node. It
@@ -65,6 +90,17 @@ public interface Node
      */
     public void jjtAddChild(Node n, int i);
 
+    
+    /**
+     *  This method tells the node to add its argument to the node's list of
+     *  children.<p>
+     *
+     *  Same as jjtAddChild(n, 0);
+     *
+     *@param  n  Description of Parameter
+     */
+    public void jjtAddFirstChild(Node n);
+
 
     /**
      *  Description of the Method
@@ -91,6 +127,18 @@ public interface Node
      *@return    Description of the Returned Value
      */
     public Node jjtGetChild(int i);
+
+
+    /**
+     *  This method returns a child node. The children are numbered from zero,
+     *  left to right.<p>
+     *
+     * Same as jjtGetFirstChild();
+     *
+     *@param  i  Description of Parameter
+     *@return    Description of the Returned Value
+     */
+    public Node jjtGetFirstChild();
 
 
     /**

@@ -62,9 +62,9 @@ public class RenameClassVisitor extends TypeChangeVisitor {
 	 */
 	protected TransformAST getFileSpecificTransform(FileSummary summary) {
 		if (isRenamingTarget(summary)) {
-			ASTName oldName = new ASTName(0);
+			ASTName oldName = new ASTName();
 			oldName.fromString(oldClassName);
-			ASTName newName = new ASTName(0);
+			ASTName newName = new ASTName();
 			newName.fromString(newClassName);
 
 			return new RenameTypeTransform(oldName, newName, 
@@ -157,7 +157,7 @@ public class RenameClassVisitor extends TypeChangeVisitor {
 	 *@return    an ASTName containing the new name 
 	 */
 	protected ASTName getNewName() {
-		ASTName result = new ASTName(0);
+		ASTName result = new ASTName();
 		result.fromString(packageName);
 		result.addNamePart(newClassName);
 		return result;
@@ -173,7 +173,7 @@ public class RenameClassVisitor extends TypeChangeVisitor {
 	 */
 	protected void addRenamingTransforms(ComplexTransform refactoring, 
 			FileSummary node, String className) {
-		ASTName oldOne = new ASTName(0);
+		ASTName oldOne = new ASTName();
 		oldOne.addNamePart(oldClassName);
 
 		TypeSummary importedType = GetTypeSummary.query(node, newClassName);
@@ -238,7 +238,7 @@ public class RenameClassVisitor extends TypeChangeVisitor {
 	 *@return          the name 
 	 */
 	private ASTName getImport(TypeSummary summary) {
-		ASTName name = new ASTName(0);
+		ASTName name = new ASTName();
 
 		Summary current = summary.getParent();
 		while (!(current instanceof PackageSummary)) {
@@ -258,7 +258,7 @@ public class RenameClassVisitor extends TypeChangeVisitor {
 	 *@return    an ASTName containing the old name 
 	 */
 	private ASTName getOldName() {
-		ASTName result = new ASTName(0);
+		ASTName result = new ASTName();
 		result.fromString(packageName);
 		result.addNamePart(oldClassName);
 		return result;
@@ -272,7 +272,7 @@ public class RenameClassVisitor extends TypeChangeVisitor {
 	 *@param  oldOne       the old one 
 	 */
 	private void simpleRename(ComplexTransform refactoring, ASTName oldOne) {
-		ASTName newOne = new ASTName(0);
+		ASTName newOne = new ASTName();
 		newOne.addNamePart(newClassName);
 
 		refactoring.add(new RenameTypeTransform(oldOne, newOne, 
@@ -294,7 +294,7 @@ public class RenameClassVisitor extends TypeChangeVisitor {
 	private void renameRefactoringTarget(ComplexTransform refactoring, 
 			FileSummary node, String className, ASTName oldOne, 
 			TypeSummary importedType) {
-		ASTName newOne = new ASTName(0);
+		ASTName newOne = new ASTName();
 		newOne.addNamePart(newClassName);
 
 		ASTName importedTypeName = getImport(importedType);

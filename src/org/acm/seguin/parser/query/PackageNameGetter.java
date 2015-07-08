@@ -43,9 +43,9 @@ public class PackageNameGetter {
 			return null;
 		}
 
-		SimpleNode first = (SimpleNode) root.jjtGetChild(0);
+		SimpleNode first = (SimpleNode) root.jjtGetFirstChild();
 		if (first instanceof ASTPackageDeclaration) {
-			return (ASTName) first.jjtGetChild(0);
+			return (ASTName) first.jjtGetFirstChild();
 		}
 
 		return null;

@@ -165,4 +165,3 @@ public class ExtractMethodAction extends CookieAction {
     }
 
 }
-//  EOF

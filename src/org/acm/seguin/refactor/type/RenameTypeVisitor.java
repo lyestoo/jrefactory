@@ -3,6 +3,7 @@ package org.acm.seguin.refactor.type;
 import org.acm.seguin.parser.ChildrenVisitor;
 import org.acm.seguin.parser.ast.ASTName;
 import org.acm.seguin.parser.ast.ASTNameList;
+import org.acm.seguin.parser.ast.ASTGenericNameList;
 import org.acm.seguin.parser.ast.ASTUnmodifiedInterfaceDeclaration;
 import org.acm.seguin.parser.ast.ASTUnmodifiedClassDeclaration;
 import org.acm.seguin.parser.ast.ASTAllocationExpression;
@@ -10,6 +11,7 @@ import org.acm.seguin.parser.ast.ASTPrimaryPrefix;
 import org.acm.seguin.parser.ast.ASTAttribute;
 import org.acm.seguin.parser.ast.ASTType;
 import org.acm.seguin.parser.ast.ASTReferenceType;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
 import org.acm.seguin.parser.ast.ASTTypeParameters;
 import org.acm.seguin.parser.ast.ASTMethodDeclaration;
 import org.acm.seguin.parser.ast.ASTConstructorDeclaration;
@@ -44,15 +46,15 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 		}
 
 		int index = 0;
-		if (node.jjtGetChild(index) instanceof ASTName) {
+		if (node.jjtGetChild(index) instanceof ASTClassOrInterfaceType) {
 			if (node.jjtGetChild(index).equals(rtd.getOld())) {
 				node.jjtAddChild(rtd.getNew(), index);
 			}
 			index++;
 		}
 
-		if (node.jjtGetChild(index) instanceof ASTNameList) {
-			ASTNameList namelist = (ASTNameList) node.jjtGetChild(index);
+		if (node.jjtGetChild(index) instanceof ASTGenericNameList) {
+			ASTGenericNameList namelist = (ASTGenericNameList) node.jjtGetChild(index);
 			for (int ndx = 0; ndx < namelist.jjtGetNumChildren(); ndx++) {
 				if (namelist.jjtGetChild(ndx).equals(rtd.getOld())) {
 					namelist.jjtAddChild(rtd.getNew(), ndx);
@@ -81,8 +83,8 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 		}
 
 		int index = 0;
-		if (node.jjtGetChild(index) instanceof ASTNameList) {
-			ASTNameList namelist = (ASTNameList) node.jjtGetChild(index);
+		if (node.jjtGetChild(index) instanceof ASTGenericNameList) {
+			ASTGenericNameList namelist = (ASTGenericNameList) node.jjtGetChild(index);
 			for (int ndx = 0; ndx < namelist.jjtGetNumChildren(); ndx++) {
 				if (namelist.jjtGetChild(ndx).equals(rtd.getOld())) {
 					namelist.jjtAddChild(rtd.getNew(), ndx);
@@ -137,12 +139,12 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 	 */
 	public Object visit(ASTMethodDeclaration node, Object data) {
                 int child = 2;
-                if (node.jjtGetChild(0) instanceof ASTTypeParameters) {
+                if (node.jjtGetFirstChild() instanceof ASTTypeParameters) {
                     child=3;
                 }
 		if ((node.jjtGetNumChildren() >= child+1) &&
 				(node.jjtGetChild(child) instanceof ASTNameList)) {
-			ASTNameList nameList = (ASTNameList) node.jjtGetChild(2);
+			ASTNameList nameList = (ASTNameList) node.jjtGetChild(child);
 			RenameTypeData rtd = (RenameTypeData) data;
 			processExceptions(nameList, rtd);
 		}
@@ -163,8 +165,8 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 			return data;
 		}
 
-      		//if (node.jjtGetChild(0) instanceof ASTName) {
-		//	ASTName child = (ASTName) node.jjtGetChild(0);
+      		//if (node.jjtGetFirstChild() instanceof ASTName) {
+		//	ASTName child = (ASTName) node.jjtGetFirstChild();
                 //
 		//	RenameTypeData rtd = (RenameTypeData) data;
 		//	if (child.equals(rtd.getOld())) {
@@ -190,8 +192,8 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 			return data;
 		}
 
-		if (node.jjtGetChild(0) instanceof ASTName) {
-			ASTName child = (ASTName) node.jjtGetChild(0);
+		if (node.jjtGetFirstChild() instanceof ASTClassOrInterfaceType) {
+			ASTClassOrInterfaceType child = (ASTClassOrInterfaceType) node.jjtGetFirstChild();
 
 			RenameTypeData rtd = (RenameTypeData) data;
 			if (child.equals(rtd.getOld())) {
@@ -214,14 +216,14 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 	 *@return       The rename type data
 	 */
 	public Object visit(ASTPrimaryExpression node, Object data) {
-		ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetChild(0);
+		ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetFirstChild();
 
 		if (prefix.jjtGetNumChildren() == 0) {
 			return data;
 		}
 
-		if (prefix.jjtGetChild(0) instanceof ASTName) {
-			ASTName child = (ASTName) prefix.jjtGetChild(0);
+		if (prefix.jjtGetFirstChild() instanceof ASTName) {
+			ASTName child = (ASTName) prefix.jjtGetFirstChild();
 
 			RenameTypeData rtd = (RenameTypeData) data;
 			if (child.equals(rtd.getOld())) {
@@ -251,8 +253,8 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 			return data;
 		}
 
-		if (node.jjtGetChild(0) instanceof ASTName) {
-			ASTName child = (ASTName) node.jjtGetChild(0);
+		if (node.jjtGetFirstChild() instanceof ASTClassOrInterfaceType) {
+			ASTClassOrInterfaceType child = (ASTClassOrInterfaceType) node.jjtGetFirstChild();
 
 			RenameTypeData rtd = (RenameTypeData) data;
 			if (child.equals(rtd.getOld())) {
@@ -279,7 +281,7 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 		}
 
 		ASTPrimarySuffix suffix = (ASTPrimarySuffix) node.jjtGetChild(1);
-		return (suffix.jjtGetChild(0) instanceof ASTArguments);
+		return (suffix.jjtGetFirstChild() instanceof ASTArguments);
 	}
 
 

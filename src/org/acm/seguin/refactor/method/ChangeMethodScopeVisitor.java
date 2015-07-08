@@ -11,7 +11,7 @@ package org.acm.seguin.refactor.method;
 import org.acm.seguin.parser.ast.ASTMethodDeclaration;
 import org.acm.seguin.parser.ast.ASTNestedClassDeclaration;
 import org.acm.seguin.parser.ast.ASTNestedInterfaceDeclaration;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.summary.MethodSummary;
 
 /**
@@ -85,28 +85,28 @@ class ChangeMethodScopeVisitor extends IdentifyMethodVisitor {
 	 *@param  decl  the declaration to change scope on
 	 */
 	private void changeScope(ASTMethodDeclaration decl) {
-		ModifierHolder holder = decl.getModifiers();
+		//ModifierHolder holder = decl.getModifiers();
 
 		switch (changeTo) {
 			case PUBLIC:
-				holder.setPrivate(false);
-				holder.setProtected(false);
-				holder.setPublic(true);
+				decl.setPrivate(false);
+				decl.setProtected(false);
+				decl.setPublic(true);
 				break;
 			case PROTECTED:
-				holder.setPrivate(false);
-				holder.setProtected(true);
-				holder.setPublic(false);
+				decl.setPrivate(false);
+				decl.setProtected(true);
+				decl.setPublic(false);
 				break;
 			case PACKAGE:
-				holder.setPrivate(false);
-				holder.setProtected(false);
-				holder.setPublic(false);
+				decl.setPrivate(false);
+				decl.setProtected(false);
+				decl.setPublic(false);
 				break;
 			case PRIVATE:
-				holder.setPrivate(true);
-				holder.setProtected(false);
-				holder.setPublic(false);
+				decl.setPrivate(true);
+				decl.setProtected(false);
+				decl.setPublic(false);
 				break;
 		}
 	}

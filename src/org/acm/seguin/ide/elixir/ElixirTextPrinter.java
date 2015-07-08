@@ -51,7 +51,7 @@
  */
 package org.acm.seguin.ide.elixir;
 
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 import java.io.File;
 import com.elixirtech.fx.*;
 import com.elixirtech.ide.edit.*;

@@ -18,7 +18,7 @@ import org.acm.seguin.parser.ast.ASTNestedClassDeclaration;
 import org.acm.seguin.parser.ast.ASTConstructorDeclaration;
 import org.acm.seguin.parser.ast.ASTEnumDeclaration;
 import org.acm.seguin.parser.ast.SimpleNode;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 
 /**
  *  Sorts fields and method by whether they are marked final
@@ -38,34 +38,34 @@ class FinalOrder extends Ordering {
 	 *@return         The Index value
 	 */
 	protected int getIndex(Object object) {
-		Object data = ((SimpleNode) object).jjtGetChild(0);
+		Object data = ((SimpleNode) object).jjtGetFirstChild();
 		if (data instanceof ASTClassBodyDeclaration) {
-			data = ((ASTClassBodyDeclaration) data).jjtGetChild(0);
+			data = ((ASTClassBodyDeclaration) data).jjtGetFirstChild();
 		}
 		else if (data instanceof ASTInterfaceMemberDeclaration) {
-			data = ((ASTInterfaceMemberDeclaration) data).jjtGetChild(0);
+			data = ((ASTInterfaceMemberDeclaration) data).jjtGetFirstChild();
 		}
 
 		int finalCode = 0;
 
 		//  Now that we have data, determine the type of data
 		if (data instanceof ASTEnumDeclaration) {
-			finalCode = getFinalCode(((ASTEnumDeclaration) data).getModifiers());
+			finalCode = getFinalCode(((ASTEnumDeclaration) data).isFinal());
 		}
 		else if (data instanceof ASTFieldDeclaration) {
-			finalCode = getFinalCode(((ASTFieldDeclaration) data).getModifiers());
+			finalCode = getFinalCode(((ASTFieldDeclaration) data).isFinal());
 		}
 		else if (data instanceof ASTConstructorDeclaration) {
-			finalCode = getFinalCode(((ASTConstructorDeclaration) data).getModifiers());
+			finalCode = getFinalCode(((ASTConstructorDeclaration) data).isFinal());
 		}
 		else if (data instanceof ASTMethodDeclaration) {
-			finalCode = getFinalCode(((ASTMethodDeclaration) data).getModifiers());
+			finalCode = getFinalCode(((ASTMethodDeclaration) data).isFinal());
 		}
 		else if (data instanceof ASTNestedInterfaceDeclaration) {
-			finalCode = getFinalCode(((ASTNestedInterfaceDeclaration) data).getModifiers());
+			finalCode = getFinalCode(((ASTNestedInterfaceDeclaration) data).isFinal());
 		}
 		else if (data instanceof ASTNestedClassDeclaration) {
-			finalCode = getFinalCode(((ASTNestedClassDeclaration) data).getModifiers());
+			finalCode = getFinalCode(((ASTNestedClassDeclaration) data).isFinal());
 		}
 		else {
 			return 100;
@@ -86,12 +86,8 @@ class FinalOrder extends Ordering {
 	 *@param  mods  Description of Parameter
 	 *@return       The Protection value
 	 */
-	private int getFinalCode(ModifierHolder mods) {
-		if (mods.isFinal()) {
-			return 1;
-		}
-		else {
-			return 0;
-		}
+	private int getFinalCode(boolean fin) {
+		return (fin) ? 1 : 0;
 	}
+
 }

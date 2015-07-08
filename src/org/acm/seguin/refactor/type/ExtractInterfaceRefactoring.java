@@ -11,7 +11,7 @@ package org.acm.seguin.refactor.type;
 import java.io.*;
 import java.util.*;
 import org.acm.seguin.parser.ast.*;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.refactor.AddImportTransform;
 import org.acm.seguin.refactor.ComplexTransform;
 import org.acm.seguin.refactor.Refactoring;
@@ -185,16 +185,16 @@ public class ExtractInterfaceRefactoring extends Refactoring {
 		Iterator methods = ts.getMethods();
 		while (methods.hasNext()) {
 			MethodSummary ms = (MethodSummary) methods.next();
-			ModifierHolder mh = ms.getModifiers();
+			//ModifierHolder mh = ms.getModifiers();
 			/*
 			 *  Include only public, non-static, non-constructor methods.
 			 *  Private and protected methods are not allowed in interfaces and
 			 *  methods that are package-protected in an interface need to be
 			 *  implemented by public methods in implementing classes (I think).
 			 */
-			if (mh.isPublic() && (!ms.isConstructor()) && (!mh.isStatic())) {
+			if (ms.isPublic() && (!ms.isConstructor()) && (!ms.isStatic())) {
 				// synchronized modifier is not allowed for interfaces.
-				mh.setSynchronized(false);
+				ms.setSynchronized(false);
 				firstClassMethods.addElement(ms);
 			}
 		}
@@ -254,7 +254,7 @@ public class ExtractInterfaceRefactoring extends Refactoring {
 			TypeSummary ts = (TypeSummary) m_summaryList.elementAt(i);
 			FileSummary fileSummary = (FileSummary) ts.getParent();
 			File file = fileSummary.getFile();
-			ASTName interfaceName = new ASTName(0);
+			ASTName interfaceName = new ASTName();
 
 			String currentPackageName = ts.getPackageSummary().getName();
 			/*

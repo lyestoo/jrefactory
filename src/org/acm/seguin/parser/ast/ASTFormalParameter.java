@@ -20,6 +20,7 @@ import org.acm.seguin.parser.JavaParser;
 public class ASTFormalParameter extends SimpleNode {
 	//  Instance Variable
 	private boolean usingFinal;
+        private boolean varArg;
 
 
 	/**
@@ -64,13 +65,13 @@ public class ASTFormalParameter extends SimpleNode {
 
 
 	/**
-	 *  Converts this object to a string
+	 *  Mark that this formal parameter as having a variable argument
 	 *
-	 *@return    a string representing this object
+	 *@param  varArg  is this Formal Parameter a VarArg
 	 */
-	public String toString() {
-		return super.toString() + "[Using final:  " + usingFinal + "]";
-	}
+        public void setVarArg(boolean varArg) {
+            this.varArg = varArg;
+        }
 
 
 	/**

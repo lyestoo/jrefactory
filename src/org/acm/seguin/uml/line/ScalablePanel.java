@@ -61,13 +61,15 @@ import javax.swing.JPanel;
  *  Panel that can be scaled and shifted
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: ScalablePanel.java,v 1.4 2003/07/29 20:51:57 mikeatkinson Exp $
  *@created    September 12, 2001
  */
 public abstract class ScalablePanel extends JPanel {
     private boolean inShapeChange;
     private boolean inScaling = false;
 
-    private double scale;
+    private double scale = 1.0;
 
     private int absoluteWidth = -1;
     private int absoluteHeight = -1;

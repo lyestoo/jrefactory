@@ -8,7 +8,12 @@
  */
 package org.acm.seguin.io;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.acm.seguin.awt.ExceptionPrinter;
 
@@ -72,17 +77,15 @@ public class FileCopy implements Runnable {
 			OutputStream fos = getOutputStream();
 			int bufferSize = 1024 * 8 * 4;
 			byte[] buffer = new byte[bufferSize];
-			int bytesRead = bufferSize;
 
-			while (bytesRead == bufferSize) {
-				bytesRead = fis.read(buffer);
+			int bytesRead;
+			while ((bytesRead = fis.read(buffer)) >= 0) {
 				fos.write(buffer, 0, bytesRead);
 			}
 
 			fos.close();
 			fis.close();
-		}
-		catch (IOException ioe) {
+		} catch (IOException ioe) {
 			ExceptionPrinter.print(ioe, false);
 		}
 	}
@@ -107,8 +110,9 @@ public class FileCopy implements Runnable {
 	 */
 	protected synchronized OutputStream getOutputStream() throws IOException {
 		File parent = dest.getParentFile();
-		if ((parent != null) && !parent.exists())
+		if ((parent != null) && !parent.exists()) {
 			parent.mkdirs();
+                }
 
 		return new FileOutputStream(dest);
 	}

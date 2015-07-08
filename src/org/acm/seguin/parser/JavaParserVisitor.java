@@ -28,7 +28,7 @@ public interface JavaParserVisitor
   public Object visit(ASTTypeParameterList node, Object data);
   public Object visit(ASTTypeParameter node, Object data);
   public Object visit(ASTReferenceTypeList node, Object data);
-  public Object visit(ASTReferenceVariance node, Object data);
+  public Object visit(ASTActualTypeArgument node, Object data);
   public Object visit(ASTClassBody node, Object data);
   public Object visit(ASTNestedClassDeclaration node, Object data);
   public Object visit(ASTClassBodyDeclaration node, Object data);
@@ -44,7 +44,6 @@ public interface JavaParserVisitor
   public Object visit(ASTFieldDeclaration node, Object data);
   public Object visit(ASTVariableDeclarator node, Object data);
   public Object visit(ASTVariableDeclaratorId node, Object data);
-  public Object visit(ASTVariance node, Object data);
   public Object visit(ASTVariableInitializer node, Object data);
   public Object visit(ASTArrayInitializer node, Object data);
   public Object visit(ASTMethodDeclaration node, Object data);
@@ -60,6 +59,7 @@ public interface JavaParserVisitor
   public Object visit(ASTPrimitiveType node, Object data);
   public Object visit(ASTResultType node, Object data);
   public Object visit(ASTName node, Object data);
+  public Object visit(ASTClassOrInterfaceType node, Object data);
   public Object visit(ASTNameList node, Object data);
   public Object visit(ASTGenericNameList node, Object data);
   public Object visit(ASTExpression node, Object data);
@@ -104,9 +104,9 @@ public interface JavaParserVisitor
   public Object visit(ASTSwitchLabel node, Object data);
   public Object visit(ASTIfStatement node, Object data);
   public Object visit(ASTWhileStatement node, Object data);
-  public Object visit(ASTDoStatement node, Object data);
   public Object visit(ASTForStatement node, Object data);
   public Object visit(ASTForInit node, Object data);
+  public Object visit(ASTDoStatement node, Object data);
   public Object visit(ASTStatementExpressionList node, Object data);
   public Object visit(ASTForUpdate node, Object data);
   public Object visit(ASTBreakStatement node, Object data);

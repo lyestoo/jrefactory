@@ -49,6 +49,7 @@ public class ASTLiteral extends SimpleNode {
 	 *@param  newName  the new name
 	 */
 	public void setName(String newName) {
+        //System.out.println("Literal.setName("+newName+")");
 		name = newName.intern();
 	}
 
@@ -59,17 +60,8 @@ public class ASTLiteral extends SimpleNode {
 	 *@return    the name
 	 */
 	public String getName() {
+        //System.out.println("Literal.getName() -> "+name);
 		return name;
-	}
-
-
-	/**
-	 *  Convert this object to a string
-	 *
-	 *@return    a string representing this object
-	 */
-	public String toString() {
-		return super.toString() + " [" + getName() + "]";
 	}
 
 

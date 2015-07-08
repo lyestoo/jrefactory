@@ -47,7 +47,7 @@ public class DefaultUndoAction implements UndoAction, Serializable {
 	 */
 	public DefaultUndoAction()
 	{
-            System.out.println("DefaultUndoAction()");
+            //System.out.println("DefaultUndoAction()");
                 description = "unknown";
 		list = new LinkedList();
 	}
@@ -60,7 +60,7 @@ public class DefaultUndoAction implements UndoAction, Serializable {
 	 */
 	public void setDescription(String description)
 	{
-            System.out.println("DefaultUndoAction.setDescription("+description+")");
+            //System.out.println("DefaultUndoAction.setDescription("+description+")");
 		this.description = description;
 	}
 
@@ -71,7 +71,7 @@ public class DefaultUndoAction implements UndoAction, Serializable {
 	 */
 	public String getDescription()
 	{
-            System.out.println("DefaultUndoAction.setDescription() => "+description);
+            //System.out.println("DefaultUndoAction.setDescription() => "+description);
 		return description;
 	}
 
@@ -84,7 +84,7 @@ public class DefaultUndoAction implements UndoAction, Serializable {
 	 */
 	public void add(File oldFile, File newFile)
 	{
-            System.out.println("DefaultUndoAction.add("+oldFile+","+newFile+")");
+            //System.out.println("DefaultUndoAction.add("+oldFile+","+newFile+")");
 		File dest = null;
 		if (oldFile == null) {
 			dest = null;
@@ -101,7 +101,7 @@ public class DefaultUndoAction implements UndoAction, Serializable {
 			oldFile.renameTo(dest);
 		}
 
-            System.out.println("  list.add(new FileSet("+oldFile+","+dest+","+newFile+"))");
+            //System.out.println("  list.add(new FileSet("+oldFile+","+dest+","+newFile+"))");
 		list.add(new FileSet(oldFile, dest, newFile));
 	}
 
@@ -110,7 +110,7 @@ public class DefaultUndoAction implements UndoAction, Serializable {
 	 *  Undo the current action
 	 */
 	public void undo() {
-            System.out.println("UndoAction.undo()");
+            //System.out.println("UndoAction.undo()");
 		Iterator iter = list.iterator();
 		while (iter.hasNext()) {
 			((FileSet) iter.next()).undo();

@@ -52,7 +52,7 @@
 package org.acm.seguin.ide.common.action;
 
 import java.io.File;
-import java.io.InputStream;
+import java.io.StringReader;
 import java.util.Iterator;
 import org.acm.seguin.summary.FileSummary;
 import org.acm.seguin.summary.TypeSummary;
@@ -64,6 +64,8 @@ import org.acm.seguin.summary.TypeSummary;
  *  files.
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: SelectedFileSet.java,v 1.3 2003/07/29 20:51:52 mikeatkinson Exp $ 
  *@created    October 18, 2001
  */
 public abstract class SelectedFileSet {
@@ -119,7 +121,7 @@ public abstract class SelectedFileSet {
      *@param  input  Description of Parameter
      *@return        Description of the Returned Value
      */
-    protected FileSummary reloadFile(File file, InputStream input) {
+    protected FileSummary reloadFile(File file, StringReader input) {
         return FileSummary.reloadFromBuffer(file, input);
     }
 }

@@ -49,4 +49,7 @@ public class ASTClassBodyDeclaration extends SimpleNode {
 	public Object jjtAccept(JavaParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
+    public boolean isAnonymousInnerClass() {
+        return jjtGetParent() instanceof ASTClassBody && jjtGetParent().jjtGetParent() instanceof ASTAllocationExpression;
+    }
 }

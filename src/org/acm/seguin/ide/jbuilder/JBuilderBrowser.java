@@ -84,7 +84,7 @@ public class JBuilderBrowser extends SourceBrowser {
      *@param  file  File to look for in this project.
      *@return       FileNode The FileNode. *duh
      */
-    protected FileNode findSourceFileNode(File file) {
+    public FileNode findSourceFileNode(File file) {
         Browser browser = Browser.getActiveBrowser();
         Project project = browser.getActiveProject();
         if (project == null) {
@@ -101,7 +101,7 @@ public class JBuilderBrowser extends SourceBrowser {
      *@param  lineNumber  Line number to go to.
      *@param  sourceNode  Source file node.
      */
-    protected void gotoLine(int lineNumber, FileNode sourceNode) {
+    public void gotoLine(int lineNumber, FileNode sourceNode) {
         AbstractTextNodeViewer sourceViewer =
                 (AbstractTextNodeViewer) Browser.getActiveBrowser().getViewerOfType(sourceNode, AbstractTextNodeViewer.class);
         EditorPane editor = sourceViewer.getEditor();
@@ -129,7 +129,7 @@ public class JBuilderBrowser extends SourceBrowser {
      *
      *@param  node  Source file node to show.
      */
-    protected void showNode(FileNode node) {
+    public void showNode(FileNode node) {
         Browser browser = Browser.getActiveBrowser();
         try {
             browser.setActiveNode(node, true);
@@ -139,4 +139,4 @@ public class JBuilderBrowser extends SourceBrowser {
         }
     }
 }
-//  EOF
+

@@ -53,15 +53,18 @@
 package org.acm.seguin.pretty;
 
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Comparator;
+import org.acm.seguin.parser.io.CharStream;
 import org.acm.seguin.parser.ast.ASTCompilationUnit;
 import org.acm.seguin.pretty.sort.MultipleOrdering;
 import org.acm.seguin.pretty.sort.SameOrdering;
 import org.acm.seguin.pretty.sort.TopLevelOrdering;
-//import org.acm.seguin.util.Comparator;
 import org.acm.seguin.util.FileSettings;
 import org.acm.seguin.util.MissingSettingsException;
 import org.acm.seguin.util.Settings;
@@ -71,6 +74,8 @@ import org.acm.seguin.util.Settings;
  *  This object stores all the data necessary to print the the Java file
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: PrintData.java,v 1.27 2003/09/29 19:32:39 mikeatkinson Exp $ 
  *@created    March 6, 1999
  */
 public class PrintData
@@ -93,7 +98,7 @@ public class PrintData
     private boolean isMethodBrace = false;
 
     // Method parameter indentation
-    private boolean lineUpParams = true;
+    private boolean lineUpParams = false;
     private boolean inParams = false;
     private int lastParamIndent = 0;
 
@@ -170,8 +175,10 @@ public class PrintData
     private boolean lineupJavadocDescr = false;
 
     private int javadocIndent = -1;    // Means it should be loaded from "javadoc.indent"
-    private boolean c_ownline = true; // Means that c style comments at the end of a 
+    private boolean c_ownline = true;  // Means that c style comments at the end of a 
                                        // program line should be placed on their own line.
+                                       
+    private int charStreamType = 4;    // character output type (same as input).
     
     /**
      *  Use the C style blocks
@@ -290,7 +297,7 @@ public class PrintData
      */
     public PrintData()
     {
-        this(System.out);
+        this(new OutputStreamWriter(System.out));
     }
 
 
@@ -299,13 +306,14 @@ public class PrintData
      *
      *@param  out  the output stream
      */
-    public PrintData(OutputStream out)
+    public PrintData(Writer out)
     {
         indent = 0;
-        lineQueue = lineQueueFactory(new PrintWriter(new OutputStreamWriter(out)));
         outputBuffer = new StringBuffer();
         newlineCount = 0;
 
+        charStreamType = CharStream.JAVA_LIKE;
+        
         //  Load the properties
         bundle = FileSettings.getRefactoryPrettySettings();
         try {
@@ -320,11 +328,17 @@ public class PrintData
             else {
                 indentChar = indentCharacter.charAt(0);
             }
+            charStreamType = bundle.getInteger("char.stream.type");
         }
         catch (MissingSettingsException mre) {
             //  Default is sufficient
         }
 
+        //lineQueue = lineQueueFactory(new PrintWriter(new JavaOutputStreamWriter(out)));
+        lineQueue = lineQueueFactory(new PrintWriter(out));
+        //java.util.SortedMap cs = java.nio.charset.Charset.availableCharsets();
+        //System.out.println("character sets ="+cs.keySet());
+        
         codeBlockStyle = translateBlockStyle("block.style");
         methodBlockStyle = translateBlockStyle("method.block.style");
         classBlockStyle = translateBlockStyle("class.block.style");
@@ -880,6 +894,9 @@ public class PrintData
         fieldSpaceCode = value;
     }
 
+    public void setLineUpParams(boolean value) {
+       lineUpParams = value;
+    }
 
     /**
      *  Sets the elseOnNewLine attribute of the PrintData object
@@ -1529,13 +1546,16 @@ public class PrintData
      *
      *@return    The ParamIndent value
      */
-    public int getParamIndent()
-    {
-        if (inParams) {
-            return lastParamIndent;
-        }
-        return 0;
-    }
+//    public int getParamIndent()
+//    {
+//       System.out.print("getParamIndent() inParams="+inParams+", lineUpParams="+lineUpParams);
+//        if (inParams && lineUpParams) {
+//            System.out.println(" ->"+lastParamIndent);
+//            return lastParamIndent;
+//        }
+//        System.out.println(" ->"+0);
+//        return 0;
+//    }
 
 
     /**
@@ -2339,8 +2359,7 @@ public class PrintData
     /**
      *  Increment the indent by the default amount
      */
-    public void incrIndent()
-    {
+    public void incrIndent() {
         incrIndent(INDENT);
     }
 
@@ -2348,8 +2367,7 @@ public class PrintData
     /**
      *  Indent the output
      */
-    public void indent()
-    {
+    public void indent() {
         if (!isBufferEmpty()) {
             newline();
         }
@@ -2364,21 +2382,64 @@ public class PrintData
      *  is true, parameters on new lines are lined up with the method's open
      *  parenthesis.
      */
-    public void indentParam()
-    {
-        if ((surpriseType == PARAM_INDENT) && (lastParamIndent > 0)) {
+/*
+    public void indentParam() {
+       System.out.println("indentParam() surpriseType="+surpriseType+", lastParamIndent="+lastParamIndent);
+       
+        if (lineUpParams && (surpriseType == PARAM_INDENT) && (lastParamIndent > 0)) {
+            indent();
+            for (int ndx = 0; ndx < lastParamIndent - indent; ndx++) {
+                System.out.println("  indenting by"+(lastParamIndent - indent));
+                append(" ");
+            }
+        } else {
+            if (oldSurpriseType==DOUBLE_INDENT) {
+               incrIndent();
+               incrIndent();
+               indent();
+               decrIndent();
+               decrIndent();
+            } else {
+               incrIndent();
+               indent();
+               decrIndent();
+            }
+        }
+    }
+*/
+	/**
+	 *  Inserts a surprise indent
+	 *
+	 *@param  printData  the print data
+	 */
+    public  void surpriseIndent() {
+        if (lineUpParams && (lastParamIndent > 0)) {
             indent();
             for (int ndx = 0; ndx < lastParamIndent - indent; ndx++) {
                 append(" ");
             }
-        }
-        else {
+        } else if (getSurpriseReturn() == SINGLE_INDENT) {
             incrIndent();
             indent();
             decrIndent();
+        } else if (getSurpriseReturn() == DOUBLE_INDENT) {
+            incrIndent();
+            incrIndent();
+            indent();
+            decrIndent();
+            decrIndent();
+        } else if (getSurpriseReturn() == PARAM_INDENT) {
+            incrIndent();
+            incrIndent();
+            incrIndent();
+            indent();
+            decrIndent();
+            decrIndent();
+            decrIndent();
+        } else if (getSurpriseReturn() == NO_INDENT) {
+            indent();
         }
     }
-
 
     /**
      *  Indicates that a method's open brace is about to be formatted.
@@ -2713,8 +2774,126 @@ public class PrintData
 	public void setTaggedJavadocDescription(int value) { taggedJavadocDescription = value; }
         
         
-        public StringBuffer getBuffer() {
-            return outputBuffer;
-        }
+     public StringBuffer getBuffer() {
+         return outputBuffer;
+     }
+     private static class JavaOutputStreamWriter extends Writer {
+         Writer out = null;
+         public JavaOutputStreamWriter(Writer out) {
+            this.out = out;
+         }
+         /**
+          * Write a single character.
+          *
+          * @exception  IOException  If an I/O error occurs
+          */
+         public void write(int c) throws IOException {
+              if (c>127) {
+                  System.out.println("writing character="+c);
+                  out.write('\\');
+                  out.write('u');
+                  out.write(toHex( (c>>12)&0x0F ) );
+                  out.write(toHex( (c>>8)&0x0F ) );
+                  out.write(toHex( (c>>4)&0x0F ) );
+                  out.write(toHex( c&0x0F ) );
+              } else {
+                  out.write(c);
+              }
+         }
+         
+         /**
+          * Write a portion of an array of characters.
+          *
+          * @param  cbuf  Buffer of characters
+          * @param  off   Offset from which to start writing characters
+          * @param  len   Number of characters to write
+          *
+          * @exception  IOException  If an I/O error occurs
+          */
+         public void write(char cbuf[], int off, int len) throws IOException {
+            char[] nbuf = null;
+            int nlen = 0;
+            for (int i=off; i<off+len; i++) {
+               char c = cbuf[i];
+               if (c>127) {
+                  if (nbuf==null) {
+                     nbuf=new char[len*4];
+                     for (int j=off; j<i; j++) {
+                        nbuf[j-off] = cbuf[j];
+                     }
+                     nlen = i-off;
+                  }
+                  System.out.println("writing character="+c);
+                  nbuf[nlen++] = '\\';
+                  nbuf[nlen++] = 'u';
+                  nbuf[nlen++] = toHex( (c>>12)&0x0F );
+                  nbuf[nlen++] = toHex( (c>>8)&0x0F );
+                  nbuf[nlen++] = toHex( (c>>4)&0x0F );
+                  nbuf[nlen++] = toHex( c&0x0F );
+               } else if (nbuf!=null) {
+                  nbuf[nlen++] = c;
+               }
+            }
+                     
+            if (nbuf==null) {
+               out.write(cbuf, off, len);
+            } else {
+               out.write(nbuf, 0, nlen);
+            }
+         }
+         
+         private char toHex(int x) {
+            switch (x) {
+               case 0 : return '0'; 
+               case 1 : return '1'; 
+               case 2 : return '2'; 
+               case 3 : return '3'; 
+               case 4 : return '4'; 
+               case 5 : return '5'; 
+               case 6 : return '6'; 
+               case 7 : return '7'; 
+               case 8 : return '8'; 
+               case 9 : return '9'; 
+               case 10 : return 'A'; 
+               case 11 : return 'B'; 
+               case 12 : return 'C'; 
+               case 13 : return 'D'; 
+               case 14 : return 'E'; 
+               case 15 : return 'F';
+            }
+            return '0';
+         }
+               
+         /**
+          * Write a portion of a string.
+          *
+          * @param  str  A String
+          * @param  off  Offset from which to start writing characters
+          * @param  len  Number of characters to write
+          *
+          * @exception  IOException  If an I/O error occurs
+          */
+         public void write(String str, int off, int len) throws IOException {
+             write(str.toCharArray(), off, len);
+         }
+         
+         /**
+          * Flush the stream.
+          *
+          * @exception  IOException  If an I/O error occurs
+          */
+         public void flush() throws IOException {
+             out.flush();
+         }
+         
+         /**
+          * Close the stream.
+          *
+          * @exception  IOException  If an I/O error occurs
+          */
+         public void close() throws IOException {
+             out.close();
+         }
+     }
 }
 

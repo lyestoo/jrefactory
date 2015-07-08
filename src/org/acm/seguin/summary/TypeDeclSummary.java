@@ -57,6 +57,7 @@ import org.acm.seguin.parser.ast.ASTPrimitiveType;
 import org.acm.seguin.parser.ast.ASTReferenceType;
 import org.acm.seguin.parser.ast.ASTType;
 import org.acm.seguin.parser.ast.ASTName;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
 import org.acm.seguin.summary.query.GetTypeSummary;
 
 /**
@@ -107,6 +108,8 @@ public class TypeDeclSummary extends Summary {
     public TypeDeclSummary(Summary parentSummary, ASTName nameNode) {
         //  Initialize the parent class
         super(parentSummary);
+        //System.out.print("TypeDeclSummary("+parentSummary+", "+ nameNode.getImage()+")");
+
         
         //  Local Variables
         int numChildren = nameNode.getNameSize();
@@ -131,6 +134,7 @@ public class TypeDeclSummary extends Summary {
 
         //  This isn't an array (yet)
         arrayCount = 0;
+        //System.out.println(" => typeName="+typeName);
     }
 
 
@@ -143,15 +147,16 @@ public class TypeDeclSummary extends Summary {
     public TypeDeclSummary(Summary parentSummary, ASTReferenceType refNode) {
         //  Initialize the parent class
         super(parentSummary);
+        //System.out.print("TypeDeclSummary(parentSummary, "+ refNode.getImage()+")");
 
-        if (refNode.jjtGetChild(0) instanceof ASTName) {
-            ASTName nameNode = (ASTName)refNode.jjtGetChild(0);
+        if (refNode.jjtGetFirstChild() instanceof ASTClassOrInterfaceType) {
+            ASTClassOrInterfaceType nameNode = (ASTClassOrInterfaceType)refNode.jjtGetFirstChild();
             //  Local Variables
             int numChildren = nameNode.getNameSize();
-    
+
             //  Determine the name type
             typeName = nameNode.getNamePart(numChildren - 1).intern();
-    
+
             //  Extract the package
             if (numChildren > 1) {
                 StringBuffer buffer = new StringBuffer(nameNode.getNamePart(0));
@@ -163,26 +168,27 @@ public class TypeDeclSummary extends Summary {
             } else {
                 packageName = null;
             }
-    
+
             //  This isn't a primitive value
             primitive = false;
-    
+
             //  This isn't an array (yet)
             arrayCount = 0;
         } else {
-            ASTPrimitiveType primitiveType = (ASTPrimitiveType)refNode.jjtGetChild(0);
+            ASTPrimitiveType primitiveType = (ASTPrimitiveType)refNode.jjtGetFirstChild();
             //  Remember the type name
             typeName = primitiveType.getName().intern();
-    
+
             //  The package name doesn't apply
             packageName = null;
-    
+
             //  This is a primitive value
             primitive = true;
-    
+
             //  This isn't an array (yet)
             arrayCount = 0;
         }
+        //System.out.println(" => typeName="+typeName);
     }
 
 
@@ -219,11 +225,46 @@ public class TypeDeclSummary extends Summary {
      */
     public TypeDeclSummary(Summary parentSummary, String initPackage, String initType) {
         super(parentSummary);
-
+        //System.out.print("TypeDeclSummary("+parentSummary+", "+ initPackage+", "+initType+")");
         typeName = initType;
         packageName = initPackage;
         primitive = false;
         arrayCount = 0;
+        //System.out.println(" => typeName="+typeName);
+    }
+
+
+    public TypeDeclSummary(Summary parentSummary, Class clazz) {
+        super(parentSummary);
+        //System.out.print("TypeDeclSummary(parentSummary, "+clazz+")");
+        if (clazz.isPrimitive()) {
+            if (!"void".equals(clazz.getName())) {
+                typeName = clazz.getName();
+                packageName = null;
+                primitive = true;
+                arrayCount = 0;
+            }
+        } else if (clazz.isArray()) {
+            arrayCount++;
+            Class ac = clazz.getComponentType();
+            while (ac.isArray()) {
+                arrayCount++;
+                ac = ac.getComponentType();
+            }
+            typeName = ac.getName();
+	    if (ac.getPackage()==null) {
+		packageName = null;
+	    } else {
+		packageName = ac.getPackage().getName();
+	    }
+            primitive = false;
+        } else {
+            typeName = clazz.getName();
+            packageName = clazz.getPackage().getName();
+            primitive = false;
+            arrayCount = 0;
+        }
+        //System.out.println(" => typeName="+typeName);
     }
 
 
@@ -397,7 +438,7 @@ public class TypeDeclSummary extends Summary {
     public static TypeDeclSummary getTypeDeclSummary(Summary parentSummary, ASTType typeNode) {
         //  Local Variables
         TypeDeclSummary result;
-        Node typeChild = typeNode.jjtGetChild(0);
+        Node typeChild = typeNode.jjtGetFirstChild();
 
         if (typeChild instanceof ASTPrimitiveType) {
             result = new TypeDeclSummary(parentSummary, (ASTPrimitiveType) typeChild);
@@ -436,7 +477,7 @@ public class TypeDeclSummary extends Summary {
      */
     public static TypeDeclSummary getTypeDeclSummary(Summary parentSummary, ASTResultType typeNode) {
         if (typeNode.hasAnyChildren()) {
-            return getTypeDeclSummary(parentSummary, (ASTType) typeNode.jjtGetChild(0));
+            return getTypeDeclSummary(parentSummary, (ASTType) typeNode.jjtGetFirstChild());
         } else {
             return new TypeDeclSummary(parentSummary);
         }

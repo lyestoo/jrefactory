@@ -52,18 +52,14 @@
 package org.acm.seguin.ide.jedit;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.EmptyBorder;
 import org.acm.seguin.ide.command.PackageSelectorPanel;
 import org.acm.seguin.ide.command.UMLFrame;
-import org.acm.seguin.ide.command.CommandLineMenu;
-import org.acm.seguin.ide.command.ExitMenuSelection;
 import org.acm.seguin.io.Saveable;
 import org.acm.seguin.summary.PackageSummary;
 import org.acm.seguin.uml.loader.Reloader;
@@ -72,115 +68,124 @@ import org.acm.seguin.uml.loader.Reloader;
 /**
  *  Creates a panel for the selection of packages to view.
  *
- *@author     Mike Atkinson
- *@created    June 26, 2003
+ * @author     Mike Atkinson
+ * @created    June 26, 2003
  */
 public class JEditPackageSelectorPanel extends PackageSelectorPanel
-         implements ActionListener, Saveable, Reloader {
+       implements ActionListener, Saveable, Reloader {
 
-    /**
-     *  Constructor for the PackageSelectorPanel object
-     *
-     *@param  root  The root directory
-     */
-    protected JEditPackageSelectorPanel(String root) {
-        super(root);
-    }
-
-
-    /**
-     *  Get the main panel
-     *
-     *@param  directory  Description of Parameter
-     *@return            The MainPanel value
-     */
-    public static PackageSelectorPanel getMainPanel(String directory) {
-        if (mainPanel == null) {
-            if (directory == null) {
-                return null;
-            }
-
-            mainPanel = new JEditPackageSelectorPanel(directory);
-        }
-        return mainPanel;
-    }
+   /**
+    *  Constructor for the PackageSelectorPanel object
+    *
+    * @param  root  The root directory
+    */
+   protected JEditPackageSelectorPanel(String root) {
+      super(root);
+   }
 
 
-    /**
-     *  Get the package from the central store
-     *
-     *@param  summary  The package summary that we are looking for
-     *@return          The UML package
-     */
-    protected UMLFrame getPackage(PackageSummary summary) {
-        return (UMLFrame) viewList.get(summary);
-    }
+   /**
+    *  Handle the button press events
+    *
+    * @param  evt  the event
+    */
+   public void actionPerformed(ActionEvent evt) {
+      String command = evt.getActionCommand();
+      //if (command.equals("xxx")) {
+      //} else {
+      super.actionPerformed(evt);
+      //}
+   }
 
 
-    /**
-     *  Handle the button press events
-     *
-     *@param  evt  the event
-     */
-    public void actionPerformed(ActionEvent evt) {
-        String command = evt.getActionCommand();
-        if (command.equals("xxx")) {
-        } else {
-            super.actionPerformed(evt);
-        }
-    }
+   /**
+    *  Get the package from the central store
+    *
+    * @param  summary  The package summary that we are looking for
+    * @return          The UML package
+    */
+   protected UMLFrame getPackage(PackageSummary summary) {
+      return (UMLFrame)viewList.get(summary);
+   }
 
 
 
-    /**
-     *  Creates the frame
-     */
-    protected JFrame createFrame() {
-        JFrame frame = new JFrame("Package Selector");
-        frame.getContentPane().add(panel);
-        return frame;
-    }
+   /**
+    *  Creates the frame
+    *
+    * @return    Description of the Returned Value
+    */
+   protected JFrame createFrame() {
+      JFrame frame = new JFrame("Package Selector");
+      frame.getContentPane().add(panel);
+      return frame;
+   }
 
 
-    /**
-     *  Creates the content panel
-     */
-    protected JPanel createMainPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
+   /**
+    *  Creates the content panel
+    *
+    * @return    Description of the Returned Value
+    */
+   protected JPanel createMainPanel() {
+      JPanel panel = new JPanel();
+      panel.setLayout(new BorderLayout());
 
-        JScrollPane scrollPane = getScrollPane();
-        //scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-        panel.add(scrollPane, BorderLayout.CENTER);
-        panel.add(buttons, BorderLayout.NORTH);
-        return panel;
-    }
+      JScrollPane scrollPane = getScrollPane();
+      //scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+      panel.add(scrollPane, BorderLayout.CENTER);
+      panel.add(buttons, BorderLayout.NORTH);
+      return panel;
+   }
 
-    /**
-     * Create the panel holding the buttons
-     */
-    protected JPanel createButtons(ActionListener listener) {
-        JPanel panel = new JPanel();
-        JButton showButton = new JButton("Show");
-        showButton.setBounds(0, 10, 100, 25);
-        panel.add(showButton);
-        showButton.addActionListener(listener);
 
-        JButton hideButton = new JButton("Hide");
-        hideButton.setBounds(0, 50, 100, 25);
-        panel.add(hideButton);
-        hideButton.addActionListener(listener);
+   /**
+    *  Create the panel holding the buttons
+    *
+    * @param  listener  Description of Parameter
+    * @return           Description of the Returned Value
+    */
+   protected JPanel createButtons(ActionListener listener) {
+      JPanel panel = new JPanel();
+      JButton showButton = new JButton("Show");
+      showButton.setBounds(0, 10, 100, 25);
+      panel.add(showButton);
+      showButton.addActionListener(listener);
 
-        JButton reloadButton = new JButton("Reload");
-        reloadButton.setBounds(0, 90, 100, 25);
-        panel.add(reloadButton);
-        reloadButton.addActionListener(listener);
-/*
+      JButton hideButton = new JButton("Hide");
+      hideButton.setBounds(0, 50, 100, 25);
+      panel.add(hideButton);
+      hideButton.addActionListener(listener);
+
+      JButton reloadButton = new JButton("Reload");
+      reloadButton.setBounds(0, 90, 100, 25);
+      panel.add(reloadButton);
+      reloadButton.addActionListener(listener);
+      /*
         JButton reloadAllButton = new JButton("Reload All");
         reloadAllButton.setBounds(0, 130, 100, 25);
         reloadAllButton.setEnabled(false);
         panel.add(reloadAllButton);
 */
-        return panel;
-    }
+      return panel;
+   }
+
+
+   /**
+    *  Get the main panel
+    *
+    * @param  directory  Description of Parameter
+    * @return            The MainPanel value
+    */
+   public static PackageSelectorPanel getMainPanel(String directory) {
+      if (mainPanel == null) {
+         if (directory == null) {
+            return null;
+         }
+
+         mainPanel = new JEditPackageSelectorPanel(directory);
+      }
+      return mainPanel;
+   }
 }
+

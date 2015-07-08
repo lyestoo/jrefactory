@@ -9,15 +9,17 @@
 package org.acm.seguin.parser.factory;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.Reader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.FileReader;
 
 /**
  *  Generates new parsers for a java file
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: FileParserFactory.java,v 1.2 2003/07/29 20:51:55 mikeatkinson Exp $ 
  *@created    June 6, 1999
  */
 public class FileParserFactory extends ParserFactory {
@@ -40,9 +42,9 @@ public class FileParserFactory extends ParserFactory {
 	 *
 	 *@return    the input stream
 	 */
-	protected InputStream getInputStream() {
+	protected Reader getReader() {
 		try {
-			return new FileInputStream(input);
+			return new FileReader(input);
 		}
 		catch (FileNotFoundException fnfe) {
 			System.err.println("Unable to find the file specified by " + getKey());

@@ -10,6 +10,7 @@ package org.acm.seguin.parser.ast;
 
 import org.acm.seguin.parser.JavaParserVisitor;
 import org.acm.seguin.parser.JavaParser;
+import org.acm.seguin.parser.Node;
 
 /**
  *  Declares a variable.  Contains the name of the variable and
@@ -56,6 +57,16 @@ public class ASTVariableDeclaratorId extends SimpleNode {
 
 
 	/**
+	 *  Set the object's name (used for PMD testing)
+	 *
+	 *@param  newName  the new name
+	 */
+	public void setImage(String newName) {
+		name = newName.intern();
+	}
+
+
+	/**
 	 *  Set the number of indirection for the array
 	 *
 	 *@param  count  the count
@@ -86,16 +97,6 @@ public class ASTVariableDeclaratorId extends SimpleNode {
 
 
 	/**
-	 *  Convert this object to a string
-	 *
-	 *@return    a string representing this object
-	 */
-	public String toString() {
-		return super.toString() + " [" + getName() + "]";
-	}
-
-
-	/**
 	 *  Accept the visitor.
 	 *
 	 *@param  visitor  Description of Parameter
@@ -105,4 +106,29 @@ public class ASTVariableDeclaratorId extends SimpleNode {
 	public Object jjtAccept(JavaParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
+
+    public boolean isExceptionBlockParameter() {
+        return jjtGetParent().jjtGetParent() instanceof ASTTryStatement;
+    }
+
+    public SimpleNode getTypeNameNode() {
+        if (jjtGetParent().jjtGetParent() instanceof ASTLocalVariableDeclaration) {
+            return findTypeNameNode(jjtGetParent().jjtGetParent());
+        } else if (jjtGetParent() instanceof ASTFormalParameter) {
+            return findTypeNameNode(jjtGetParent());
+        } else if (jjtGetParent().jjtGetParent() instanceof ASTFieldDeclaration) {
+            return findTypeNameNode(jjtGetParent().jjtGetParent());
+        }
+        throw new RuntimeException("Don't know how to get the type for anything other than a ASTLocalVariableDeclaration/ASTFormalParameterASTFieldDeclaration");
+    }
+
+    private SimpleNode findTypeNameNode(Node node) {
+        ASTType typeNode = (ASTType) node.jjtGetFirstChild();
+        SimpleNode refNode = (SimpleNode) typeNode.jjtGetFirstChild();
+        if (refNode instanceof ASTReferenceType) {
+           return (SimpleNode) refNode.jjtGetFirstChild();
+        }
+        return (SimpleNode) typeNode.jjtGetFirstChild();
+    }
+
 }

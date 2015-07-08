@@ -74,8 +74,8 @@ import org.acm.seguin.refactor.undo.UndoStack;
  *  Creates the menubar for the command line program
  *
  *@author     Chris Seguin
- *@author     Mike Atkinson (<a href="mailto:javastyle@ladyshot.demon.co.uk">Mike</a>)
- *@version    $Version: $
+ *@author     <a href="mailto:JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: CommandLineMenu.java,v 1.5 2003/07/29 20:51:52 mikeatkinson Exp $
  *@created    October 18, 2001
  */
 public class CommandLineMenu {

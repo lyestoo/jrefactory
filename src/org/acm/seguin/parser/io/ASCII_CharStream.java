@@ -5,9 +5,11 @@ package org.acm.seguin.parser.io;
  *  contain only ASCII characters (without unicode processing).
  *
  *@author    Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: ASCII_CharStream.java,v 1.2 2003/07/29 20:51:55 mikeatkinson Exp $ 
  */
 final class ASCII_CharStream extends CharStream {
-	private static char MASK;
+	private char MASK;
 
 	/**
 	 *  Constructor for the ASCII_CharStream object
@@ -20,7 +22,7 @@ final class ASCII_CharStream extends CharStream {
 	public ASCII_CharStream(java.io.Reader dstream, int startline,
 			int startcolumn, int buffersize, boolean fullChar) {
 		if (inputStream != null) {
-			throw new Error("\n   ERROR: Second call to the constructor of a static ASCII_CharStream.  You must\n" +
+			throw new Error("\n   ERROR: Second call to the constructor of a ASCII_CharStream.  You must\n" +
 					"       either use ReInit() or set the JavaCC option STATIC to false\n" +
 					"       during the generation of this class.");
 		}
@@ -40,114 +42,13 @@ final class ASCII_CharStream extends CharStream {
 	}
 
 
-	/**
-	 *  Constructor for the ASCII_CharStream object
-	 *
-	 *@param  dstream      Description of Parameter
-	 *@param  startline    Description of Parameter
-	 *@param  startcolumn  Description of Parameter
-	 */
-	public ASCII_CharStream(java.io.Reader dstream, int startline,
-			int startcolumn, boolean useMask) {
-		this(dstream, startline, startcolumn, 4096, useMask);
-	}
-
-
-	/**
-	 *  Constructor for the ASCII_CharStream object
-	 *
-	 *@param  dstream      Description of Parameter
-	 *@param  startline    Description of Parameter
-	 *@param  startcolumn  Description of Parameter
-	 *@param  buffersize   Description of Parameter
-	 */
-	public ASCII_CharStream(java.io.InputStream dstream, int startline,
-			int startcolumn, int buffersize, boolean useMask) {
-		this(new java.io.InputStreamReader(dstream), startline, startcolumn, 4096, useMask);
-	}
-
-
-	/**
-	 *  Constructor for the ASCII_CharStream object
-	 *
-	 *@param  dstream      Description of Parameter
-	 *@param  startline    Description of Parameter
-	 *@param  startcolumn  Description of Parameter
-	 */
-	public ASCII_CharStream(java.io.InputStream dstream, int startline,
-			int startcolumn, boolean useMask) {
-		this(dstream, startline, startcolumn, 4096, useMask);
-	}
-
-
-	/**
-	 *@return        The Column value
-	 *@deprecated
-	 *@see           #getEndColumn
-	 */
-
-	public final static int getColumn() {
-		return bufcolumn[bufpos];
-	}
-
-
-	/**
-	 *@return        The Line value
-	 *@deprecated
-	 *@see           #getEndLine
-	 */
-
-	public final static int getLine() {
-		return bufline[bufpos];
-	}
-
-
-	/**
-	 *  Gets the EndColumn attribute of the ASCII_CharStream class
-	 *
-	 *@return    The EndColumn value
-	 */
-	public final static int getEndColumn() {
-		return bufcolumn[bufpos];
-	}
-
-
-	/**
-	 *  Gets the EndLine attribute of the ASCII_CharStream class
-	 *
-	 *@return    The EndLine value
-	 */
-	public final static int getEndLine() {
-		return bufline[bufpos];
-	}
-
-
-	/**
-	 *  Gets the BeginColumn attribute of the ASCII_CharStream class
-	 *
-	 *@return    The BeginColumn value
-	 */
-	public final static int getBeginColumn() {
-		return bufcolumn[tokenBegin];
-	}
-
-
-	/**
-	 *  Gets the BeginLine attribute of the ASCII_CharStream class
-	 *
-	 *@return    The BeginLine value
-	 */
-	public final static int getBeginLine() {
-		return bufline[tokenBegin];
-	}
-
 
 	/**
 	 *  Description of the Method
 	 *
 	 *@return    Description of the Returned Value
 	 */
-	public final static String GetImage() {
+	public final String GetImage() {
 		if (bufpos >= tokenBegin) {
 			return new String(buffer, tokenBegin, bufpos - tokenBegin + 1);
 		}
@@ -164,7 +65,7 @@ final class ASCII_CharStream extends CharStream {
 	 *@param  len  Description of Parameter
 	 *@return      Description of the Returned Value
 	 */
-	public final static char[] GetSuffix(int len) {
+	public final char[] GetSuffix(int len) {
 		char[] ret = new char[len];
 
 		if ((bufpos + 1) >= len) {
@@ -180,20 +81,6 @@ final class ASCII_CharStream extends CharStream {
 	}
 
 
-	/**
-	 *  Description of the Method
-	 *
-	 *@return                          Description of the Returned Value
-	 *@exception  java.io.IOException  Description of Exception
-	 */
-	public final static char BeginToken() throws java.io.IOException {
-		tokenBegin = -1;
-		char c = readChar();
-		tokenBegin = bufpos;
-
-		return c;
-	}
-
 
 	/**
 	 *  Description of the Method
@@ -201,7 +88,7 @@ final class ASCII_CharStream extends CharStream {
 	 *@return                          Description of the Returned Value
 	 *@exception  java.io.IOException  Description of Exception
 	 */
-	public final static char readChar() throws java.io.IOException {
+	public final char readChar() throws java.io.IOException {
 		if (inBuf > 0) {
 			--inBuf;
 			return (char) (MASK & buffer[(bufpos == bufsize - 1) ? (bufpos = 0) : ++bufpos]);
@@ -223,7 +110,7 @@ final class ASCII_CharStream extends CharStream {
 	 *
 	 *@param  amount  Description of Parameter
 	 */
-	public final static void backup(int amount) {
+	public final void backup(int amount) {
 
 		inBuf += amount;
 		if ((bufpos -= amount) < 0) {
@@ -240,7 +127,7 @@ final class ASCII_CharStream extends CharStream {
 	 *@param  startcolumn  Description of Parameter
 	 *@param  buffersize   Description of Parameter
 	 */
-	public static void ReInit(java.io.Reader dstream, int startline,
+	public void ReInit(java.io.Reader dstream, int startline,
 			int startcolumn, int buffersize) {
 		inputStream = dstream;
 		line = startline;
@@ -258,50 +145,11 @@ final class ASCII_CharStream extends CharStream {
 	}
 
 
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  dstream      Description of Parameter
-	 *@param  startline    Description of Parameter
-	 *@param  startcolumn  Description of Parameter
-	 */
-	public static void ReInit(java.io.Reader dstream, int startline,
-			int startcolumn) {
-		ReInit(dstream, startline, startcolumn, 4096);
-	}
-
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  dstream      Description of Parameter
-	 *@param  startline    Description of Parameter
-	 *@param  startcolumn  Description of Parameter
-	 *@param  buffersize   Description of Parameter
-	 */
-	public static void ReInit(java.io.InputStream dstream, int startline,
-			int startcolumn, int buffersize) {
-		ReInit(new java.io.InputStreamReader(dstream), startline, startcolumn, 4096);
-	}
-
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  dstream      Description of Parameter
-	 *@param  startline    Description of Parameter
-	 *@param  startcolumn  Description of Parameter
-	 */
-	public static void ReInit(java.io.InputStream dstream, int startline,
-			int startcolumn) {
-		ReInit(dstream, startline, startcolumn, 4096);
-	}
-
 
 	/**
 	 *  Description of the Method
 	 */
-	public static void Done() {
+	public void Done() {
 		buffer = null;
 		bufline = null;
 		bufcolumn = null;
@@ -315,7 +163,7 @@ final class ASCII_CharStream extends CharStream {
 	 *@param  newLine  Description of Parameter
 	 *@param  newCol   Description of Parameter
 	 */
-	public static void adjustBeginLineColumn(int newLine, int newCol) {
+	public void adjustBeginLineColumn(int newLine, int newCol) {
 		int start = tokenBegin;
 		int len;
 
@@ -367,7 +215,7 @@ final class ASCII_CharStream extends CharStream {
 	 *
 	 *@param  wrapAround  Description of Parameter
 	 */
-	private final static void ExpandBuff(boolean wrapAround) {
+	private final void ExpandBuff(boolean wrapAround) {
 		char[] newbuffer = new char[bufsize + 2048];
 		int newbufline[] = new int[bufsize + 2048];
 		int newbufcolumn[] = new int[bufsize + 2048];
@@ -417,7 +265,7 @@ final class ASCII_CharStream extends CharStream {
 	 *
 	 *@exception  java.io.IOException  Description of Exception
 	 */
-	private final static void FillBuff() throws java.io.IOException {
+	private final void FillBuff() throws java.io.IOException {
 		if (maxNextCharInd == available) {
 			if (available == bufsize) {
 				if (tokenBegin > 2048) {
@@ -470,7 +318,7 @@ final class ASCII_CharStream extends CharStream {
 	 *
 	 *@param  c  Description of Parameter
 	 */
-	private final static void UpdateLineColumn(char c) {
+	private final void UpdateLineColumn(char c) {
 		column++;
 
 		if (prevCharIsLF) {

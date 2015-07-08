@@ -61,7 +61,7 @@ import org.acm.seguin.pretty.PrettyPrintVisitor;
 import org.acm.seguin.pretty.PrintData;
 import org.acm.seguin.pretty.line.LineNumberingData;
 import org.acm.seguin.util.FileSettings;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 
 
 /**

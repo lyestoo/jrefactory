@@ -65,16 +65,6 @@ public class ASTInitializer extends SimpleNode {
 
 
 	/**
-	 *  Converts this to a string
-	 *
-	 *@return    the string
-	 */
-	public String toString() {
-		return super.toString() + " [Using static:  " + usingStatic + "]";
-	}
-
-
-	/**
 	 *  Accept the visitor.
 	 *
 	 *@param  visitor  Description of Parameter

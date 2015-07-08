@@ -172,7 +172,7 @@ public class PackageSelectorPanel extends PackageSelectorArea
      */
     public static PackageSelectorPanel openMainFrame(String directory) {
         getMainPanel(directory);
-        mainPanel.setVisible(true);
+        if (mainPanel!=null) { mainPanel.setVisible(true); }
         return mainPanel;
     }
 

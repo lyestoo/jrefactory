@@ -54,22 +54,22 @@ public class ASTPrimarySuffix extends SimpleNode {
 
 
 	/**
+	 *  Set the object's name (used for PMD testing)
+	 *
+	 *@param  newName  the new name
+	 */
+	public void setImage(String newName) {
+		name = newName.intern();
+	}
+
+
+	/**
 	 *  Get the object's name
 	 *
 	 *@return    the name
 	 */
 	public String getName() {
 		return name;
-	}
-
-
-	/**
-	 *  Convert this object to a string
-	 *
-	 *@return    a string representing this object
-	 */
-	public String toString() {
-		return super.toString() + " [" + getName() + "]";
 	}
 
 
@@ -83,4 +83,15 @@ public class ASTPrimarySuffix extends SimpleNode {
 	public Object jjtAccept(JavaParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
+    
+    private boolean isArguments;
+
+    public void setIsArguments() {
+        this.isArguments = true;
+    }
+
+    public boolean isArguments() {
+        return this.isArguments;
+    }
+
 }

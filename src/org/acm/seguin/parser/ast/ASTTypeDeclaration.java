@@ -10,6 +10,7 @@ package org.acm.seguin.parser.ast;
 
 import org.acm.seguin.parser.JavaParserVisitor;
 import org.acm.seguin.parser.JavaParser;
+import org.acm.seguin.parser.JavaParserTreeConstants;
 
 /**
  *  Declares a new type
@@ -18,6 +19,15 @@ import org.acm.seguin.parser.JavaParser;
  *@created    October 13, 1999
  */
 public class ASTTypeDeclaration extends SimpleNode {
+	/**
+	 *  Constructor for the ASTTypeDeclaration object
+	 *
+	 *@param  id  Description of Parameter
+	 */
+	public ASTTypeDeclaration() {
+		super(JavaParserTreeConstants.JJTTYPEDECLARATION);
+	}
+
 	/**
 	 *  Constructor for the ASTTypeDeclaration object
 	 *

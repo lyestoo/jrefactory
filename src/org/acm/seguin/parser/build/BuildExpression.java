@@ -19,59 +19,59 @@ public class BuildExpression {
 		ASTExpression expression = new ASTExpression(0);
 
 		ASTConditionalExpression condExpression = new ASTConditionalExpression(0);
-		expression.jjtAddChild(condExpression, 0);
+		expression.jjtAddFirstChild(condExpression);
 
 		ASTConditionalOrExpression condOrExpression = new ASTConditionalOrExpression(0);
-		condExpression.jjtAddChild(condOrExpression, 0);
+		condExpression.jjtAddFirstChild(condOrExpression);
 
 		ASTConditionalAndExpression condAndExpression = new ASTConditionalAndExpression(0);
-		condOrExpression.jjtAddChild(condAndExpression, 0);
+		condOrExpression.jjtAddFirstChild(condAndExpression);
 
 		ASTInclusiveOrExpression inclOrExpression = new ASTInclusiveOrExpression(0);
-		condAndExpression.jjtAddChild(inclOrExpression, 0);
+		condAndExpression.jjtAddFirstChild(inclOrExpression);
 
 		ASTExclusiveOrExpression exclOrExpression = new ASTExclusiveOrExpression(0);
-		inclOrExpression.jjtAddChild(exclOrExpression, 0);
+		inclOrExpression.jjtAddFirstChild(exclOrExpression);
 
 		ASTAndExpression andExpression = new ASTAndExpression(0);
-		exclOrExpression.jjtAddChild(andExpression, 0);
+		exclOrExpression.jjtAddFirstChild(andExpression);
 
 		ASTEqualityExpression equalExpression = new ASTEqualityExpression(0);
-		andExpression.jjtAddChild(equalExpression, 0);
+		andExpression.jjtAddFirstChild(equalExpression);
 
 		ASTInstanceOfExpression instanceOfExpression = new ASTInstanceOfExpression(0);
-		equalExpression.jjtAddChild(instanceOfExpression, 0);
+		equalExpression.jjtAddFirstChild(instanceOfExpression);
 
 		ASTRelationalExpression relationalExpression = new ASTRelationalExpression(0);
-		instanceOfExpression.jjtAddChild(relationalExpression, 0);
+		instanceOfExpression.jjtAddFirstChild(relationalExpression);
 
 		ASTShiftExpression shiftExpression = new ASTShiftExpression(0);
-		relationalExpression.jjtAddChild(shiftExpression, 0);
+		relationalExpression.jjtAddFirstChild(shiftExpression);
 
 		ASTAdditiveExpression addExpression = new ASTAdditiveExpression(0);
-		shiftExpression.jjtAddChild(addExpression, 0);
+		shiftExpression.jjtAddFirstChild(addExpression);
 
 		ASTMultiplicativeExpression multExpression = new ASTMultiplicativeExpression(0);
-		addExpression.jjtAddChild(multExpression, 0);
+		addExpression.jjtAddFirstChild(multExpression);
 
 		ASTUnaryExpression unaryExpression = new ASTUnaryExpression(0);
-		multExpression.jjtAddChild(unaryExpression, 0);
+		multExpression.jjtAddFirstChild(unaryExpression);
 
 		ASTUnaryExpressionNotPlusMinus uenpm = new ASTUnaryExpressionNotPlusMinus(0);
-		unaryExpression.jjtAddChild(uenpm, 0);
+		unaryExpression.jjtAddFirstChild(uenpm);
 
 		ASTPostfixExpression postfixExpression = new ASTPostfixExpression(0);
-		uenpm.jjtAddChild(postfixExpression, 0);
+		uenpm.jjtAddFirstChild(postfixExpression);
 
 		ASTPrimaryExpression primaryExpression = new ASTPrimaryExpression(0);
-		postfixExpression.jjtAddChild(primaryExpression, 0);
+		postfixExpression.jjtAddFirstChild(primaryExpression);
 
 		ASTPrimaryPrefix primaryPrefix = new ASTPrimaryPrefix(0);
-		primaryExpression.jjtAddChild(primaryPrefix, 0);
+		primaryExpression.jjtAddFirstChild(primaryPrefix);
 
-		ASTName nameNode = new ASTName(0);
+		ASTName nameNode = new ASTName();
 		nameNode.addNamePart(name);
-		primaryExpression.jjtAddChild(nameNode, 0);
+		primaryExpression.jjtAddFirstChild(nameNode);
 
 		return expression;
 	}

@@ -5,11 +5,26 @@
     <!-- Installing JRefactory menu actions: -->
     <folder name="Menu">
         <folder name="Tools">
-            <file name="org-acm-seguin-ide-netbeans-PrettyPrinterAction.instance"/>
-            <!-- Position after Options... -->
-            <attr name="org-netbeans-modules-projects-settings-OptionsAction.instance/org-acm-seguin-ide-netbeans-PrettyPrinterAction.instance" boolvalue="true"/>
-            <file name="org-acm-seguin-ide-netbeans-ExtractMethodAction.instance"/>
-            <attr name="org-acm-seguin-ide-netbeans-PrettyPrinterAction.instance/org-acm-seguin-ide-netbeans-ExtractMethodAction.instance" boolvalue="true"/>
+            <folder name="JavaStyle">
+               <file name="org-acm-seguin-ide-netbeans-PrettyPrinterAction.instance"/>
+               <file name="org-acm-seguin-ide-netbeans-JRefactoryAction.instance"/>
+               <folder name="Coding Standards">
+                  <file name="org-acm-seguin-ide-netbeans-CSCheckBufferAction.instance"/>
+                  <file name="org-acm-seguin-ide-netbeans-CSCheckAllBuffersAction.instance"/>
+                  <file name="org-acm-seguin-ide-netbeans-CSCheckDirAction.instance"/>
+                  <file name="org-acm-seguin-ide-netbeans-CSCheckDirRecursiveAction.instance"/>
+               </folder>
+               <folder name="Detect Duplicate Code">
+                  <file name="org-acm-seguin-ide-netbeans-CPDCheckBufferAction.instance"/>
+                  <file name="org-acm-seguin-ide-netbeans-CPDCheckAllBuffersAction.instance"/>
+                  <file name="org-acm-seguin-ide-netbeans-CPDCheckDirAction.instance"/>
+                  <file name="org-acm-seguin-ide-netbeans-CPDCheckDirRecursiveAction.instance"/>
+               </folder>
+               <folder name="Refactor">
+                  <file name="org-acm-seguin-ide-netbeans-ExtractMethodAction.instance"/>
+               </folder>
+               <file name="org-acm-seguin-ide-netbeans-OptionsAction.instance"/>
+            </folder>
         </folder>
     </folder>
 </filesystem>

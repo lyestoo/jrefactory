@@ -1,8 +1,7 @@
 package org.acm.seguin.parser.factory;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.EmptyStackException;
-import javax.swing.JOptionPane;
 import org.acm.seguin.parser.ast.SimpleNode;
 import org.acm.seguin.parser.JavaParser;
 import org.acm.seguin.parser.ParseException;
@@ -12,6 +11,8 @@ import org.acm.seguin.awt.ExceptionPrinter;
  *  Generates new parsers for a java file
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: ParserFactory.java,v 1.4 2003/09/18 23:07:29 mikeatkinson Exp $ 
  *@created    June 6, 1999
  */
 public abstract class ParserFactory {
@@ -42,14 +43,12 @@ public abstract class ParserFactory {
 				//  Get the parse tree
 				try {
 					root = parser.CompilationUnit();
-				}
-				catch (ParseException pe) {
+				} catch (ParseException pe) {
 					System.out.println("ParserFactory Version 0.1:  Encountered errors during parse:  " + getKey());
 					ExceptionPrinter.print(pe, interactive);
 
 					return null;
-				}
-				catch (EmptyStackException ese) {
+				} catch (EmptyStackException ese) {
 					System.out.println("ParserFactory Version 0.1:  Encountered errors during parse:  " + getKey());
 					ExceptionPrinter.print(ese, false);
 					root = null;
@@ -67,7 +66,7 @@ public abstract class ParserFactory {
 	 *
 	 *@return    the input stream
 	 */
-	protected abstract InputStream getInputStream();
+	protected abstract Reader getReader();
 
 
 	/**
@@ -76,7 +75,7 @@ public abstract class ParserFactory {
 	 *@return    the java parser
 	 */
 	protected JavaParser getParser() {
-		InputStream in = getInputStream();
+		Reader in = getReader();
 		if (in == null) {
 			return null;
 		}

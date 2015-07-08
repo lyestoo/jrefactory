@@ -11,7 +11,7 @@ import org.acm.seguin.summary.SummaryTraversal;
 import org.acm.seguin.summary.load.LoadStatus;
 import org.acm.seguin.summary.load.SilentLoadStatus;
 import org.acm.seguin.summary.load.TextLoadStatus;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 import org.acm.seguin.util.FileSettings;
 
 

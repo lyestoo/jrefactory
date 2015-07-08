@@ -53,13 +53,14 @@ package org.acm.seguin.summary;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.parser.ast.SimpleNode;
 
 /**
  *  Stores the summary of a type (either class or interface)
  *
  *@author     Chris Seguin
+ *@author     Mike Atkinson
  *@created    June 6, 1999
  */
 public class TypeSummary extends Summary {
@@ -71,7 +72,6 @@ public class TypeSummary extends Summary {
     private LinkedList methodList;
     private LinkedList fieldList;
     private LinkedList typeList;
-    private ModifierHolder modifiers;
 
 
     /**
@@ -254,16 +254,6 @@ public class TypeSummary extends Summary {
 
 
     /**
-     *  Returns the modifier holder
-     *
-     *@return    the holder
-     */
-    public ModifierHolder getModifiers() {
-        return modifiers;
-    }
-
-
-    /**
      *  Finds the package summary associated with this type
      *
      *@return    the package summary
@@ -320,15 +310,6 @@ public class TypeSummary extends Summary {
         return getName();
     }
 
-
-    /**
-     *  Sets the modifier holder
-     *
-     *@param  mod  the holder
-     */
-    protected void setModifiers(ModifierHolder mod) {
-        modifiers = mod;
-    }
 
 
     /**
@@ -427,7 +408,7 @@ public class TypeSummary extends Summary {
             while (iter.hasNext()) {
                 MethodSummary next = (MethodSummary) iter.next();
                 if (next.isInitializer()) {
-                    if (next.getModifiers().isStatic() == isStatic) {
+                    if (next.isStatic() == isStatic) {
                         return next;
                     }
                 }
@@ -483,12 +464,8 @@ public class TypeSummary extends Summary {
 
         //  Load the method summary
         //  Remember the modifiers
-        ModifierHolder holder = new ModifierHolder();
-        if (isStatic) {
-            holder.add("static");
-        }
-        holder.add("private");
-        methodSummary.setModifiers(holder);
+        methodSummary.setStatic(isStatic);
+        methodSummary.setPrivate(true);
 
         //  Load the method names
         methodSummary.setName("***Initializer***");

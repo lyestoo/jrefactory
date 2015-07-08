@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+OpenTools-UI: org.acm.seguin.ide.jbuilder.JBuilderPlugin
+

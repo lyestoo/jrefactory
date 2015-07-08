@@ -18,6 +18,7 @@ import org.acm.seguin.parser.factory.NameFactory;
 import org.acm.seguin.summary.Summary;
 import org.acm.seguin.summary.PackageSummary;
 import org.acm.seguin.summary.TypeSummary;
+import org.acm.seguin.parser.JavaParserTreeConstants;
 
 /**
  *  This object revises the import statements in the tree.
@@ -96,8 +97,8 @@ public class AddImportTransform extends TransformAST {
 		}
 
 		//  Create the import
-		ASTImportDeclaration importDecl = new ASTImportDeclaration(0);
-		importDecl.jjtAddChild(name, 0);
+		ASTImportDeclaration importDecl = new ASTImportDeclaration(JavaParserTreeConstants.JJTIMPORTDECLARATION);
+		importDecl.jjtAddFirstChild(name);
 		importDecl.setImportPackage(false);
 
 		//  Add it to the source tree
@@ -119,7 +120,7 @@ public class AddImportTransform extends TransformAST {
 			//  Check to see if we have already imported this
 			if ((!ignorePackageName) && (child instanceof ASTPackageDeclaration)) {
 				ASTPackageDeclaration decl = (ASTPackageDeclaration) child;
-				ASTName packageName = (ASTName) child.jjtGetChild(0);
+				ASTName packageName = (ASTName) child.jjtGetFirstChild();
 				if (packageName.getNameSize() + 1 == name.getNameSize()) {
 					boolean done = true;
 					for (int ndx2 = 0; ndx2 < packageName.getNameSize(); ndx2++) {
@@ -137,7 +138,7 @@ public class AddImportTransform extends TransformAST {
 			//  Check to see if we have already imported this
 			if (child instanceof ASTImportDeclaration) {
 				ASTImportDeclaration decl = (ASTImportDeclaration) child;
-				ASTName importName = (ASTName) child.jjtGetChild(0);
+				ASTName importName = (ASTName) child.jjtGetFirstChild();
 				if (importName.equals(name)) {
 					return -1;
 				}

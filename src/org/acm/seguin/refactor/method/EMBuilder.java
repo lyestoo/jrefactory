@@ -34,7 +34,9 @@ import org.acm.seguin.summary.VariableSummary;
 import org.acm.seguin.summary.TypeDeclSummary;
 
 import org.acm.seguin.parser.ast.ASTReferenceType;
-import org.acm.seguin.parser.ast.ASTVariance;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
+import org.acm.seguin.parser.JavaParserTreeConstants;
+
 
 /**
  *  Builds the invocation of the method that is extracted for insertion into
@@ -122,7 +124,7 @@ class EMBuilder
 	 */
 	public Node build()
 	{
-		ASTBlockStatement blockStatement = new ASTBlockStatement(0);
+		ASTBlockStatement blockStatement = new ASTBlockStatement(JavaParserTreeConstants.JJTBLOCKSTATEMENT);
 
 		if (localVariableNeeded) {
 			buildWithLocal(blockStatement);
@@ -132,7 +134,7 @@ class EMBuilder
 		ASTStatement statement = new ASTStatement(0);
 		blockStatement.jjtAddChild(statement, 0);
 
-		ASTStatementExpression stateExpress = new ASTStatementExpression(0);
+		ASTStatementExpression stateExpress = new ASTStatementExpression(JavaParserTreeConstants.JJTSTATEMENTEXPRESSION);
 		statement.jjtAddChild(stateExpress, 0);
 
 		ASTPrimaryExpression primaryExpression = null;
@@ -164,18 +166,18 @@ class EMBuilder
 	private void buildAssignment(ASTStatementExpression stateExpress)
 	{
 		//  First add what we are returning
-		ASTPrimaryExpression primaryExpression = new ASTPrimaryExpression(0);
+		ASTPrimaryExpression primaryExpression = new ASTPrimaryExpression(JavaParserTreeConstants.JJTPRIMARYEXPRESSION);
 		stateExpress.jjtAddChild(primaryExpression, 0);
 
-		ASTPrimaryPrefix prefix = new ASTPrimaryPrefix(0);
+		ASTPrimaryPrefix prefix = new ASTPrimaryPrefix(JavaParserTreeConstants.JJTPRIMARYPREFIX);
 		primaryExpression.jjtAddChild(prefix, 0);
 
-		ASTName name = new ASTName(0);
+		ASTName name = new ASTName();
 		name.addNamePart(returnSummary.getName());
 		primaryExpression.jjtAddChild(name, 0);
 
 		//  Now add the assignment operator
-		ASTAssignmentOperator assign = new ASTAssignmentOperator(0);
+		ASTAssignmentOperator assign = new ASTAssignmentOperator(JavaParserTreeConstants.JJTASSIGNMENTOPERATOR);
 		assign.setName("=");
 		stateExpress.jjtAddChild(assign, 1);
 
@@ -193,23 +195,23 @@ class EMBuilder
 	 */
 	private ASTPrimaryExpression buildMethodInvocation(SimpleNode stateExpress, int index)
 	{
-		ASTPrimaryExpression primaryExpression = new ASTPrimaryExpression(0);
+		ASTPrimaryExpression primaryExpression = new ASTPrimaryExpression(JavaParserTreeConstants.JJTPRIMARYEXPRESSION);
 		stateExpress.jjtAddChild(primaryExpression, index);
 
-		ASTPrimaryPrefix prefix = new ASTPrimaryPrefix(0);
+		ASTPrimaryPrefix prefix = new ASTPrimaryPrefix(JavaParserTreeConstants.JJTPRIMARYPREFIX);
 		primaryExpression.jjtAddChild(prefix, 0);
 
-		ASTName name = new ASTName(0);
+		ASTName name = new ASTName();
 		name.addNamePart(methodName);
 		primaryExpression.jjtAddChild(name, 0);
 
-		ASTPrimarySuffix suffix = new ASTPrimarySuffix(0);
+		ASTPrimarySuffix suffix = new ASTPrimarySuffix(JavaParserTreeConstants.JJTPRIMARYSUFFIX);
 		primaryExpression.jjtAddChild(suffix, 1);
 
-		ASTArguments args = new ASTArguments(0);
+		ASTArguments args = new ASTArguments(JavaParserTreeConstants.JJTARGUMENTS);
 		suffix.jjtAddChild(args, 0);
 
-		ASTArgumentList argList = new ASTArgumentList(0);
+		ASTArgumentList argList = new ASTArgumentList(JavaParserTreeConstants.JJTARGUMENTLIST);
 		args.jjtAddChild(argList, 0);
 
 		int count = 0;
@@ -237,46 +239,43 @@ class EMBuilder
 	 */
 	private void buildWithLocal(ASTBlockStatement blockStatement)
 	{
-		ASTLocalVariableDeclaration statement = new ASTLocalVariableDeclaration(0);
+		ASTLocalVariableDeclaration statement = new ASTLocalVariableDeclaration(JavaParserTreeConstants.JJTLOCALVARIABLEDECLARATION);
 		blockStatement.jjtAddChild(statement, 0);
 
-		ASTType type = new ASTType(0);
+		ASTType type = new ASTType(JavaParserTreeConstants.JJTTYPE);
 		statement.jjtAddChild(type, 0);
 
 		TypeDeclSummary typeDecl = returnSummary.getTypeDecl();
                 if (typeDecl.getArrayCount()==0 && typeDecl.isPrimitive())
 		{
-			ASTPrimitiveType primitiveType = new ASTPrimitiveType(0);
+			ASTPrimitiveType primitiveType = new ASTPrimitiveType(JavaParserTreeConstants.JJTPRIMITIVETYPE);
 			primitiveType.setName(typeDecl.getType());
 			type.jjtAddChild(primitiveType, 0);
 		}
 		else
 		{
-                        ASTReferenceType reference = new ASTReferenceType(0);
+                        ASTReferenceType reference = new ASTReferenceType(JavaParserTreeConstants.JJTREFERENCETYPE);
                         type.jjtAddChild(reference, 0);
                         if (typeDecl.isPrimitive()) {
-                            ASTPrimitiveType primitiveType = new ASTPrimitiveType(0);
+                            ASTPrimitiveType primitiveType = new ASTPrimitiveType(JavaParserTreeConstants.JJTPRIMITIVETYPE);
                             primitiveType.setName(typeDecl.getType());
                             reference.jjtAddChild(primitiveType, 0);
                         } else {
-                            ASTName name = new ASTName(0);
+                            ASTClassOrInterfaceType name = new ASTClassOrInterfaceType(JavaParserTreeConstants.JJTCLASSORINTERFACETYPE);
                             name.fromString(typeDecl.getLongName());
                             reference.jjtAddChild(name, 0);
                         }
-                        for (int ndx=0; ndx<typeDecl.getArrayCount(); ndx++) {
-                                ASTVariance variance = new ASTVariance(0);
-                                reference.jjtAddChild(variance, ndx+1);
-                        }
+                        reference.setArrayCount(typeDecl.getArrayCount());
 		}
 
-		ASTVariableDeclarator varDecl = new ASTVariableDeclarator(0);
+		ASTVariableDeclarator varDecl = new ASTVariableDeclarator(JavaParserTreeConstants.JJTVARIABLEDECLARATORID);
 		statement.jjtAddChild(varDecl, 1);
 
-		ASTVariableDeclaratorId varDeclID = new ASTVariableDeclaratorId(0);
+		ASTVariableDeclaratorId varDeclID = new ASTVariableDeclaratorId(JavaParserTreeConstants.JJTVARIABLEDECLARATORID);
 		varDeclID.setName(returnSummary.getName());
 		varDecl.jjtAddChild(varDeclID, 0);
 
-		ASTVariableInitializer initializer = new ASTVariableInitializer(0);
+		ASTVariableInitializer initializer = new ASTVariableInitializer(JavaParserTreeConstants.JJTVARIABLEINITIALIZER);
 		varDecl.jjtAddChild(initializer, 1);
 
 		buildMethodInvocation(initializer, 0);

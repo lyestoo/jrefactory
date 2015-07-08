@@ -2,7 +2,9 @@ package org.acm.seguin.refactor.type;
 
 import org.acm.seguin.parser.ChildrenVisitor;
 import org.acm.seguin.parser.ast.ASTName;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
 import org.acm.seguin.parser.ast.ASTUnmodifiedClassDeclaration;
+import org.acm.seguin.parser.JavaParserTreeConstants;
 
 /**
  *  Description of the Class 
@@ -22,11 +24,11 @@ public class RenameParentVisitor extends ChildrenVisitor {
 		String oldName = rtd.getOld().getName();
 
 		if (oldName.equals(node.getName())) {
-			if (node.jjtGetChild(0) instanceof ASTName) {
-				node.jjtAddChild(rtd.getNew(), 0);
+			if (node.jjtGetFirstChild() instanceof ASTClassOrInterfaceType) {
+				node.jjtAddChild(new ASTClassOrInterfaceType(rtd.getNew()),0);
 			}
 			else {
-				node.jjtInsertChild(rtd.getNew(), 0);
+				node.jjtInsertChild(new ASTClassOrInterfaceType(rtd.getNew()),0);
 			}
 		}
 

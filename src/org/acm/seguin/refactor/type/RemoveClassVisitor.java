@@ -67,7 +67,7 @@ public class RemoveClassVisitor extends RenameClassVisitor {
 	 */
 	protected ASTName getNewName() {
 		if (newClassName.equals("Object")) {
-			ASTName result = new ASTName(0);
+			ASTName result = new ASTName();
 			result.addNamePart(newClassName);
 			return result;
 		}
@@ -75,7 +75,7 @@ public class RemoveClassVisitor extends RenameClassVisitor {
 			return super.getNewName();
 		}
 
-		ASTName result = new ASTName(0);
+		ASTName result = new ASTName();
 		result.fromString(parentPackage);
 		result.addNamePart(newClassName);
 		return result;
@@ -94,7 +94,7 @@ public class RemoveClassVisitor extends RenameClassVisitor {
 	protected void alreadyImportsType(ComplexTransform refactoring, ASTName oldOne, 
 			FileSummary node, TypeSummary importedType) {
 		if (isSamePackage(node, importedType) || isParent(importedType)) {
-			ASTName newOne = new ASTName(0);
+			ASTName newOne = new ASTName();
 			newOne.addNamePart(newClassName);
 
 			refactoring.add(new RenameTypeTransform(oldOne, newOne, null));

@@ -11,7 +11,7 @@ package org.acm.seguin.pretty;
 import java.io.File;
 import javax.swing.JOptionPane;
 import org.acm.seguin.awt.ExceptionPrinter;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 
 /**
  *  Pretty print the source code based on the IDE

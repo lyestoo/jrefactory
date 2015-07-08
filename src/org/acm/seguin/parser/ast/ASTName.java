@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import org.acm.seguin.parser.JavaParser;
 import org.acm.seguin.parser.JavaParserVisitor;
+import org.acm.seguin.parser.JavaParserTreeConstants;
 
 /**
  *  Stores a name. The name can consist of a number of parts separated by
@@ -23,9 +24,20 @@ import org.acm.seguin.parser.JavaParserVisitor;
  */
 public class ASTName extends SimpleNode implements Cloneable {
 	//  Instance Variables
-	private Vector name;
+        protected String name = null;
 
 
+	/**
+	 *  Constructor for the ASTName object
+	 *
+	 *@param  id  Description of Parameter
+	 */
+	public ASTName()
+	{
+		super(JavaParserTreeConstants.JJTIDENTIFIER);
+	}
+   
+   
 	/**
 	 *  Constructor for the ASTName object
 	 *
@@ -34,7 +46,6 @@ public class ASTName extends SimpleNode implements Cloneable {
 	public ASTName(int id)
 	{
 		super(id);
-		name = new Vector();
 	}
 
 
@@ -47,10 +58,10 @@ public class ASTName extends SimpleNode implements Cloneable {
 	public ASTName(JavaParser p, int id)
 	{
 		super(p, id);
-		name = new Vector();
 	}
 
 
+  
 	/**
 	 *  Add a component of the name
 	 *
@@ -59,7 +70,17 @@ public class ASTName extends SimpleNode implements Cloneable {
 	 */
 	public void setNamePart(int ndx, String value)
 	{
-		name.setElementAt(value, ndx);
+		name=null;
+                int count = 0;
+                for (int i=0; i<children.length; i++) {
+                    if (children[i] instanceof ASTIdentifier) {
+                        if (count==ndx) {
+                            ((ASTIdentifier)children[i]).setName(value);
+                            return;
+                        }
+                        count++;
+                    }
+                }
 	}
 
 
@@ -71,48 +92,17 @@ public class ASTName extends SimpleNode implements Cloneable {
 	 */
 	public String getNamePart(int ndx)
 	{
-		if ((ndx >= 0) && (ndx < name.size())) {
-			return (String) name.elementAt(ndx);
-		}
+		int count = 0;
+                for (int i=0; i<children.length; i++) {
+                    if (children[i] instanceof ASTIdentifier) {
+                        if (count==ndx) {
+                            return ((ASTIdentifier)children[i]).getName();
+                        }
+                        count++;
+                    }
+                }
 
 		return null;
-	}
-
-
-	/**
-	 *  Get the object's name
-	 *
-	 *@return    the name
-	 */
-	public String getName()
-	{
-		//  Local Variables
-		StringBuffer buf = new StringBuffer();
-		Enumeration enum = name.elements();
-		boolean first = true;
-
-		//  Iterate through the parts
-		while (enum.hasMoreElements()) {
-			if (!first) {
-				buf.append(".");
-			}
-			buf.append((String) enum.nextElement());
-			first = false;
-		}
-
-		//  Return the buffer
-		return buf.toString();
-	}
-
-
-	/**
-	 *  Get the length of the name
-	 *
-	 *@return    the number of parts in the name
-	 */
-	public int getNameSize()
-	{
-		return name.size();
 	}
 
 
@@ -124,7 +114,19 @@ public class ASTName extends SimpleNode implements Cloneable {
 	 */
 	public void insertNamePart(int ndx, String value)
 	{
-		name.insertElementAt(value, ndx);
+                name=null;
+		int count = 0;
+                ASTIdentifier ident = new ASTIdentifier(JavaParserTreeConstants.JJTIDENTIFIER);
+                ident.setName(value);
+                for (int i=0; i<children.length; i++) {
+                    if (children[i] instanceof ASTIdentifier) {
+                        if (count==ndx) {
+                            jjtInsertChild(ident, i);
+                            return;
+                        }
+                        count++;
+                    }
+                }
 	}
 
 
@@ -133,20 +135,60 @@ public class ASTName extends SimpleNode implements Cloneable {
 	 *
 	 *@param  newName  the new name
 	 */
-	public void addNamePart(String newName)
-	{
-		name.addElement(newName.intern());
+	public void addNamePart(String newName) {
+      name=null;
+      ASTIdentifier ident = new ASTIdentifier(JavaParserTreeConstants.JJTIDENTIFIER);
+      ident.setName(newName);
+      jjtAddChild(ident, ((children==null) ? 0 : children.length));
 	}
 
 
 	/**
-	 *  Convert this object to a string
+	 *  Get the object's name
 	 *
-	 *@return    a string representing this object
+	 *@return    the name
 	 */
-	public String toString()
-	{
-		return super.toString() + " [" + getName() + "]";
+	public String getName() {
+      if (name==null) {
+         if (children==null) {
+            name = "";
+            return name;
+         }
+         //  Local Variables
+         StringBuffer buf = new StringBuffer();
+         boolean first = true;
+         
+         //  Iterate through the parts
+         for (int i=0; i<children.length; i++) {
+            if (children[i] instanceof ASTIdentifier) {
+               if (!first) {
+                  buf.append(".");
+               }
+               buf.append(((ASTIdentifier)children[i]).getName());
+               first = false;
+            }
+         }
+         
+         //  Return the buffer
+         name = buf.toString();
+      }
+      return name;
+	}
+
+
+	/**
+	 *  Get the length of the name
+	 *
+	 *@return    the number of parts in the name
+	 */
+	public int getNameSize() {
+      int count = 0;
+      for (int i=0; i<children.length; i++) {
+         if (children[i] instanceof ASTIdentifier) {
+            count++;
+         }
+      }
+      return count;
 	}
 
 
@@ -155,18 +197,20 @@ public class ASTName extends SimpleNode implements Cloneable {
 	 *
 	 *@param  input  Description of Parameter
 	 */
-	public void fromString(String input)
-	{
+	public void fromString(String input) {
 		//  Clean the old one
-		name.removeAllElements();
+      name = null;   //FIXME? = input
+		children = null;
 
 		//  Load it
 		StringTokenizer tok = new StringTokenizer(input, ".");
 		while (tok.hasMoreTokens()) {
 			String next = tok.nextToken();
-			name.addElement(next);
+         //System.out.println("ASTName.fromString.addNamePart("+next+")");
+			addNamePart(next);
 		}
 	}
+
 
 
 	/**
@@ -175,8 +219,7 @@ public class ASTName extends SimpleNode implements Cloneable {
 	 *@param  other  Description of Parameter
 	 *@return        Description of the Returned Value
 	 */
-	public boolean equals(Object other)
-	{
+	public boolean equals(Object other) {
 		if (other == this) {
 			return true;
 		}
@@ -184,11 +227,18 @@ public class ASTName extends SimpleNode implements Cloneable {
 			ASTName otherName = (ASTName) other;
 
 			if (otherName.getNameSize() == getNameSize()) {
-				return startsWith(otherName);
+				return getName().equals(otherName.getName());
 			}
 		}
 		return false;
 	}
+   
+   public int hashCode() {
+      if (name==null) {
+         name = getName();
+      }
+      return name.hashCode();
+   }
 
 
 	/**
@@ -217,6 +267,7 @@ public class ASTName extends SimpleNode implements Cloneable {
 	}
 
 
+
 	/**
 	 *  Change starting part. Presumes that otherName is less than the length of
 	 *  the current name.
@@ -227,7 +278,7 @@ public class ASTName extends SimpleNode implements Cloneable {
 	 */
 	public ASTName changeStartingPart(ASTName oldBase, ASTName newBase)
 	{
-		ASTName result = new ASTName(0);
+		ASTName result = new ASTName();
 
 		int last = newBase.getNameSize();
 		for (int ndx = 0; ndx < last; ndx++) {
@@ -237,24 +288,6 @@ public class ASTName extends SimpleNode implements Cloneable {
 		int end = getNameSize();
 		int start = oldBase.getNameSize();
 		for (int ndx = start; ndx < end; ndx++) {
-			result.addNamePart(getNamePart(ndx));
-		}
-
-		return result;
-	}
-
-
-	/**
-	 *  Create a copy
-	 *
-	 *@return    Description of the Returned Value
-	 */
-	public Object clone()
-	{
-		ASTName result = new ASTName(0);
-
-		int last = getNameSize();
-		for (int ndx = 0; ndx < last; ndx++) {
 			result.addNamePart(getNamePart(ndx));
 		}
 
@@ -274,4 +307,13 @@ public class ASTName extends SimpleNode implements Cloneable {
 	{
 		return visitor.visit(this, data);
 	}
+    
+	/**
+	 *  Convert this object from a string (used for PMD testing)
+	 *
+	 *@param  image  The name in form "org.test.AName" for example
+	 */
+    public void setImage(String image) {
+        fromString(image);
+    }
 }

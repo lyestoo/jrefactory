@@ -14,7 +14,7 @@ import org.acm.seguin.parser.ast.ASTName;
 import org.acm.seguin.parser.ast.ASTPrimitiveType;
 import org.acm.seguin.parser.ast.ASTType;
 import org.acm.seguin.parser.ast.SimpleNode;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.refactor.AddImportTransform;
 import org.acm.seguin.refactor.ComplexTransform;
 import org.acm.seguin.refactor.Refactoring;
@@ -129,11 +129,11 @@ public class PushUpFieldRefactoring extends FieldRefactoring {
 			return;
 		}
 
-		ASTFieldDeclaration decl = (ASTFieldDeclaration) fieldDecl.jjtGetChild(0);
-		ModifierHolder holder = decl.getModifiers();
-		if (!holder.isPublic()) {
-			holder.setPrivate(false);
-			holder.setProtected(true);
+		ASTFieldDeclaration decl = (ASTFieldDeclaration) fieldDecl.jjtGetFirstChild();
+		//ModifierHolder holder = decl.getModifiers();
+		if (!decl.isPublic()) {
+			decl.setPrivate(false);
+			decl.setProtected(true);
 		}
 
 		AddFieldTransform aft = new AddFieldTransform(fieldDecl);

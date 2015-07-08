@@ -10,9 +10,11 @@ package org.acm.seguin.refactor.type;
 
 import org.acm.seguin.parser.ChildrenVisitor;
 import org.acm.seguin.parser.ast.ASTName;
-import org.acm.seguin.parser.ast.ASTNameList;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
+import org.acm.seguin.parser.ast.ASTGenericNameList;
 import org.acm.seguin.parser.ast.ASTUnmodifiedClassDeclaration;
 import org.acm.seguin.parser.ast.SimpleNode;
+import org.acm.seguin.parser.JavaParserTreeConstants;
 
 /**
  *  Walks the parse tree and updates it
@@ -41,15 +43,15 @@ public class AddImplementedInterfaceVisitor extends ChildrenVisitor {
 	public Object visit(ASTUnmodifiedClassDeclaration node, Object data)
 	{
 		ASTName interfaceName = (ASTName) data;
-		ASTNameList nameList = null;
+		ASTGenericNameList nameList = null;
 		// Find the ASTNameList or add one
 		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-			if (node.jjtGetChild(i) instanceof ASTNameList) {
-				nameList = (ASTNameList) node.jjtGetChild(i);
+			if (node.jjtGetChild(i) instanceof ASTGenericNameList) {
+				nameList = (ASTGenericNameList) node.jjtGetChild(i);
 			}
 		}
 		if (nameList == null) {
-			nameList = new ASTNameList(0);
+			nameList = new ASTGenericNameList(JavaParserTreeConstants.JJTGENERICNAMELIST);
 			node.jjtInsertChild(nameList, node.jjtGetNumChildren() - 1);
 		}
 		// Determine whether the interface name is already in the list of implemented interfaces

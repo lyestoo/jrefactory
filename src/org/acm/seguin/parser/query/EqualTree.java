@@ -10,7 +10,7 @@ package org.acm.seguin.parser.query;
 
 import java.util.Enumeration;
 import org.acm.seguin.parser.ast.*;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 
 /**
  *  This software compares a parse tree to insure that they are identical.
@@ -125,29 +125,6 @@ public class EqualTree extends CompareParseTreeVisitor {
 		return defaultComparison(node, data);
         }  
     
-	/**
-	 *  Visit a node, comparing it with that supplied in data.
-	 *
-	 *  
-	 *@param  node  The node we are visiting
-	 *@param  data  The simple node to compare
-	 *@return       Boolean.TRUE or Boolean.FALSE
-         *@since        JRefactory 2.7.00
-         */
-        public Object visit(ASTVariance node, Object data) {
-		if (super.visit(node, data).equals(Boolean.TRUE)) {
-                        String nodeName = node.getName();
-                        String otherName = ((ASTVariance) data).getName();
-			if (nodeName== null && otherName==null) {
-				return Boolean.TRUE;
-			} else if (nodeName!=null && nodeName.equals(otherName)) {
-                                return Boolean.TRUE;
-                        }
-		}
-
-		//System.out.println("Different type:  different structure");
-		return Boolean.FALSE;
-        }
     
 	/**
 	 *  Visit a node, comparing it with that supplied in data.
@@ -351,7 +328,7 @@ public class EqualTree extends CompareParseTreeVisitor {
 	public Object visit(ASTClassDeclaration node, Object data)
 	{
 		if (super.visit(node, data).equals(Boolean.TRUE)) {
-			if (node.getModifiers().equals(((ASTClassDeclaration) data).getModifiers())) {
+			if (node.getModifiers()==((ASTClassDeclaration) data).getModifiers()) {
 				return Boolean.TRUE;
 			}
 		}
@@ -371,7 +348,7 @@ public class EqualTree extends CompareParseTreeVisitor {
 	public Object visit(ASTConstructorDeclaration node, Object data)
 	{
 		if (super.visit(node, data).equals(Boolean.TRUE)) {
-			if (node.getModifiers().equals(((ASTConstructorDeclaration) data).getModifiers()) &&
+			if (node.getModifiers() == ((ASTConstructorDeclaration) data).getModifiers() &&
 				node.getName().equals(((ASTConstructorDeclaration) data).getName())) {
 				return Boolean.TRUE;
 			}
@@ -468,9 +445,9 @@ public class EqualTree extends CompareParseTreeVisitor {
 	public Object visit(ASTFieldDeclaration node, Object data)
 	{
 		if (super.visit(node, data).equals(Boolean.TRUE)) {
-			ModifierHolder nodeModifiers = node.getModifiers();
-			ModifierHolder dataModifiers = ((ASTFieldDeclaration) data).getModifiers();
-			if (nodeModifiers.equals(dataModifiers)) {
+			int nodeModifiers = node.getModifiers();
+			int dataModifiers = ((ASTFieldDeclaration) data).getModifiers();
+			if (nodeModifiers == dataModifiers) {
 				return Boolean.TRUE;
 			}
 			//System.out.println("Different field modifiers:  [" + nodeModifiers + "] [" + dataModifiers + "}");
@@ -551,7 +528,7 @@ public class EqualTree extends CompareParseTreeVisitor {
 	public Object visit(ASTInterfaceDeclaration node, Object data)
 	{
 		if (super.visit(node, data).equals(Boolean.TRUE)) {
-			if (node.getModifiers().equals(((ASTInterfaceDeclaration) data).getModifiers())) {
+			if (node.getModifiers() == ((ASTInterfaceDeclaration) data).getModifiers()) {
 				return Boolean.TRUE;
 			}
 		}
@@ -631,9 +608,9 @@ public class EqualTree extends CompareParseTreeVisitor {
 	public Object visit(ASTMethodDeclaration node, Object data)
 	{
 		if (super.visit(node, data).equals(Boolean.TRUE)) {
-			ModifierHolder nodeModifiers = node.getModifiers();
-			ModifierHolder dataModifiers = ((ASTMethodDeclaration) data).getModifiers();
-			if (nodeModifiers.equals(dataModifiers)) {
+			int nodeModifiers = node.getModifiers();
+			int dataModifiers = ((ASTMethodDeclaration) data).getModifiers();
+			if (nodeModifiers == dataModifiers) {
 				return Boolean.TRUE;
 			}
 			//System.out.println("Different method modifiers:  [" + nodeModifiers + "] [" + dataModifiers + "}");
@@ -745,7 +722,7 @@ public class EqualTree extends CompareParseTreeVisitor {
 	public Object visit(ASTNestedClassDeclaration node, Object data)
 	{
 		if (super.visit(node, data).equals(Boolean.TRUE)) {
-			if (node.getModifiers().equals(((ASTNestedClassDeclaration) data).getModifiers())) {
+			if (node.getModifiers() == ((ASTNestedClassDeclaration) data).getModifiers()) {
 				return Boolean.TRUE;
 			}
 		}
@@ -765,7 +742,7 @@ public class EqualTree extends CompareParseTreeVisitor {
 	public Object visit(ASTNestedInterfaceDeclaration node, Object data)
 	{
 		if (super.visit(node, data).equals(Boolean.TRUE)) {
-			if (node.getModifiers().equals(((ASTNestedInterfaceDeclaration) data).getModifiers())) {
+			if (node.getModifiers() == ((ASTNestedInterfaceDeclaration) data).getModifiers()) {
 				return Boolean.TRUE;
 			}
 		}
@@ -956,14 +933,15 @@ public class EqualTree extends CompareParseTreeVisitor {
 	 */
 	public Object visit(ASTType node, Object data)
 	{
-		if (super.visit(node, data).equals(Boolean.TRUE)) {
-			if (node.getArrayCount() == ((ASTType) data).getArrayCount()) {
-				return Boolean.TRUE;
-			}
-		}
+		//if (super.visit(node, data).equals(Boolean.TRUE)) {
+		//	if (node.getArrayCount() == ((ASTType) data).getArrayCount()) {
+		//		return Boolean.TRUE;
+		//	}
+		//}
 
 		//System.out.println("Different type:  different structure");
-		return Boolean.FALSE;
+		//return Boolean.FALSE;
+                return super.visit(node, data);
 	}
 
 

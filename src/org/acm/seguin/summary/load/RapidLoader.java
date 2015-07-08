@@ -85,8 +85,6 @@ public class RapidLoader {
     public void load() {
         try {
             System.out.println("RapidLoader.load()");
-            //String filename = FileSettings.getSettingsRoot() + File.separator + ".Refactory" + File.separator + "data.sof";
-            //FileInputStream fileInput = new FileInputStream(filename);
             FileInputStream fileInput = new FileInputStream(new File(FileSettings.getRefactorySettingsRoot(), "data.sof"));
             BufferedInputStream bufferInput = new BufferedInputStream(fileInput);
             ObjectInputStream in = new ObjectInputStream(bufferInput);
@@ -112,8 +110,6 @@ public class RapidLoader {
          */
         public void run() {
             try {
-                //String filename = FileSettings.getSettingsRoot() + File.separator + ".Refactory" + File.separator + "data.sof";
-                //FileOutputStream fileOutput = new FileOutputStream(filename);
                 FileOutputStream fileOutput = new FileOutputStream(new File(FileSettings.getRefactorySettingsRoot(), "data.sof"));
                 BufferedOutputStream bufferOutput = new BufferedOutputStream(fileOutput);
                 ObjectOutputStream out = new ObjectOutputStream(bufferOutput);

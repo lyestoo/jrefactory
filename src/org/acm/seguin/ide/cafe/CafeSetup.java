@@ -58,9 +58,9 @@ import java.awt.Menu;
 import java.awt.MenuItem;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 import org.acm.seguin.util.FileSettings;
-import org.acm.seguin.refactor.RefactoringException;
+
 
 /**
  *  This class sets up the pretty printer and all the associated menu items.

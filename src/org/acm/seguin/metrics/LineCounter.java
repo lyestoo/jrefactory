@@ -8,7 +8,10 @@
  */
 package org.acm.seguin.metrics;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import org.acm.seguin.awt.ExceptionPrinter;
 
 /**

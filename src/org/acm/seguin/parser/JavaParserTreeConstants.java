@@ -27,7 +27,7 @@ public interface JavaParserTreeConstants
   public int JJTTYPEPARAMETERLIST = 8;
   public int JJTTYPEPARAMETER = 9;
   public int JJTREFERENCETYPELIST = 10;
-  public int JJTREFERENCEVARIANCE = 11;
+  public int JJTACTUALTYPEARGUMENT = 11;
   public int JJTCLASSBODY = 12;
   public int JJTNESTEDCLASSDECLARATION = 13;
   public int JJTCLASSBODYDECLARATION = 14;
@@ -43,22 +43,22 @@ public interface JavaParserTreeConstants
   public int JJTFIELDDECLARATION = 24;
   public int JJTVARIABLEDECLARATOR = 25;
   public int JJTVARIABLEDECLARATORID = 26;
-  public int JJTVARIANCE = 27;
-  public int JJTVARIABLEINITIALIZER = 28;
-  public int JJTARRAYINITIALIZER = 29;
-  public int JJTMETHODDECLARATION = 30;
-  public int JJTMETHODDECLARATOR = 31;
-  public int JJTFORMALPARAMETERS = 32;
-  public int JJTFORMALPARAMETER = 33;
-  public int JJTCONSTRUCTORDECLARATION = 34;
-  public int JJTEXPLICITCONSTRUCTORINVOCATION = 35;
-  public int JJTINITIALIZER = 36;
-  public int JJTTYPE = 37;
-  public int JJTREFERENCETYPE = 38;
-  public int JJTTYPEARGUMENTS = 39;
-  public int JJTPRIMITIVETYPE = 40;
-  public int JJTRESULTTYPE = 41;
-  public int JJTNAME = 42;
+  public int JJTVARIABLEINITIALIZER = 27;
+  public int JJTARRAYINITIALIZER = 28;
+  public int JJTMETHODDECLARATION = 29;
+  public int JJTMETHODDECLARATOR = 30;
+  public int JJTFORMALPARAMETERS = 31;
+  public int JJTFORMALPARAMETER = 32;
+  public int JJTCONSTRUCTORDECLARATION = 33;
+  public int JJTEXPLICITCONSTRUCTORINVOCATION = 34;
+  public int JJTINITIALIZER = 35;
+  public int JJTTYPE = 36;
+  public int JJTREFERENCETYPE = 37;
+  public int JJTTYPEARGUMENTS = 38;
+  public int JJTPRIMITIVETYPE = 39;
+  public int JJTRESULTTYPE = 40;
+  public int JJTNAME = 41;
+  public int JJTCLASSORINTERFACETYPE = 42;
   public int JJTNAMELIST = 43;
   public int JJTGENERICNAMELIST = 44;
   public int JJTEXPRESSION = 45;
@@ -103,9 +103,9 @@ public interface JavaParserTreeConstants
   public int JJTSWITCHLABEL = 84;
   public int JJTIFSTATEMENT = 85;
   public int JJTWHILESTATEMENT = 86;
-  public int JJTDOSTATEMENT = 87;
-  public int JJTFORSTATEMENT = 88;
-  public int JJTFORINIT = 89;
+  public int JJTFORSTATEMENT = 87;
+  public int JJTFORINIT = 88;
+  public int JJTDOSTATEMENT = 89;
   public int JJTSTATEMENTEXPRESSIONLIST = 90;
   public int JJTFORUPDATE = 91;
   public int JJTBREAKSTATEMENT = 92;
@@ -129,7 +129,7 @@ public interface JavaParserTreeConstants
     "TypeParameterList",
     "TypeParameter",
     "ReferenceTypeList",
-    "ReferenceVariance",
+    "ActualTypeArgument",
     "ClassBody",
     "NestedClassDeclaration",
     "ClassBodyDeclaration",
@@ -145,7 +145,6 @@ public interface JavaParserTreeConstants
     "FieldDeclaration",
     "VariableDeclarator",
     "VariableDeclaratorId",
-    "Variance",
     "VariableInitializer",
     "ArrayInitializer",
     "MethodDeclaration",
@@ -161,6 +160,7 @@ public interface JavaParserTreeConstants
     "PrimitiveType",
     "ResultType",
     "Name",
+    "ClassOrInterfaceType",
     "NameList",
     "GenericNameList",
     "Expression",
@@ -205,9 +205,9 @@ public interface JavaParserTreeConstants
     "SwitchLabel",
     "IfStatement",
     "WhileStatement",
-    "DoStatement",
     "ForStatement",
     "ForInit",
+    "DoStatement",
     "StatementExpressionList",
     "ForUpdate",
     "BreakStatement",

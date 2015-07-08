@@ -19,6 +19,7 @@ import java.util.Iterator;
 import org.acm.seguin.parser.ast.ASTFormalParameter;
 import org.acm.seguin.parser.ast.ASTType;
 import org.acm.seguin.parser.ast.ASTReferenceType;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
 import org.acm.seguin.parser.ast.ASTPrimitiveType;
 import org.acm.seguin.parser.ast.ASTName;
 import org.acm.seguin.summary.ParameterSummary;
@@ -55,7 +56,7 @@ abstract class IdentifyMethodVisitor extends ChildrenVisitor {
 	 */
 	protected boolean isFound(SimpleNode next) {
 		if (next instanceof ASTMethodDeclaration) {
-                    if (next.jjtGetChild(0) instanceof ASTTypeParameters) {
+                    if (next.jjtGetFirstChild() instanceof ASTTypeParameters) {
 		        return checkDeclaration((ASTMethodDeclarator) next.jjtGetChild(2));
                     } else {
 		        return checkDeclaration((ASTMethodDeclarator) next.jjtGetChild(1));
@@ -78,10 +79,10 @@ abstract class IdentifyMethodVisitor extends ChildrenVisitor {
 	 */
 	protected boolean checkDeclaration(ASTMethodDeclarator decl) {
 		if (decl.getName().equals(methodSummary.getName())) {
-                        if (decl.jjtGetChild(0) instanceof ASTTypeParameters) {
+                        if (decl.jjtGetFirstChild() instanceof ASTTypeParameters) {
                                 return checkParameters((ASTFormalParameters) decl.jjtGetChild(1));
                         } else {
-                                return checkParameters((ASTFormalParameters) decl.jjtGetChild(0));
+                                return checkParameters((ASTFormalParameters) decl.jjtGetFirstChild());
                         }
 		}
 
@@ -98,7 +99,7 @@ abstract class IdentifyMethodVisitor extends ChildrenVisitor {
 	 */
 	protected boolean checkDeclaration(ASTConstructorDeclaration decl) {
 		if (methodSummary.isConstructor()) {
-			return checkParameters((ASTFormalParameters) decl.jjtGetChild(0));
+			return checkParameters((ASTFormalParameters) decl.jjtGetFirstChild());
 		}
 
 		return false;
@@ -122,22 +123,19 @@ abstract class IdentifyMethodVisitor extends ChildrenVisitor {
 		int ndx;
 		for (ndx = 0; (iter.hasNext()) && (ndx < length); ndx++) {
 			ASTFormalParameter param = (ASTFormalParameter) params.jjtGetChild(ndx);
-			ASTType type = (ASTType) param.jjtGetChild(0);
+			ASTType type = (ASTType) param.jjtGetFirstChild();
 			String name;
 
-			if (type.jjtGetChild(0) instanceof ASTPrimitiveType) {
-				name = ((ASTPrimitiveType) type.jjtGetChild(0)).getName();
-			}
-			else if (type.jjtGetChild(0) instanceof ASTReferenceType) {
-                                ASTReferenceType reference = (ASTReferenceType) type.jjtGetChild(0);
-                                if (reference.jjtGetChild(0) instanceof ASTName) {
-                                        name = ((ASTName) reference.jjtGetChild(0)).getName();
+			if (type.jjtGetFirstChild() instanceof ASTPrimitiveType) {
+				name = ((ASTPrimitiveType) type.jjtGetFirstChild()).getName();
+			} else {
+                            // (type.jjtGetFirstChild() instanceof ASTReferenceType) {
+                                ASTReferenceType reference = (ASTReferenceType) type.jjtGetFirstChild();
+                                if (reference.jjtGetFirstChild() instanceof ASTClassOrInterfaceType) {
+                                        name = ((ASTClassOrInterfaceType) reference.jjtGetFirstChild()).getName();
                                 } else {
-                                        name = ((ASTPrimitiveType) type.jjtGetChild(0)).getName();
+                                        name = ((ASTPrimitiveType) type.jjtGetFirstChild()).getName();
                                 }
-			}
-			else {
-				name = ((ASTName) type.jjtGetChild(0)).getName();
 			}
 
 			ParameterSummary paramSummary = (ParameterSummary) iter.next();

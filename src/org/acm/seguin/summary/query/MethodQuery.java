@@ -52,7 +52,7 @@
 package org.acm.seguin.summary.query;
 
 import java.util.Iterator;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 import org.acm.seguin.summary.TypeSummary;
 import org.acm.seguin.summary.TypeDeclSummary;
 import org.acm.seguin.summary.MethodSummary;
@@ -166,14 +166,14 @@ public class MethodQuery {
     private static boolean appropriate(MethodSummary methodSummary,
             String name, int protection) {
         if (methodSummary.getName().equals(name)) {
-            ModifierHolder mods = methodSummary.getModifiers();
+            //ModifierHolder mods = methodSummary.getModifiers();
             if (protection == PRIVATE) {
                 return true;
-            } else if ((protection == DEFAULT) && !mods.isPrivate()) {
+            } else if ((protection == DEFAULT) && !methodSummary.isPrivate()) {
                 return true;
-            } else if ((protection == PROTECTED) && (mods.isPublic() || mods.isProtected())) {
+            } else if ((protection == PROTECTED) && (methodSummary.isPublic() || methodSummary.isProtected())) {
                 return true;
-            } else if ((protection == PUBLIC) && mods.isPublic()) {
+            } else if ((protection == PUBLIC) && methodSummary.isPublic()) {
                 return true;
             }
         }

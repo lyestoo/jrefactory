@@ -76,7 +76,7 @@ public class Search {
 		//System.out.println("DEBUG[Search.searchAtLevel]  #1");
 		for (int ndx = 0; ndx <= stop; ndx++) {
 			Node attempt = root.jjtGetChild(ndx);
-			Node lookingForNode = lookingFor.jjtGetChild(0);
+			Node lookingForNode = lookingFor.jjtGetFirstChild();
 			//System.out.println("DEBUG[Search.searchAtLevel]  #2 " + attempt.getClass().getName() + "  " + lookingForNode.getClass().getName());
 			Boolean same = (Boolean) attempt.jjtAccept(equalTree, lookingForNode);
 			if (same.equals(Boolean.TRUE) && findAll(root, lookingFor, ndx)) {

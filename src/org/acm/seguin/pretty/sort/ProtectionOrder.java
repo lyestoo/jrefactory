@@ -18,7 +18,7 @@ import org.acm.seguin.parser.ast.ASTNestedClassDeclaration;
 import org.acm.seguin.parser.ast.ASTConstructorDeclaration;
 import org.acm.seguin.parser.ast.ASTEnumDeclaration;
 import org.acm.seguin.parser.ast.SimpleNode;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 
 
 /**
@@ -61,34 +61,34 @@ public class ProtectionOrder extends Ordering {
 	 *@return         the objects index if it is found or 7 if it is not
 	 */
 	protected int getIndex(Object object) {
-		Object data = ((SimpleNode) object).jjtGetChild(0);
+		Object data = ((SimpleNode) object).jjtGetFirstChild();
 		if (data instanceof ASTClassBodyDeclaration) {
-			data = ((ASTClassBodyDeclaration) data).jjtGetChild(0);
+			data = ((ASTClassBodyDeclaration) data).jjtGetFirstChild();
 		}
 		else if (data instanceof ASTInterfaceMemberDeclaration) {
-			data = ((ASTInterfaceMemberDeclaration) data).jjtGetChild(0);
+			data = ((ASTInterfaceMemberDeclaration) data).jjtGetFirstChild();
 		}
 
 		int protection = 0;
 
 		//  Now that we have data, determine the type of data
 		if (data instanceof ASTEnumDeclaration) {
-			protection = getProtection(((ASTEnumDeclaration) data).getModifiers());
+			protection = getProtection((ASTEnumDeclaration) data);
 		}
 		else if (data instanceof ASTFieldDeclaration) {
-			protection = getProtection(((ASTFieldDeclaration) data).getModifiers());
+			protection = getProtection((ASTFieldDeclaration) data);
 		}
 		else if (data instanceof ASTConstructorDeclaration) {
-			protection = getProtection(((ASTConstructorDeclaration) data).getModifiers());
+			protection = getProtection((ASTConstructorDeclaration) data);
 		}
 		else if (data instanceof ASTMethodDeclaration) {
-			protection = getProtection(((ASTMethodDeclaration) data).getModifiers());
+			protection = getProtection((ASTMethodDeclaration) data);
 		}
 		else if (data instanceof ASTNestedInterfaceDeclaration) {
-			protection = getProtection(((ASTNestedInterfaceDeclaration) data).getModifiers());
+			protection = getProtection((ASTNestedInterfaceDeclaration) data);
 		}
 		else if (data instanceof ASTNestedClassDeclaration) {
-			protection = getProtection(((ASTNestedClassDeclaration) data).getModifiers());
+			protection = getProtection((ASTNestedClassDeclaration) data);
 		}
 		else {
 			return 100;

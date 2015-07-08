@@ -182,19 +182,17 @@ public class PrintingSettings {
 	 */
 	public void save() {
 		try {
-			//String dir = FileSettings.getSettingsRoot() + File.separator + ".Refactory";
-			//File directory = new File(dir);
          File directory = FileSettings.getRefactorySettingsRoot();
 			if (!directory.exists()) {
 				directory.mkdirs();
 			}
 
-			//String filename = dir + File.separator + "printing.settings";
 			FileWriter output = new FileWriter(new File(directory, "printing.settings"));
 			PrintWriter printer = new PrintWriter(output);
 			write(printer);
 			printer.close();
 			output.close();
+			init();
 		}
 		catch (IOException ioe) {
 			ExceptionPrinter.print(ioe, false);
@@ -223,6 +221,7 @@ public class PrintingSettings {
 
 		try {
 			FileSettings setting = FileSettings.getRefactorySettings("printing");
+         setting.setReloadNow(true);
 
 			textFontSize = setting.getInteger("text.font.size");
 			textSpace = setting.getInteger("text.space");

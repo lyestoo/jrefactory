@@ -150,10 +150,10 @@ import org.acm.seguin.parser.ast.ASTTypeParameter;
 import org.acm.seguin.parser.ast.ASTTypeArguments;
 import org.acm.seguin.parser.ast.ASTReferenceTypeList;
 import org.acm.seguin.parser.ast.ASTReferenceType;
-import org.acm.seguin.parser.ast.ASTReferenceVariance;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
+import org.acm.seguin.parser.ast.ASTActualTypeArgument;
 import org.acm.seguin.parser.ast.ASTTypeParameters;
 import org.acm.seguin.parser.ast.ASTGenericNameList;
-import org.acm.seguin.parser.ast.ASTVariance;
 import org.acm.seguin.parser.ast.ASTEnumDeclaration;
 import org.acm.seguin.parser.ast.ASTEnumElement;
 import org.acm.seguin.parser.ast.ASTIdentifier;
@@ -200,13 +200,20 @@ public class LineCountVisitor implements JavaParserVisitor {
             if (ndx > 0) {
                 countLines(node.getSpecial("comma." + (ndx-1)));
             }
-            Node child = node.jjtGetChild(ndx);
-            child.jjtAccept(this, data);
+            node.jjtGetChild(ndx).jjtAccept(this, data);
         }
         return data;
     }
     public Object visit(ASTTypeParameter node, Object data) {
-        //System.out.println("FIXME: visit(ASTTypeParameter)");
+        int countChildren = node.jjtGetNumChildren();
+        for (int ndx = 0; ndx < countChildren; ndx++) {
+            if (ndx == 1) {
+                countLines(node.getSpecial("extends." + (ndx-1)));
+            } if (ndx >1) {
+                countLines(node.getSpecial("and." + (ndx-1)));
+            }
+            node.jjtGetChild(ndx).jjtAccept(this, data);
+        }
         return data;
     }
     public Object visit(ASTTypeArguments node, Object data) {
@@ -216,8 +223,7 @@ public class LineCountVisitor implements JavaParserVisitor {
             if (ndx > 0) {
                 countLines(node.getSpecial("comma." + (ndx-1)));
             }
-            Node child = node.jjtGetChild(ndx);
-            child.jjtAccept(this, data);
+            node.jjtGetChild(ndx).jjtAccept(this, data);
         }
         countLines(node.getSpecial(">."));
         return data;
@@ -237,12 +243,27 @@ public class LineCountVisitor implements JavaParserVisitor {
     }
     public Object visit(ASTReferenceType node, Object data) {
         node.childrenAccept(this, data);   //  Traverse the children
+        //  Add the array
+        int count = node.getArrayCount();
+        for (int ndx = 0; ndx < count; ndx++) {
+            countLines(node.getSpecial("[." + ndx));
+            countLines(node.getSpecial("]." + ndx));
+        }
         return data;
     }
-    public Object visit(ASTReferenceVariance node, Object data) {
-        countLines(node.getSpecial("star"));
-        countLines(node.getSpecial("plus"));
-        countLines(node.getSpecial("minus"));
+    public Object visit(ASTClassOrInterfaceType node, Object data) {
+        node.childrenAccept(this, data);   //  Traverse the children
+        //  Add the array
+        int count = node.getNameSize();
+        for (int ndx = 0; ndx < count; ndx++) {
+            countLines(node.getSpecial("period." + ndx));
+        }
+        return data;
+    }
+    public Object visit(ASTActualTypeArgument node, Object data) {
+        countLines(node.getSpecial("?"));
+        countLines(node.getSpecial("extends"));
+        countLines(node.getSpecial("super"));
         node.childrenAccept(this, data);   //  Traverse the children
         return data;
     }
@@ -254,23 +275,15 @@ public class LineCountVisitor implements JavaParserVisitor {
     }
     public Object visit(ASTGenericNameList node, Object data) {
         //  Traverse the children
-        int commaCount = 0;
         int countChildren = node.jjtGetNumChildren();
         for (int ndx = 0; ndx < countChildren; ndx++) {
             Node child = node.jjtGetChild(ndx);
-            if (ndx > 0 && child instanceof ASTName) {
-                countLines(node.getSpecial("comma." + commaCount));
-                commaCount++;
+            if (ndx > 0 && child instanceof ASTClassOrInterfaceType) {
+                countLines(node.getSpecial("comma." + (ndx - 1)));
             }
             child.jjtAccept(this, data);
         }
         return data;//  Return the data
-    }
-    public Object visit(ASTVariance node, Object data) {
-        countLines(node.getSpecial("[."));
-        countLines(node.getSpecial("id"));
-        countLines(node.getSpecial("]."));
-        return data;
     }
     public Object visit(ASTEnumDeclaration node, Object data) {
         countLines(node.getSpecial("static"));
@@ -280,7 +293,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         countLines(node.getSpecial("private"));
 
         countLines(node.getSpecial("enum"));
-        Node child = node.jjtGetChild(0);
+        Node child = node.jjtGetFirstChild();
         child.jjtAccept(this, data);
         
         int n=1;
@@ -426,7 +439,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         countLines(node.getSpecial("abstract"));
 
         //  Get the child
-        SimpleNode child = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode child = (SimpleNode) node.jjtGetFirstChild();
         countLines(child.getSpecial("class"));
 
         //  Traverse the children
@@ -453,7 +466,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         int lastIndex = node.jjtGetNumChildren();
         for (int ndx = 0; ndx < lastIndex; ndx++) {
             Node next = node.jjtGetChild(ndx);
-            if (next instanceof ASTName) {
+            if (next instanceof ASTClassOrInterfaceType) {
                 countLines(node.getSpecial("extends"));
                 next.jjtAccept(this, data);
             } else if (next instanceof ASTGenericNameList) {
@@ -510,7 +523,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         countLines(node.getSpecial("strictfp"));
 
         //  Get the child
-        SimpleNode child = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode child = (SimpleNode) node.jjtGetFirstChild();
         countLines(child.getSpecial("class"));
 
         //  Traverse the children
@@ -562,7 +575,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         countLines(node.getSpecial("strictfp"));
 
         //  Get the child
-        SimpleNode child = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode child = (SimpleNode) node.jjtGetFirstChild();
         countLines(child.getSpecial("interface"));
 
         //  Traverse the children
@@ -592,7 +605,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         countLines(node.getSpecial("private"));
 
         //  Get the child
-        SimpleNode child = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode child = (SimpleNode) node.jjtGetFirstChild();
         countLines(child.getSpecial("interface"));
 
         //  Traverse the children
@@ -685,7 +698,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         countLines(node.getSpecial("private"));
 
         //  Handle the first two children (which are required)
-        Node next = node.jjtGetChild(0);
+        Node next = node.jjtGetFirstChild();
         next.jjtAccept(this, data);
         next = node.jjtGetChild(1);
         next.jjtAccept(this, data);
@@ -716,7 +729,7 @@ public class LineCountVisitor implements JavaParserVisitor {
     public Object visit(ASTVariableDeclarator node, Object data) {
 
         //  Handle the first child (which is required)
-        Node next = node.jjtGetChild(0);
+        Node next = node.jjtGetFirstChild();
         next.jjtAccept(this, data);
 
         //  Traverse the rest of the children
@@ -744,7 +757,8 @@ public class LineCountVisitor implements JavaParserVisitor {
         countLines(node.getSpecial("id"));
         int last = node.getArrayCount();
         for (int ndx = 0; ndx < last; ndx++) {
-           node.jjtGetChild(ndx).jjtAccept(this, data);
+            countLines(node.getSpecial("[." + ndx));
+            countLines(node.getSpecial("]." + ndx));
         }
 
         //  Return the data
@@ -812,7 +826,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         countLines(node.getSpecial("native"));
         countLines(node.getSpecial("strictfp"));
         countLines(node.getSpecial("synchronized"));
-        countLines(getInitialToken((ASTResultType) node.jjtGetChild(0)));
+        countLines(getInitialToken((ASTResultType) node.jjtGetFirstChild()));
 
         //  Handle the first two/three children (which are required)
         int child = 0;
@@ -863,17 +877,13 @@ public class LineCountVisitor implements JavaParserVisitor {
         //  Handle the first child (which is required)
         countLines(node.getSpecial("id"));
         node.childrenAccept(this, data);
-        /*
+
         int last = node.getArrayCount();
         for (int ndx = 0; ndx < last; ndx++) {
-            if (node.jjtGetChild(ndx+1) instanceof ASTVariance) {
-                node.jjtGetChild(ndx+1).jjtAccept(this, data);
-            } else {
-                countLines(node.getSpecial("[." + ndx));
-                countLines(node.getSpecial("]." + ndx));
-            }
+            countLines(node.getSpecial("[." + ndx));
+            countLines(node.getSpecial("]." + ndx));
         }
-        */
+
 
         //  Return the data
         return data;
@@ -926,7 +936,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         }
 
         //  Traverse the children
-        Node next = node.jjtGetChild(0);
+        Node next = node.jjtGetFirstChild();
         next.jjtAccept(this, data);
         next = node.jjtGetChild(1);
         next.jjtAccept(this, data);
@@ -1009,8 +1019,8 @@ public class LineCountVisitor implements JavaParserVisitor {
 
         //  Print the name of the node
         int startWith = 0;
-        if (node.jjtGetChild(0) instanceof ASTPrimaryExpression) {
-            node.jjtGetChild(0).jjtAccept(this, data);
+        if (node.jjtGetFirstChild() instanceof ASTPrimaryExpression) {
+            node.jjtGetFirstChild().jjtAccept(this, data);
             startWith++;
             countLines(node.getSpecial("."));
         }
@@ -1183,9 +1193,9 @@ public class LineCountVisitor implements JavaParserVisitor {
         //  Traverse the children
         int childCount = node.jjtGetNumChildren();
         if (childCount == 1) {
-            node.jjtGetChild(0).jjtAccept(this, data);
+            node.jjtGetFirstChild().jjtAccept(this, data);
         } else {
-            node.jjtGetChild(0).jjtAccept(this, data);
+            node.jjtGetFirstChild().jjtAccept(this, data);
             countLines(node.getSpecial("?"));
             node.jjtGetChild(1).jjtAccept(this, data);
             countLines(node.getSpecial(":"));
@@ -1339,7 +1349,7 @@ public class LineCountVisitor implements JavaParserVisitor {
     public Object visit(ASTUnaryExpression node, Object data) {
 
         //  Traverse the children
-        Node child = node.jjtGetChild(0);
+        Node child = node.jjtGetFirstChild();
         if (child instanceof ASTUnaryExpression) {
             countLines(node.getSpecial("operator"));
         }
@@ -1400,7 +1410,7 @@ public class LineCountVisitor implements JavaParserVisitor {
     public Object visit(ASTUnaryExpressionNotPlusMinus node, Object data) {
 
         //  Traverse the children
-        Node child = node.jjtGetChild(0);
+        Node child = node.jjtGetFirstChild();
         if (child instanceof ASTUnaryExpression) {
             countLines(node.getSpecial("operator"));
         }
@@ -1459,7 +1469,7 @@ public class LineCountVisitor implements JavaParserVisitor {
 
         //  Cast portion
         countLines(node.getSpecial("begin"));
-        node.jjtGetChild(0).jjtAccept(this, data);
+        node.jjtGetFirstChild().jjtAccept(this, data);
         countLines(node.getSpecial("end"));
 
         //  Expression
@@ -1501,7 +1511,7 @@ public class LineCountVisitor implements JavaParserVisitor {
             countLines(node.getSpecial("this"));
             countLines(node.getSpecial("id"));
         } else {
-            Node child = node.jjtGetChild(0);
+            Node child = node.jjtGetFirstChild();
             if ((child instanceof ASTLiteral) ||
                     (child instanceof ASTName) ||
                     (child instanceof ASTAllocationExpression)) {
@@ -1537,7 +1547,7 @@ public class LineCountVisitor implements JavaParserVisitor {
             countLines(node.getSpecial("dot"));
             countLines(node.getSpecial("id"));
         } else {
-            Node child = node.jjtGetChild(0);
+            Node child = node.jjtGetFirstChild();
             if (child instanceof ASTArguments) {
                 child.jjtAccept(this, data);
             } else if (child instanceof ASTExpression) {
@@ -1676,11 +1686,21 @@ public class LineCountVisitor implements JavaParserVisitor {
                 countLines(node.getSpecial("[." + ndx));
                 node.jjtGetChild(ndx).jjtAccept(this, data);
                 countLines(node.getSpecial("]." + ndx));
-            } else if (node.jjtGetChild(ndx) instanceof ASTVariance) {
-                node.jjtGetChild(ndx).jjtAccept(this, data);
             } else if (node.jjtGetChild(ndx) instanceof ASTArrayInitializer) {
-                node.jjtGetChild(ndx).jjtAccept(this, data);
+                foundInitializer = true;
             }
+        }
+        int looping = node.getArrayCount();
+        if (foundInitializer) {
+            looping++;
+        }
+
+        for (int ndx = last; ndx < looping; ndx++) {
+            countLines(node.getSpecial("[." + ndx));
+            countLines(node.getSpecial("]." + ndx));
+        }
+        if (foundInitializer) {
+            node.jjtGetChild(last - 1).jjtAccept(this, data);
         }
 
         //  Return the data
@@ -1699,7 +1719,7 @@ public class LineCountVisitor implements JavaParserVisitor {
 
         //  Traverse the children
         node.childrenAccept(this, data);
-        if (node.jjtGetChild(0) instanceof ASTStatementExpression) {
+        if (node.jjtGetFirstChild() instanceof ASTStatementExpression) {
             //  Finish off the statement expression
             countLines(node.getSpecial("semicolon"));
         }
@@ -1763,7 +1783,7 @@ public class LineCountVisitor implements JavaParserVisitor {
 
         //  Include the stuff before the class/interface declaration
         if (node.hasAnyChildren()) {
-            SimpleNode child = (SimpleNode) node.jjtGetChild(0);
+            SimpleNode child = (SimpleNode) node.jjtGetFirstChild();
 
             if (node.isFinal()) {
                 countLines(node.getSpecial("final"));
@@ -1840,9 +1860,9 @@ public class LineCountVisitor implements JavaParserVisitor {
     public Object visit(ASTStatementExpression node, Object data) {
 
         //  Traverse the children
-        if (node.jjtGetChild(0) instanceof ASTPrimaryExpression) {
+        if (node.jjtGetFirstChild() instanceof ASTPrimaryExpression) {
             int last = node.jjtGetNumChildren();
-            node.jjtGetChild(0).jjtAccept(this, data);
+            node.jjtGetFirstChild().jjtAccept(this, data);
             countLines(node.getSpecial("id"));
             for (int ndx = 1; ndx < last; ndx++) {
                 node.jjtGetChild(ndx).jjtAccept(this, data);
@@ -1868,7 +1888,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         //  Switch
         countLines(node.getSpecial("switch"));
         countLines(node.getSpecial("beginExpr"));
-        node.jjtGetChild(0).jjtAccept(this, data);
+        node.jjtGetFirstChild().jjtAccept(this, data);
         countLines(node.getSpecial("endExpr"));
 
         //  Start the block
@@ -1929,7 +1949,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         //  Determine if the node has children
         countLines(node.getSpecial("if"));
         countLines(node.getSpecial("beginExpr"));
-        node.jjtGetChild(0).jjtAccept(this, data);
+        node.jjtGetFirstChild().jjtAccept(this, data);
         countLines(node.getSpecial("endExpr"));
 
         //  Determine if the then contains a block
@@ -1943,7 +1963,7 @@ public class LineCountVisitor implements JavaParserVisitor {
             countLines(node.getSpecial("else"));
             //  Determine if the next item is a statement
             ASTStatement child = (ASTStatement) node.jjtGetChild(2);
-            Node next = child.jjtGetChild(0);
+            Node next = child.jjtGetFirstChild();
             if (next instanceof ASTIfStatement) {
                 next.jjtAccept(this, data);
             } else {
@@ -1968,7 +1988,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         //  Determine if the node has children
         countLines(node.getSpecial("while"));
         countLines(node.getSpecial("beginExpr"));
-        node.jjtGetChild(0).jjtAccept(this, data);
+        node.jjtGetFirstChild().jjtAccept(this, data);
         countLines(node.getSpecial("endExpr"));
 
         //  Process the block
@@ -1992,7 +2012,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         countLines(node.getSpecial("do"));
 
         //  Process the block
-        forceBlock(node.jjtGetChild(0), data);
+        forceBlock(node.jjtGetFirstChild(), data);
 
         //  Process the while block
         countLines(node.getSpecial("while"));
@@ -2020,7 +2040,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         countLines(node.getSpecial("beginExpr"));
 
         //  Traverse the children
-        Node next = node.jjtGetChild(0);
+        Node next = node.jjtGetFirstChild();
         int index = 1;
         if (next instanceof ASTLocalVariableDeclaration) {
             next.jjtAccept(this, data);
@@ -2065,7 +2085,7 @@ public class LineCountVisitor implements JavaParserVisitor {
     public Object visit(ASTForInit node, Object data) {
 
         //  Traverse the children
-        Node next = node.jjtGetChild(0);
+        Node next = node.jjtGetFirstChild();
         if (next instanceof ASTLocalVariableDeclaration) {
             forInit((ASTLocalVariableDeclaration) next, data);
         } else {
@@ -2214,7 +2234,7 @@ public class LineCountVisitor implements JavaParserVisitor {
         //  Traverse the children
         countLines(node.getSpecial("synchronized"));
         countLines(node.getSpecial("beginExpr"));
-        node.jjtGetChild(0).jjtAccept(this, data);
+        node.jjtGetFirstChild().jjtAccept(this, data);
         countLines(node.getSpecial("endExpr"));
         node.jjtGetChild(1).jjtAccept(this, data);
 
@@ -2233,7 +2253,7 @@ public class LineCountVisitor implements JavaParserVisitor {
     public Object visit(ASTTryStatement node, Object data) {
         //  Traverse the children
         countLines(node.getSpecial("try"));
-        node.jjtGetChild(0).jjtAccept(this, data);
+        node.jjtGetFirstChild().jjtAccept(this, data);
 
         //  Now work with the pairs
         int last = node.jjtGetNumChildren();
@@ -2273,7 +2293,7 @@ public class LineCountVisitor implements JavaParserVisitor {
     {
         //  Traverse the children
         countLines(node.getSpecial("assert"));
-        node.jjtGetChild(0).jjtAccept(this, data);
+        node.jjtGetFirstChild().jjtAccept(this, data);
         if (node.jjtGetNumChildren() > 1) {
 	        countLines(node.getSpecial("colon"));
 	        node.jjtGetChild(1).jjtAccept(this, data);
@@ -2351,9 +2371,9 @@ public class LineCountVisitor implements JavaParserVisitor {
      */
     protected void forceBlock(Node node, Object data) {
         if ((node.jjtGetNumChildren() > 0) &&
-                (node.jjtGetChild(0) instanceof ASTBlock)) {
+                (node.jjtGetFirstChild() instanceof ASTBlock)) {
             //  We know we have a block
-            ASTBlock child = (ASTBlock) node.jjtGetChild(0);
+            ASTBlock child = (ASTBlock) node.jjtGetFirstChild();
 
             child.jjtAccept(this, data);
         } else {
@@ -2372,7 +2392,7 @@ public class LineCountVisitor implements JavaParserVisitor {
 
         //  Traverse the children
         int last = node.jjtGetNumChildren();
-        Node typeNode = node.jjtGetChild(0);
+        Node typeNode = node.jjtGetFirstChild();
         typeNode.jjtAccept(this, data);
 
         for (int ndx = 1; ndx < last; ndx++) {
@@ -2401,31 +2421,33 @@ public class LineCountVisitor implements JavaParserVisitor {
     protected Token getInitialToken(ASTResultType top) {
         //  Check to see if we need to go farther down
         if (top.hasAnyChildren()) {
-            ASTType type = (ASTType) top.jjtGetChild(0);
-            if (type.jjtGetChild(0) instanceof ASTPrimitiveType) {
-                ASTPrimitiveType primitiveType = (ASTPrimitiveType) type.jjtGetChild(0);
+            ASTType type = (ASTType) top.jjtGetFirstChild();
+            if (type.jjtGetFirstChild() instanceof ASTPrimitiveType) {
+                ASTPrimitiveType primitiveType = (ASTPrimitiveType) type.jjtGetFirstChild();
                 Token tok = primitiveType.getSpecial("primitive");
                 primitiveType.removeSpecial("primitive");
                 return tok;
             }
-            else if (type.jjtGetChild(0) instanceof ASTReferenceType) {
-                    ASTReferenceType reference = (ASTReferenceType) type.jjtGetChild(0);
-                    if (reference.jjtGetChild(0) instanceof ASTPrimitiveType) {
-                            ASTPrimitiveType primitiveType = (ASTPrimitiveType) reference.jjtGetChild(0);
+            else if (type.jjtGetFirstChild() instanceof ASTReferenceType) {
+                    ASTReferenceType reference = (ASTReferenceType) type.jjtGetFirstChild();
+                    if (reference.jjtGetFirstChild() instanceof ASTPrimitiveType) {
+                            ASTPrimitiveType primitiveType = (ASTPrimitiveType) reference.jjtGetFirstChild();
                             Token tok = primitiveType.getSpecial("primitive");
                             primitiveType.removeSpecial("primitive");
                             return tok;
                     } else {
-                            ASTName name = (ASTName) reference.jjtGetChild(0);
-                            Token tok = name.getSpecial("id0");
-                            name.removeSpecial("id0");
+                            ASTClassOrInterfaceType name = (ASTClassOrInterfaceType) reference.jjtGetFirstChild();
+                            ASTIdentifier id = (ASTIdentifier) name.jjtGetFirstChild();
+                            Token tok = id.getSpecial("id");
+                            id.removeSpecial("id");
                             return tok;
                     }
             }
             else {
-                ASTName name = (ASTName) type.jjtGetChild(0);
-                Token tok = name.getSpecial("id0");
-                name.removeSpecial("id0");
+                ASTClassOrInterfaceType name = (ASTClassOrInterfaceType) type.jjtGetFirstChild();
+                ASTIdentifier id = (ASTIdentifier) name.jjtGetFirstChild();
+                Token tok = id.getSpecial("id");
+                id.removeSpecial("id");
                 return tok;
             }
         } else {
@@ -2464,10 +2486,11 @@ public class LineCountVisitor implements JavaParserVisitor {
         Token current = first;
         while (current != null) {
             switch (current.kind) {
-                case 4:
+                //case 4:
                 case 5:
                 case 6:
                 case 7:
+                case 8:
                     lineCount++;
                     break;
                 case JavaParserConstants.SINGLE_LINE_COMMENT:

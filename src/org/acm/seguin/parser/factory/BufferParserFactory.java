@@ -8,13 +8,15 @@
  */
 package org.acm.seguin.parser.factory;
 
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
+import java.io.Reader;
+import java.io.StringReader;
 
 /**
  *  Generates new parsers for a java file
  *
  *@author     Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: BufferParserFactory.java,v 1.2 2003/07/29 20:51:55 mikeatkinson Exp $ 
  *@created    June 6, 1999
  */
 public class BufferParserFactory extends ParserFactory {
@@ -37,8 +39,8 @@ public class BufferParserFactory extends ParserFactory {
 	 *
 	 *@return    the input stream
 	 */
-	protected InputStream getInputStream() {
-		return new ByteArrayInputStream(inputBuffer.getBytes());
+	protected Reader getReader() {
+            return new StringReader(inputBuffer);
 	}
 
 

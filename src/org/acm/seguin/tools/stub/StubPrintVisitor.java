@@ -148,10 +148,10 @@ import org.acm.seguin.parser.ast.ASTTypeParameter;
 import org.acm.seguin.parser.ast.ASTTypeArguments;
 import org.acm.seguin.parser.ast.ASTReferenceTypeList;
 import org.acm.seguin.parser.ast.ASTReferenceType;
-import org.acm.seguin.parser.ast.ASTReferenceVariance;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
+import org.acm.seguin.parser.ast.ASTActualTypeArgument;
 import org.acm.seguin.parser.ast.ASTTypeParameters;
 import org.acm.seguin.parser.ast.ASTGenericNameList;
-import org.acm.seguin.parser.ast.ASTVariance;
 import org.acm.seguin.parser.ast.ASTEnumDeclaration;
 import org.acm.seguin.parser.ast.ASTEnumElement;
 import org.acm.seguin.parser.ast.ASTIdentifier;
@@ -212,10 +212,34 @@ public class StubPrintVisitor implements JavaParserVisitor {
     public Object visit(ASTReferenceType node, Object data) {
         PrintData printData = (PrintData) data; //  Get the data
         node.childrenAccept(this, data);        //  Accept the children
+        //  Add the array
+        int count = node.getArrayCount();
+        for (int ndx = 0; ndx < count; ndx++) {
+            printData.appendText("[");
+            printData.appendText("]");
+        }
         printData.flush();                      //  Flush the buffer
         return data;                            //  Return the data
     }
-    public Object visit(ASTReferenceVariance node, Object data) {
+    /**
+     *  Description of the Method
+     *
+     *@param  node  Description of Parameter
+     *@param  data  Description of Parameter
+     *@return       Description of the Returned Value
+     */
+    public Object visit(ASTClassOrInterfaceType node, Object data) {
+        //  Get the data
+        PrintData printData = (PrintData) data;
+
+        //  Print the name of the node
+        printData.appendText(node.getName());
+
+        //  Return the data
+        return data;
+    }
+
+    public Object visit(ASTActualTypeArgument node, Object data) {
         PrintData printData = (PrintData) data; //  Get the data
         node.childrenAccept(this, data);        //  Accept the children
         printData.flush();                      //  Flush the buffer
@@ -227,20 +251,28 @@ public class StubPrintVisitor implements JavaParserVisitor {
         printData.flush();                      //  Flush the buffer
         return data;                            //  Return the data
     }
+    /**
+     *  Description of the Method
+     *
+     *@param  node  Description of Parameter
+     *@param  data  Description of Parameter
+     *@return       Description of the Returned Value
+     */
     public Object visit(ASTGenericNameList node, Object data) {
         PrintData printData = (PrintData) data; //  Get the data
-        node.childrenAccept(this, data);        //  Accept the children
-        printData.flush();                      //  Flush the buffer
-        return data;                            //  Return the data
+        //  Traverse the children
+        int countChildren = node.jjtGetNumChildren();
+        for (int ndx = 0; ndx < countChildren; ndx++) {
+            if (ndx > 0) {
+                printData.appendText(", ");
+            }
+            Node child = node.jjtGetChild(ndx);
+            child.jjtAccept(this, data);
+        }
+        return data;  //  Return the data
     }
-    public Object visit(ASTVariance node, Object data) {
-        PrintData printData = (PrintData) data; //  Get the data
-        printData.appendText("[");
-        printData.appendText(node.getName());
-        printData.appendText("]");
-        printData.flush();                      //  Flush the buffer
-        return data;                            //  Return the data
-    }
+
+
     public Object visit(ASTEnumDeclaration node, Object data) {
         PrintData printData = (PrintData) data; //  Get the data
         node.childrenAccept(this, data);        //  Accept the children
@@ -386,7 +418,7 @@ public class StubPrintVisitor implements JavaParserVisitor {
         PrintData printData = (PrintData) data;
 
         //  Get the child
-        SimpleNode child = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode child = (SimpleNode) node.jjtGetFirstChild();
 
         //  Indent and insert the modifiers
         printData.indent();
@@ -419,7 +451,7 @@ public class StubPrintVisitor implements JavaParserVisitor {
         int lastIndex = node.jjtGetNumChildren();
         for (int ndx = 0; ndx < lastIndex; ndx++) {
             Node next = node.jjtGetChild(ndx);
-            if (next instanceof ASTName) {
+            if (next instanceof ASTClassOrInterfaceType) {
                 printData.appendKeyword(" extends ");
                 next.jjtAccept(this, data);
             } else if (next instanceof ASTNameList) {
@@ -479,7 +511,7 @@ public class StubPrintVisitor implements JavaParserVisitor {
         printData.beginClass();
 
         //  Get the child
-        SimpleNode child = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode child = (SimpleNode) node.jjtGetFirstChild();
 
         //  Indent and include the modifiers
         printData.indent();
@@ -536,7 +568,7 @@ public class StubPrintVisitor implements JavaParserVisitor {
         PrintData printData = (PrintData) data;
 
         //  Get the child
-        SimpleNode child = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode child = (SimpleNode) node.jjtGetFirstChild();
 
         //  Indent and add the modifiers
         printData.indent();
@@ -569,7 +601,7 @@ public class StubPrintVisitor implements JavaParserVisitor {
         printData.beginInterface();
 
         //  Get the child
-        SimpleNode child = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode child = (SimpleNode) node.jjtGetFirstChild();
 
         //  Force the Javadoc to be included
         if (node.isRequired()) {
@@ -693,7 +725,7 @@ public class StubPrintVisitor implements JavaParserVisitor {
         printData.appendKeyword(node.getModifiersString(PrintData.STANDARD_ORDER));
 
         //  Handle the first two children (which are required)
-        Node next = node.jjtGetChild(0);
+        Node next = node.jjtGetFirstChild();
         next.jjtAccept(this, data);
         printData.space();
         next = node.jjtGetChild(1);
@@ -729,7 +761,7 @@ public class StubPrintVisitor implements JavaParserVisitor {
         PrintData printData = (PrintData) data;
 
         //  Handle the first child (which is required)
-        Node next = node.jjtGetChild(0);
+        Node next = node.jjtGetFirstChild();
         next.jjtAccept(this, data);
 
         //  Return the data
@@ -945,7 +977,7 @@ public class StubPrintVisitor implements JavaParserVisitor {
         }
 
         //  Traverse the children
-        Node next = node.jjtGetChild(0);
+        Node next = node.jjtGetFirstChild();
         next.jjtAccept(this, data);
         printData.space();
         next = node.jjtGetChild(1);
@@ -1060,15 +1092,6 @@ public class StubPrintVisitor implements JavaParserVisitor {
 
         //  Traverse the children
         node.childrenAccept(this, data);
-
-        //  Add the array
-        /*
-        int count = node.getArrayCount();
-        for (int ndx = 0; ndx < count; ndx++) {
-            printData.appendText("[");
-            printData.appendText("]");
-        }
-        */
 
         //  Return the data
         return data;

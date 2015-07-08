@@ -55,7 +55,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 import org.acm.seguin.summary.TypeSummary;
 import org.acm.seguin.uml.line.DragPanelAdapter;
-import org.acm.seguin.pretty.ModifierHolder;
+import org.acm.seguin.parser.ast.ModifierHolder;
 
 /**
  *  Displays a single UML nested type in a line
@@ -85,9 +85,9 @@ public class UMLNestedType extends UMLLine implements ISourceful {
         current = initCurrent;
 
         //  Reset the parent data
-        ModifierHolder modifiers = summary.getModifiers();
+        //ModifierHolder modifiers = summary.getModifiers();
         setLabelText(summary.toString());
-        setLabelFont(UMLLine.getProtectionFont(false, modifiers));
+        setLabelFont(UMLLine.getProtectionFont(false, summary));
 
         //  Reset the size
         setSize(getPreferredSize());

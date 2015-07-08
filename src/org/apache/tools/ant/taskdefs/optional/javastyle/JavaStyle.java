@@ -57,7 +57,7 @@ package org.apache.tools.ant.taskdefs.optional.javastyle;
 import java.io.File;
 import java.util.Vector;
 import org.acm.seguin.pretty.PrettyPrintFile;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;

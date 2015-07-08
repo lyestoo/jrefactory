@@ -83,6 +83,6 @@ public class SpaceBeforeJavadocPanel extends TogglePanel {
      *@return    The initialValue value
      */
     protected String getInitialValue() {
-        return "false";
+        return "true";
     }
 }

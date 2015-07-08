@@ -71,26 +71,6 @@ public class ASTAdditiveExpression extends SimpleNode {
 
 
 	/**
-	 *  Convert this object to a string
-	 *
-	 *@return    a string representing this object
-	 */
-	public String toString() {
-		StringBuffer buffer = new StringBuffer(super.toString());
-		buffer.append(" [");
-		Enumeration enum = getNames();
-		while (enum.hasMoreElements()) {
-			buffer.append(enum.nextElement().toString());
-			if (enum.hasMoreElements()) {
-				buffer.append(", ");
-			}
-		}
-		buffer.append("]");
-		return buffer.toString();
-	}
-
-
-	/**
 	 *  Accept the visitor.
 	 *
 	 *@param  visitor  Description of Parameter

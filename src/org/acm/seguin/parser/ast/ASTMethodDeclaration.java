@@ -8,7 +8,6 @@
  */
 package org.acm.seguin.parser.ast;
 
-import org.acm.seguin.pretty.ModifierHolder;
 import org.acm.seguin.pretty.JavaDocComponent;
 import org.acm.seguin.pretty.JavaDocable;
 import org.acm.seguin.pretty.JavaDocableImpl;
@@ -28,10 +27,9 @@ import java.text.MessageFormat;
  *@author     Mike Atkinson
  *@created    October 13, 1999
  */
-public class ASTMethodDeclaration extends SimpleNode implements JavaDocable {
+public class ASTMethodDeclaration extends AccessNode implements JavaDocable {
 	// Instance Variables
-	private ModifierHolder modifiers;
-	private JavaDocableImpl jdi;
+	private JavaDocableImpl jdi = null;
 
 
 	/**
@@ -41,8 +39,6 @@ public class ASTMethodDeclaration extends SimpleNode implements JavaDocable {
 	 */
 	public ASTMethodDeclaration(int id) {
 		super(id);
-		modifiers = new ModifierHolder();
-		jdi = new JavaDocableImpl();
 	}
 
 
@@ -54,162 +50,6 @@ public class ASTMethodDeclaration extends SimpleNode implements JavaDocable {
 	 */
 	public ASTMethodDeclaration(JavaParser p, int id) {
 		super(p, id);
-		modifiers = new ModifierHolder();
-		jdi = new JavaDocableImpl();
-	}
-
-
-	/**
-	 *  Determine if the object is abstract
-	 *
-	 *@return    true if this stores an ABSTRACT flag
-	 */
-	public boolean isAbstract() {
-		return modifiers.isAbstract();
-	}
-
-
-	/**
-	 *  Determine if the object is explicit
-	 *
-	 *@return    true if this stores an EXPLICIT flag
-	 */
-	public boolean isExplicit() {
-		return modifiers.isExplicit();
-	}
-
-
-	/**
-	 *  Determine if the object is final
-	 *
-	 *@return    true if this stores an FINAL flag
-	 */
-	public boolean isFinal() {
-		return modifiers.isFinal();
-	}
-
-
-	/**
-	 *  Determine if the object is interface
-	 *
-	 *@return    true if this stores an INTERFACE flag
-	 */
-	public boolean isInterface() {
-		return modifiers.isInterface();
-	}
-
-
-	/**
-	 *  Determine if the object is native
-	 *
-	 *@return    true if this stores an NATIVE flag
-	 */
-	public boolean isNative() {
-		return modifiers.isNative();
-	}
-
-
-	/**
-	 *  Determine if the object is private
-	 *
-	 *@return    true if this stores an PRIVATE flag
-	 */
-	public boolean isPrivate() {
-		return modifiers.isPrivate();
-	}
-
-
-	/**
-	 *  Determine if the object is protected
-	 *
-	 *@return    true if this stores an PROTECTED flag
-	 */
-	public boolean isProtected() {
-		return modifiers.isProtected();
-	}
-
-
-	/**
-	 *  Determine if the object is public
-	 *
-	 *@return    true if this stores an PUBLIC flag
-	 */
-	public boolean isPublic() {
-		return modifiers.isPublic();
-	}
-
-
-	/**
-	 *  Determine if the object is static
-	 *
-	 *@return    true if this stores an static flag
-	 */
-	public boolean isStatic() {
-		return modifiers.isStatic();
-	}
-
-
-	/**
-	 *  Determine if the object is strict
-	 *
-	 *@return    true if this stores an STRICT flag
-	 */
-	public boolean isStrict() {
-		return modifiers.isStrict();
-	}
-
-
-	/**
-	 *  Determine if the object is synchronized
-	 *
-	 *@return    true if this stores an SYNCHRONIZED flag
-	 */
-	public boolean isSynchronized() {
-		return modifiers.isSynchronized();
-	}
-
-
-	/**
-	 *  Determine if the object is transient
-	 *
-	 *@return    true if this stores an TRANSIENT flag
-	 */
-	public boolean isTransient() {
-		return modifiers.isTransient();
-	}
-
-
-	/**
-	 *  Determine if the object is volatile
-	 *
-	 *@return    true if this stores an VOLATILE flag
-	 */
-	public boolean isVolatile() {
-		return modifiers.isVolatile();
-	}
-
-
-	/**
-	 *  Returns a string containing all the modifiers
-	 *
-	 *@param code the code used to determine the order of the modifiers
-	 *@return    the string representationof the order
-	 */
-	public String getModifiersString(int code) {
-		if (code == PrintData.ALPHABETICAL_ORDER)
-			return modifiers.toString();
-		else
-			return modifiers.toStandardOrderString();
-	}
-
-
-	/**
-	 *  Returns the modifier holder
-	 *
-	 *@return    the holder
-	 */
-	public ModifierHolder getModifiers() {
-		return modifiers;
 	}
 
 
@@ -219,32 +59,11 @@ public class ASTMethodDeclaration extends SimpleNode implements JavaDocable {
 	 *@return    true if it still needs to be printed
 	 */
 	public boolean isRequired() {
-		ForceJavadocComments fjc = new ForceJavadocComments();
-
-		return jdi.isRequired() &&
-				fjc.isJavaDocRequired("method", modifiers);
+                if (jdi==null) {
+                    jdi = new JavaDocableImpl();
+                }
+		return jdi.isRequired() && isRequired("method");
 	}
-
-
-	/**
-	 *  Adds a modifier to a class
-	 *
-	 *@param  modifier  the next modifier
-	 */
-	public void addModifier(String modifier) {
-		modifiers.add(modifier);
-	}
-
-
-	/**
-	 *  Convert this object to a string
-	 *
-	 *@return    a string representing this object
-	 */
-	public String toString() {
-		return super.toString() + " [" + getModifiersString(PrintData.ALPHABETICAL_ORDER) + "]";
-	}
-
 
 
 	/**
@@ -253,6 +72,9 @@ public class ASTMethodDeclaration extends SimpleNode implements JavaDocable {
 	 *@param  component  the component that can be added
 	 */
 	public void addJavaDocComponent(JavaDocComponent component) {
+                if (jdi==null) {
+                    jdi = new JavaDocableImpl();
+                }
 		jdi.addJavaDocComponent(component);
 	}
 
@@ -263,7 +85,10 @@ public class ASTMethodDeclaration extends SimpleNode implements JavaDocable {
 	 *@param  printData  the print data
 	 */
 	public void printJavaDocComponents(PrintData printData) {
-		FileSettings bundle = FileSettings.getSettings("Refactory", "pretty");
+                if (jdi==null) {
+                    jdi = new JavaDocableImpl();
+                }
+		FileSettings bundle = FileSettings.getRefactoryPrettySettings(); // getSettings("Refactory", "pretty");
 		jdi.printJavaDocComponents(printData, bundle.getString("method.tags"));
 	}
 
@@ -286,13 +111,16 @@ public class ASTMethodDeclaration extends SimpleNode implements JavaDocable {
 	 *@param  className  Description of Parameter
 	 */
 	public void finish(String className) {
+                if (jdi==null) {
+                    jdi = new JavaDocableImpl();
+                }
 		MethodAnalyzer ai = new MethodAnalyzer(this, jdi);
 		ai.finish(className);
 
 		//  Require the other tags
-		FileSettings bundle = FileSettings.getSettings("Refactory", "pretty");
+		FileSettings bundle = FileSettings.getRefactoryPrettySettings(); // getSettings("Refactory", "pretty");
                 int child =0;
-                if (jjtGetChild(0) instanceof ASTAttribute) {
+                if (jjtGetFirstChild() instanceof ASTAttribute) {
                     child++; // skip possible attributes
                 }
                 if (jjtGetChild(child) instanceof ASTTypeParameters) {

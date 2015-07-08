@@ -56,7 +56,6 @@ import java.util.*;
 
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.types.*;
-//import org.apache.tools.ant.util.*;
 
 import org.acm.seguin.awt.ExceptionPrinter;
 import org.acm.seguin.awt.TextExceptionPrinter;
@@ -68,7 +67,7 @@ import org.apache.tools.ant.taskdefs.FixCRLF;
 /**
  *@author     Ara Abrahamian (ara_e@email.com)
  *@created    May 18, 2001
- *@version    $Revision: 1.6 $
+ *@version    $Revision: 1.7 $
  */
 public final class Pretty extends Task {
     private CVSUtil cvsUtil = new CVSUtil();

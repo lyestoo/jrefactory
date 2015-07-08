@@ -46,9 +46,9 @@ public class RemoveSamePackageTransform extends TransformAST {
 	 *@return       The PackageName value 
 	 */
 	private ASTName getPackageName(SimpleNode root) {
-		SimpleNode node = (SimpleNode) root.jjtGetChild(0);
+		SimpleNode node = (SimpleNode) root.jjtGetFirstChild();
 		if (node instanceof ASTPackageDeclaration) {
-			return (ASTName) node.jjtGetChild(0);
+			return (ASTName) node.jjtGetFirstChild();
 		}
 		else {
 			return null;
@@ -64,7 +64,7 @@ public class RemoveSamePackageTransform extends TransformAST {
 	 *@return              The Importing value 
 	 */
 	private boolean isImporting(ASTName packageName, ASTImportDeclaration importDecl) {
-		ASTName name = (ASTName) importDecl.jjtGetChild(0);
+		ASTName name = (ASTName) importDecl.jjtGetFirstChild();
 
 		if (packageName == null) {
 			return (name.getNameSize() == 1);

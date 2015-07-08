@@ -16,144 +16,147 @@ import org.acm.seguin.parser.io.*;
 public interface JavaParserConstants {
 
   int EOF = 0;
-  int SINGLE_LINE_COMMENT = 11;
-  int FORMAL_COMMENT = 12;
-  int MULTI_LINE_COMMENT = 13;
-  int CATEGORY_COMMENT = 14;
-  int ABSTRACT = 16;
-  int BOOLEAN = 17;
-  int BREAK = 18;
-  int BYTE = 19;
-  int CASE = 20;
-  int CATCH = 21;
-  int CHAR = 22;
-  int CLASS = 23;
-  int CONST = 24;
-  int CONTINUE = 25;
-  int _DEFAULT = 26;
-  int DO = 27;
-  int DOUBLE = 28;
-  int ELSE = 29;
-  int EXTENDS = 30;
-  int FALSE = 31;
-  int FINAL = 32;
-  int FINALLY = 33;
-  int FLOAT = 34;
-  int FOR = 35;
-  int GOTO = 36;
-  int IF = 37;
-  int IMPLEMENTS = 38;
-  int IMPORT = 39;
-  int INSTANCEOF = 40;
-  int INT = 41;
-  int INTERFACE = 42;
-  int LONG = 43;
-  int NATIVE = 44;
-  int NEW = 45;
-  int NULL = 46;
-  int PACKAGE = 47;
-  int PRIVATE = 48;
-  int PROTECTED = 49;
-  int PUBLIC = 50;
-  int RETURN = 51;
-  int SHORT = 52;
-  int STATIC = 53;
-  int STRICTFP = 54;
-  int SUPER = 55;
-  int SWITCH = 56;
-  int SYNCHRONIZED = 57;
-  int THIS = 58;
-  int THROW = 59;
-  int THROWS = 60;
-  int TRANSIENT = 61;
-  int TRUE = 62;
-  int TRY = 63;
-  int VOID = 64;
-  int VOLATILE = 65;
-  int WHILE = 66;
-  int INTEGER_LITERAL = 67;
-  int DECIMAL_LITERAL = 68;
-  int HEX_LITERAL = 69;
-  int OCTAL_LITERAL = 70;
-  int FLOATING_POINT_LITERAL = 71;
-  int EXPONENT = 72;
-  int CHARACTER_LITERAL = 73;
-  int STRING_LITERAL = 74;
-  int IDENTIFIER = 75;
-  int LETTER = 76;
-  int DIGIT = 77;
-  int LPAREN = 78;
-  int RPAREN = 79;
-  int LBRACE = 80;
-  int RBRACE = 81;
-  int LBRACKET = 82;
-  int RBRACKET = 83;
-  int SEMICOLON = 84;
-  int COMMA = 85;
-  int DOT = 86;
-  int VARARG = 87;
-  int ASSIGN = 88;
-  int GT = 89;
-  int LT = 90;
-  int BANG = 91;
-  int TILDE = 92;
-  int HOOK = 93;
-  int COLON = 94;
-  int EQ = 95;
-  int LE = 96;
-  int GE = 97;
-  int NE = 98;
-  int SC_OR = 99;
-  int SC_AND = 100;
-  int INCR = 101;
-  int DECR = 102;
-  int PLUS = 103;
-  int MINUS = 104;
-  int STAR = 105;
-  int SLASH = 106;
-  int BIT_AND = 107;
-  int BIT_OR = 108;
-  int XOR = 109;
-  int REM = 110;
-  int LSHIFT = 111;
-  int RSIGNEDSHIFT = 112;
-  int RUNSIGNEDSHIFT = 113;
-  int PLUSASSIGN = 114;
-  int MINUSASSIGN = 115;
-  int STARASSIGN = 116;
-  int SLASHASSIGN = 117;
-  int ANDASSIGN = 118;
-  int ORASSIGN = 119;
-  int XORASSIGN = 120;
-  int REMASSIGN = 121;
-  int LSHIFTASSIGN = 122;
-  int RSIGNEDSHIFTASSIGN = 123;
-  int RUNSIGNEDSHIFTASSIGN = 124;
-  int ATTRIBUTE = 125;
+  int SINGLE_LINE_COMMENT = 13;
+  int FORMAL_COMMENT = 14;
+  int MULTI_LINE_COMMENT = 15;
+  int CATEGORY_COMMENT = 16;
+  int ABSTRACT = 18;
+  int BOOLEAN = 19;
+  int BREAK = 20;
+  int BYTE = 21;
+  int CASE = 22;
+  int CATCH = 23;
+  int CHAR = 24;
+  int CLASS = 25;
+  int CONST = 26;
+  int CONTINUE = 27;
+  int _DEFAULT = 28;
+  int DO = 29;
+  int DOUBLE = 30;
+  int ELSE = 31;
+  int EXTENDS = 32;
+  int FALSE = 33;
+  int FINAL = 34;
+  int FINALLY = 35;
+  int FLOAT = 36;
+  int FOR = 37;
+  int GOTO = 38;
+  int IF = 39;
+  int IMPLEMENTS = 40;
+  int IMPORT = 41;
+  int INSTANCEOF = 42;
+  int INT = 43;
+  int INTERFACE = 44;
+  int LONG = 45;
+  int NATIVE = 46;
+  int NEW = 47;
+  int NULL = 48;
+  int PACKAGE = 49;
+  int PRIVATE = 50;
+  int PROTECTED = 51;
+  int PUBLIC = 52;
+  int RETURN = 53;
+  int SHORT = 54;
+  int STATIC = 55;
+  int STRICTFP = 56;
+  int SUPER = 57;
+  int SWITCH = 58;
+  int SYNCHRONIZED = 59;
+  int THIS = 60;
+  int THROW = 61;
+  int THROWS = 62;
+  int TRANSIENT = 63;
+  int TRUE = 64;
+  int TRY = 65;
+  int VOID = 66;
+  int VOLATILE = 67;
+  int WHILE = 68;
+  int INTEGER_LITERAL = 69;
+  int DECIMAL_LITERAL = 70;
+  int HEX_LITERAL = 71;
+  int OCTAL_LITERAL = 72;
+  int FLOATING_POINT_LITERAL = 73;
+  int EXPONENT = 74;
+  int CHARACTER_LITERAL = 75;
+  int STRING_LITERAL = 76;
+  int IDENTIFIER = 77;
+  int LETTER = 78;
+  int DIGIT = 79;
+  int LPAREN = 80;
+  int RPAREN = 81;
+  int LBRACE = 82;
+  int RBRACE = 83;
+  int LBRACKET = 84;
+  int RBRACKET = 85;
+  int SEMICOLON = 86;
+  int COMMA = 87;
+  int DOT = 88;
+  int VARARG = 89;
+  int ASSIGN = 90;
+  int GT = 91;
+  int LT = 92;
+  int BANG = 93;
+  int TILDE = 94;
+  int HOOK = 95;
+  int COLON = 96;
+  int EQ = 97;
+  int LE = 98;
+  int GE = 99;
+  int NE = 100;
+  int SC_OR = 101;
+  int SC_AND = 102;
+  int INCR = 103;
+  int DECR = 104;
+  int PLUS = 105;
+  int MINUS = 106;
+  int STAR = 107;
+  int SLASH = 108;
+  int BIT_AND = 109;
+  int BIT_OR = 110;
+  int XOR = 111;
+  int REM = 112;
+  int LSHIFT = 113;
+  int RSIGNEDSHIFT = 114;
+  int RUNSIGNEDSHIFT = 115;
+  int PLUSASSIGN = 116;
+  int MINUSASSIGN = 117;
+  int STARASSIGN = 118;
+  int SLASHASSIGN = 119;
+  int ANDASSIGN = 120;
+  int ORASSIGN = 121;
+  int XORASSIGN = 122;
+  int REMASSIGN = 123;
+  int LSHIFTASSIGN = 124;
+  int RSIGNEDSHIFTASSIGN = 125;
+  int RUNSIGNEDSHIFTASSIGN = 126;
+  int ATTRIBUTE = 127;
 
   int DEFAULT = 0;
-  int IN_SINGLE_LINE_COMMENT = 1;
-  int IN_FORMAL_COMMENT = 2;
-  int IN_MULTI_LINE_COMMENT = 3;
-  int IN_CATEGORY_COMMENT = 4;
+  int IN_ONLY_EOF = 1;
+  int IN_SINGLE_LINE_COMMENT = 2;
+  int IN_FORMAL_COMMENT = 3;
+  int IN_MULTI_LINE_COMMENT = 4;
+  int IN_CATEGORY_COMMENT = 5;
 
   String[] tokenImage = {
     "<EOF>",
     "\" \"",
     "\"\\t\"",
     "\"\\f\"",
+    "\"\\u001a\"",
+    "<token of kind 5>",
     "\"\\n\"",
     "\"\\r\"",
     "\"\\r\\n\"",
     "\"//\"",
-    "<token of kind 8>",
+    "<token of kind 10>",
     "\"/*\"",
     "\"/*<\"",
     "<SINGLE_LINE_COMMENT>",
     "\"*/\"",
     "\"*/\"",
     "\"*/\"",
-    "<token of kind 15>",
+    "<token of kind 17>",
     "\"abstract\"",
     "\"boolean\"",
     "\"break\"",

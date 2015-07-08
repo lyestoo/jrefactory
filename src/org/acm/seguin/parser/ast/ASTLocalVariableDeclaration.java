@@ -64,16 +64,6 @@ public class ASTLocalVariableDeclaration extends SimpleNode {
 
 
 	/**
-	 *  Converts this to a string
-	 *
-	 *@return    the string
-	 */
-	public String toString() {
-		return super.toString() + " [Using final:  " + usingFinal + "]";
-	}
-
-
-	/**
 	 *  Accept the visitor.
 	 *
 	 *@param  visitor  Description of Parameter

@@ -17,7 +17,7 @@ import org.acm.seguin.ide.common.SourceBrowser;
 import org.acm.seguin.ide.command.PackageSelectorPanel;
 import org.acm.seguin.io.AllFileFilter;
 import org.acm.seguin.summary.*;
-import org.acm.seguin.tools.install.RefactoryInstaller;
+import org.acm.seguin.tools.RefactoryInstaller;
 import org.acm.seguin.uml.loader.ReloaderSingleton;
 import org.acm.seguin.util.FileSettings;
 

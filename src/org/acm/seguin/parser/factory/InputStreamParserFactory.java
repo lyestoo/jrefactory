@@ -1,20 +1,18 @@
 package org.acm.seguin.parser.factory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 
 /**
  *  Generates new parsers for a java file 
  *
  *@author     Chris Seguin 
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: InputStreamParserFactory.java,v 1.2 2003/07/29 20:51:55 mikeatkinson Exp $ 
  *@created    June 6, 1999 
  */
 public class InputStreamParserFactory extends ParserFactory {
 	//  Instance Variables
-	private InputStream input;
+	private Reader reader;
 	private String key;
 
 
@@ -24,8 +22,8 @@ public class InputStreamParserFactory extends ParserFactory {
 	 *@param  inputStream  Description of Parameter 
 	 *@param  initKey      Description of Parameter 
 	 */
-	public InputStreamParserFactory(InputStream inputStream, String initKey) {
-		input = inputStream;
+	public InputStreamParserFactory(Reader reader, String initKey) {
+		this.reader = reader;
 		key = initKey;
 	}
 
@@ -35,8 +33,8 @@ public class InputStreamParserFactory extends ParserFactory {
 	 *
 	 *@return    the input stream 
 	 */
-	protected InputStream getInputStream() {
-		return input;
+	protected Reader getReader() {
+		return reader;
 	}
 
 

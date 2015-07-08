@@ -1,6 +1,9 @@
 Manifest-Version: 1.0
 Created-By: 1.4.2 (Sun Microsystems Inc.)
-Main-Class: Refactory
+Main-Class: org.acm.seguin.ide.standalone.JRefactory
+Class-Path: jaxen-core-1.0-fcs.jar : saxpath-1.0-fcs.jar : dom4j-full.jar : bcel.jar : coreplugin.jar : findbugs.jar : findbugsGUI.jar
+
+Name: org.acm.seguin.ide.elixir
 Elixir-Extension: org.acm.seguin.ide.elixir.RefactoryExtension
 OpenTools-UI: org.acm.seguin.ide.jbuilder.UMLNode
 JDeveloper9i-Addin: org.acm.seguin.ide.jdeveloper.JDeveloperPrettyPrinter

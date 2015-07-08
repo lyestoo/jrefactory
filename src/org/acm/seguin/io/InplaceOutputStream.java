@@ -8,13 +8,18 @@
  */
 package org.acm.seguin.io;
 
-import java.io.*;
+import java.io.File;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import org.acm.seguin.util.FileSettings;
 
 /**
  *  To the user of this object, it appears that the file is written in place.
  *
  *@author    Chris Seguin
+ *@author     <a href="JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
+ *@version    $Id: InplaceOutputStream.java,v 1.6 2003/09/01 00:25:31 mikeatkinson Exp $ 
  *@date      May 12, 1999
  */
 public class InplaceOutputStream extends OutputStream {
@@ -42,7 +47,6 @@ public class InplaceOutputStream extends OutputStream {
 		{
 			//  Things have worked out!
 		}
-		//else if (attempt(System.getProperty("user.home") + File.separator + ".Refactory" + File.separator + "inplace"))
 		else if (attempt(new File(FileSettings.getRefactorySettingsRoot(), "inplace").toString()))
 		{
 		}
@@ -177,10 +181,10 @@ public class InplaceOutputStream extends OutputStream {
 		return null;
 	}
 
-/**  Attempts to determine if the file can be used for output
-@param filepath the file to open
-@return true if it worked
-*/
+        /**  Attempts to determine if the file can be used for output
+         *@param filepath the file to open
+         *@return true if it worked
+        */
 	private boolean attempt(String filepath)
 	{
 		try {

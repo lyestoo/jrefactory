@@ -13,6 +13,7 @@ import org.acm.seguin.parser.ast.ASTName;
 import org.acm.seguin.parser.ast.ASTPrimitiveType;
 import org.acm.seguin.parser.ast.ASTType;
 import org.acm.seguin.parser.ast.ASTReferenceType;
+import org.acm.seguin.parser.ast.ASTClassOrInterfaceType;
 import org.acm.seguin.parser.ast.SimpleNode;
 import org.acm.seguin.refactor.Refactoring;
 import org.acm.seguin.summary.FileSummary;
@@ -147,21 +148,19 @@ abstract class FieldRefactoring extends Refactoring {
 	 */
 	protected Object getFieldType(SimpleNode node, FileSummary fileSummary)
 	{
-		ASTFieldDeclaration child = (ASTFieldDeclaration) node.jjtGetChild(0);
-		ASTType type = (ASTType) child.jjtGetChild(0);
-		if (type.jjtGetChild(0) instanceof ASTPrimitiveType) {
+		ASTFieldDeclaration child = (ASTFieldDeclaration) node.jjtGetFirstChild();
+		ASTType type = (ASTType) child.jjtGetFirstChild();
+		if (type.jjtGetFirstChild() instanceof ASTPrimitiveType) {
 			return null;
 		}
-		ASTName name = null;
-                if (type.jjtGetChild(0) instanceof ASTReferenceType) {
-                        ASTReferenceType reference = (ASTReferenceType)type.jjtGetChild(0);
-                        if (reference.jjtGetChild(0) instanceof ASTName) {
-                                name = (ASTName)reference.jjtGetChild(0);
+		ASTClassOrInterfaceType name = null;
+                if (type.jjtGetFirstChild() instanceof ASTReferenceType) {
+                        ASTReferenceType reference = (ASTReferenceType)type.jjtGetFirstChild();
+                        if (reference.jjtGetFirstChild() instanceof ASTClassOrInterfaceType) {
+                                name = (ASTClassOrInterfaceType)reference.jjtGetFirstChild();
                         } else {
                                 return null;
                         }
-		} else {
-		        name = (ASTName) type.jjtGetChild(0);
                 }
 		if (name.getNameSize() == 1) {
 			return GetTypeSummary.query(fileSummary, name.getName());

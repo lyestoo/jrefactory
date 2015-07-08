@@ -81,10 +81,10 @@ public class TopLevelOrdering extends Ordering {
     public TopLevelOrdering(ASTCompilationUnit node, PrintData data) {
         String packageName = "";
         if (node.jjtGetNumChildren() > 0) {
-            Node firstNode = node.jjtGetChild(0);
+            Node firstNode = node.jjtGetFirstChild();
             if (firstNode instanceof ASTPackageDeclaration) {
                 ASTName name = (ASTName) ((ASTPackageDeclaration)
-                        firstNode).jjtGetChild(0);
+                        firstNode).jjtGetFirstChild();
                 packageName = name.getName() + '.';
             }
         }
@@ -142,7 +142,7 @@ public class TopLevelOrdering extends Ordering {
             return 2;
         } else if (object instanceof ASTTypeDeclaration) {
             ASTTypeDeclaration type = (ASTTypeDeclaration) object;
-            Node child = type.jjtGetChild(0);
+            Node child = type.jjtGetFirstChild();
             if (child instanceof ASTClassDeclaration) {
                 ASTClassDeclaration classDecl = (ASTClassDeclaration) child;
                 if (classDecl.isPublic()) {
@@ -173,8 +173,8 @@ public class TopLevelOrdering extends Ordering {
      *      first item is less than the second, and 0 otherwise.
      */
     private int compareImports(ASTImportDeclaration import1, ASTImportDeclaration import2) {
-        String name1 = ((ASTName) import1.jjtGetChild(0)).getName();
-        String name2 = ((ASTName) import2.jjtGetChild(0)).getName();
+        String name1 = ((ASTName) import1.jjtGetFirstChild()).getName();
+        String name2 = ((ASTName) import2.jjtGetFirstChild()).getName();
 
         int result = compareImportsByNeighbourhood(name1, name2);
         if (result == 0) {

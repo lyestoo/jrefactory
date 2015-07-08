@@ -22,7 +22,7 @@ public class JRefactoryVersion {
 	 *@return    The MinorVersion value
 	 */
 	public int getMinorVersion() {
-		return 7;
+		return 8;
 	}
 
 
@@ -32,7 +32,7 @@ public class JRefactoryVersion {
 	 *@return    The Build value
 	 */
 	public int getBuild() {
-		return 07;
+		return 9;
 	}
 
 
