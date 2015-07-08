@@ -118,7 +118,12 @@ public class PrintSpecialMultiLineComment extends PrintSpecial
 			{
 				while (token.kind != JavadocTokenizer.WORD)
 				{
-					token = tok.next();
+					if (tok.hasNext()) {
+						token = tok.next();
+					}
+					else {
+						break;
+					}
 				}
 
 				first = false;
@@ -160,7 +165,9 @@ public class PrintSpecialMultiLineComment extends PrintSpecial
 			{
 				printData.indent();
 			}
-			printData.appendComment(" */", PrintData.C_STYLE_COMMENT);
+			if (!printData.isStarsAlignedWithSlash())
+				printData.space();
+			printData.appendComment("*/", PrintData.C_STYLE_COMMENT);
 		}
 
 		//  Newline
@@ -189,7 +196,9 @@ public class PrintSpecialMultiLineComment extends PrintSpecial
 		}
 		else
 		{
-			printData.appendComment(" *", PrintData.C_STYLE_COMMENT);
+			if (!printData.isStarsAlignedWithSlash())
+				printData.space();
+			printData.appendComment("*", PrintData.C_STYLE_COMMENT);
 		}
 
 		if ((formatCode == PrintData.CSC_MAINTAIN_STAR) || !more)

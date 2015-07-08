@@ -1,3 +1,11 @@
+/*
+ *  Author:  Chris Seguin
+ *
+ *  This software has been developed under the copyleft
+ *  rules of the GNU General Public License.  Please
+ *  consult the GNU General Public License for more
+ *  details about use and distribution of this software.
+ */
 package org.acm.seguin.refactor.type;
 
 import org.acm.seguin.parser.ChildrenVisitor;
@@ -5,8 +13,9 @@ import org.acm.seguin.parser.ast.ASTName;
 import org.acm.seguin.parser.ast.ASTNameList;
 import org.acm.seguin.parser.ast.ASTUnmodifiedClassDeclaration;
 import org.acm.seguin.parser.ast.SimpleNode;
+
 /**
- *  Description of the Class
+ *  Walks the parse tree and updates it
  *
  *@author     Grant Watson
  *@created    December 1, 2000
@@ -16,8 +25,7 @@ public class AddImplementedInterfaceVisitor extends ChildrenVisitor {
 	/**
 	 *  Constructor for the AddImplementedInterfaceVisitor object
 	 */
-	public AddImplementedInterfaceVisitor() {
-	}
+	public AddImplementedInterfaceVisitor() { }
 
 
 	/**
@@ -30,7 +38,8 @@ public class AddImplementedInterfaceVisitor extends ChildrenVisitor {
 	 *@param  data  Description of Parameter
 	 *@return       Description of the Returned Value
 	 */
-	public Object visit(ASTUnmodifiedClassDeclaration node, Object data) {
+	public Object visit(ASTUnmodifiedClassDeclaration node, Object data)
+	{
 		ASTName interfaceName = (ASTName) data;
 		ASTNameList nameList = null;
 		// Find the ASTNameList or add one

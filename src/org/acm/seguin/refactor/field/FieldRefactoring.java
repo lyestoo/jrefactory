@@ -12,6 +12,7 @@ import org.acm.seguin.parser.ast.ASTFieldDeclaration;
 import org.acm.seguin.parser.ast.ASTName;
 import org.acm.seguin.parser.ast.ASTPrimitiveType;
 import org.acm.seguin.parser.ast.ASTType;
+import org.acm.seguin.parser.ast.ASTReferenceType;
 import org.acm.seguin.parser.ast.SimpleNode;
 import org.acm.seguin.refactor.Refactoring;
 import org.acm.seguin.summary.FileSummary;
@@ -151,7 +152,17 @@ abstract class FieldRefactoring extends Refactoring {
 		if (type.jjtGetChild(0) instanceof ASTPrimitiveType) {
 			return null;
 		}
-		ASTName name = (ASTName) type.jjtGetChild(0);
+		ASTName name = null;
+                if (type.jjtGetChild(0) instanceof ASTReferenceType) {
+                        ASTReferenceType reference = (ASTReferenceType)type.jjtGetChild(0);
+                        if (reference.jjtGetChild(0) instanceof ASTName) {
+                                name = (ASTName)reference.jjtGetChild(0);
+                        } else {
+                                return null;
+                        }
+		} else {
+		        name = (ASTName) type.jjtGetChild(0);
+                }
 		if (name.getNameSize() == 1) {
 			return GetTypeSummary.query(fileSummary, name.getName());
 		}

@@ -9,6 +9,7 @@
 package org.acm.seguin.pretty;
 
 import org.acm.seguin.parser.Token;
+import org.acm.seguin.parser.JavaParserConstants;
 import org.acm.seguin.util.MissingSettingsException;
 import org.acm.seguin.util.FileSettings;
 
@@ -16,6 +17,7 @@ import org.acm.seguin.util.FileSettings;
  *  Store the data that understands how to output comments and newlines
  *
  *@author     Chris Seguin
+ *@author     Mike Atkinson
  *@created    April 30, 1999
  */
 public class SpecialTokenData {
@@ -77,8 +79,45 @@ public class SpecialTokenData {
 	 *@return    true if we are at the last
 	 */
 	public boolean isLast() {
-		return ((special == null) || (special.next == null));
+		return ((special == null) || (special.next == null) || ("".equals(special.next)));
 	}
+
+
+	/**
+	 *  Returns true when it is the last JavaDoc comment.
+	 *
+	 *@return    true if we are the last
+         *@since     JRefactory 2.7.00
+	 */
+        public boolean isLastJavadocComment() {
+            boolean last = true;
+            Token s = special.next;
+            while (s != null) {
+                if (s.image!=null && s.image.startsWith("/**")) {
+                    last = false;
+                }
+                s = s.next;
+            }
+            return last;
+        }
+
+
+	/**
+	 *  If the first special Token is a C_STYLE_COMMENT, then pretend it
+         *  is a SINGLE_LINE_COMMENT.
+	 *
+         *  Fixes bug 761890 (at least partly).
+         *
+         *@since     JRefactory 2.7.03
+	 */
+        public void convertFirstCStyleCommentToSingleLine() {
+            if (    special != null
+                 && special.kind == JavaParserConstants.MULTI_LINE_COMMENT
+                 && special.image.indexOf('\n')<0) {
+                     //System.out.println("  - converting");
+                        special.kind = JavaParserConstants.SINGLE_LINE_COMMENT;
+            }
+        }
 
 
 	/**

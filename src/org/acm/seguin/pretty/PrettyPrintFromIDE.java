@@ -49,7 +49,7 @@ public abstract class PrettyPrintFromIDE extends PrettyPrintString {
 		}
 		catch (Exception exc) {
 			displayErrorMessage();
-			ExceptionPrinter.print(exc);
+			ExceptionPrinter.print(exc, false);
 		}
 	}
 

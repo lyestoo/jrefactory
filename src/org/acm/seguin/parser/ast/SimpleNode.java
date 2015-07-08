@@ -21,6 +21,7 @@ import java.util.*;
  *  tree).
  *
  *@author     Chris Seguin
+ *@author     Mike Atkinson
  *@created    May 10, 1999
  */
 public class SimpleNode implements Node {
@@ -333,12 +334,12 @@ public class SimpleNode implements Node {
 	 */
 
 	/**
-	 *  Description of the Method
+	 *  Dump the node data (including the special tokens) to System.err
 	 *
-	 *@param  prefix  Description of Parameter
+	 *@param  prefix  prefixed to every line of the output
 	 */
 	public void dump(String prefix) {
-		System.out.println(prefix + getClass().getName());
+		System.err.println(prefix + getClass().getName());
 		if (children != null) {
 			for (int i = 0; i < children.length; ++i) {
 				SimpleNode n = (SimpleNode) children[i];
@@ -347,6 +348,44 @@ public class SimpleNode implements Node {
 				}
 			}
 		}
+		if (specials != null) {
+                    int last = specials.size();
+                    for (int ndx = 0; ndx < last; ndx++) {
+                            NamedToken named = (NamedToken) specials.elementAt(ndx);
+                            System.err.println("special["+ndx+"]="+named);
+                    }
+		}
+
+                
+	}
+
+
+	/**
+	 *  Dump the node data (including the special tokens) to a String.
+	 *
+	 *@param  prefix  prefixed to every line of the output
+         *@return dump of the Node data.
+         *@since JRefactory 2.7.00
+	 */
+	public String dumpString(String prefix) {
+		StringBuffer sb = new StringBuffer(prefix + getClass().getName());
+		if (children != null) {
+			for (int i = 0; i < children.length; ++i) {
+				SimpleNode n = (SimpleNode) children[i];
+				if (n != null) {
+					sb.append(n.dumpString(prefix + " "));
+				}
+			}
+		}
+		if (specials != null) {
+                    int last = specials.size();
+                    for (int ndx = 0; ndx < last; ndx++) {
+                            NamedToken named = (NamedToken) specials.elementAt(ndx);
+                            sb.append("special["+ndx+"]="+named);
+                    }
+		}
+
+                return sb.toString();
 	}
 
 

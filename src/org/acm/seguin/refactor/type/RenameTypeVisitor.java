@@ -7,7 +7,10 @@ import org.acm.seguin.parser.ast.ASTUnmodifiedInterfaceDeclaration;
 import org.acm.seguin.parser.ast.ASTUnmodifiedClassDeclaration;
 import org.acm.seguin.parser.ast.ASTAllocationExpression;
 import org.acm.seguin.parser.ast.ASTPrimaryPrefix;
+import org.acm.seguin.parser.ast.ASTAttribute;
 import org.acm.seguin.parser.ast.ASTType;
+import org.acm.seguin.parser.ast.ASTReferenceType;
+import org.acm.seguin.parser.ast.ASTTypeParameters;
 import org.acm.seguin.parser.ast.ASTMethodDeclaration;
 import org.acm.seguin.parser.ast.ASTConstructorDeclaration;
 import org.acm.seguin.parser.ast.ASTArguments;
@@ -17,18 +20,18 @@ import org.acm.seguin.summary.TypeSummary;
 import org.acm.seguin.summary.query.ContainsStatic;
 
 /**
- *  Scan through the abstract syntax tree and replace types with a new value. 
+ *  Scan through the abstract syntax tree and replace types with a new value.
  *
- *@author     Chris Seguin 
- *@created    September 10, 1999 
+ *@author     Chris Seguin
+ *@created    September 10, 1999
  */
 public class RenameTypeVisitor extends ChildrenVisitor {
 	/**
-	 *  To visit a node 
+	 *  To visit a node
 	 *
-	 *@param  node  The node we are visiting 
-	 *@param  data  The rename type data 
-	 *@return       The rename type data 
+	 *@param  node  The node we are visiting
+	 *@param  data  The rename type data
+	 *@return       The rename type data
 	 */
 	public Object visit(ASTUnmodifiedClassDeclaration node, Object data) {
 		RenameTypeData rtd = (RenameTypeData) data;
@@ -61,11 +64,11 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 
 
 	/**
-	 *  To visit a node 
+	 *  To visit a node
 	 *
-	 *@param  node  The node we are visiting 
-	 *@param  data  The rename type data 
-	 *@return       The rename type data 
+	 *@param  node  The node we are visiting
+	 *@param  data  The rename type data
+	 *@return       The rename type data
 	 */
 	public Object visit(ASTUnmodifiedInterfaceDeclaration node, Object data) {
 		RenameTypeData rtd = (RenameTypeData) data;
@@ -92,11 +95,11 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 
 
 	/**
-	 *  To visit a node 
+	 *  To visit a node
 	 *
-	 *@param  node  The node we are visiting 
-	 *@param  data  The rename type data 
-	 *@return       The rename type data 
+	 *@param  node  The node we are visiting
+	 *@param  data  The rename type data
+	 *@return       The rename type data
 	 */
 	public Object visit(ASTConstructorDeclaration node, Object data) {
 		RenameTypeData rtd = (RenameTypeData) data;
@@ -108,9 +111,16 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 			}
 		}
 
-		if ((node.jjtGetNumChildren() >= 2) && 
-				(node.jjtGetChild(1) instanceof ASTNameList)) {
-			ASTNameList nameList = (ASTNameList) node.jjtGetChild(1);
+                int child = 0;
+                if (node.jjtGetChild(child) instanceof ASTAttribute) {
+                    child++;
+                }
+                if (node.jjtGetChild(child) instanceof ASTTypeParameters) {
+                    child++;
+                }
+		if ((node.jjtGetNumChildren() >= child+2) &&
+				(node.jjtGetChild(child+1) instanceof ASTNameList)) {
+			ASTNameList nameList = (ASTNameList) node.jjtGetChild(child+1);
 			processExceptions(nameList, rtd);
 		}
 
@@ -119,15 +129,19 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 
 
 	/**
-	 *  Description of the Method 
+	 *  Description of the Method
 	 *
-	 *@param  node  Description of Parameter 
-	 *@param  data  Description of Parameter 
-	 *@return       Description of the Returned Value 
+	 *@param  node  Description of Parameter
+	 *@param  data  Description of Parameter
+	 *@return       Description of the Returned Value
 	 */
 	public Object visit(ASTMethodDeclaration node, Object data) {
-		if ((node.jjtGetNumChildren() >= 3) && 
-				(node.jjtGetChild(2) instanceof ASTNameList)) {
+                int child = 2;
+                if (node.jjtGetChild(0) instanceof ASTTypeParameters) {
+                    child=3;
+                }
+		if ((node.jjtGetNumChildren() >= child+1) &&
+				(node.jjtGetChild(child) instanceof ASTNameList)) {
 			ASTNameList nameList = (ASTNameList) node.jjtGetChild(2);
 			RenameTypeData rtd = (RenameTypeData) data;
 			processExceptions(nameList, rtd);
@@ -138,13 +152,40 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 
 
 	/**
-	 *  To visit a node 
+	 *  To visit a node
 	 *
-	 *@param  node  The node we are visiting 
-	 *@param  data  The rename type data 
-	 *@return       The rename type data 
+	 *@param  node  The node we are visiting
+	 *@param  data  The rename type data
+	 *@return       The rename type data
 	 */
 	public Object visit(ASTType node, Object data) {
+		if (node.jjtGetNumChildren() == 0) {
+			return data;
+		}
+
+      		//if (node.jjtGetChild(0) instanceof ASTName) {
+		//	ASTName child = (ASTName) node.jjtGetChild(0);
+                //
+		//	RenameTypeData rtd = (RenameTypeData) data;
+		//	if (child.equals(rtd.getOld())) {
+		//		node.jjtAddChild(rtd.getNew(), 0);
+		//	}
+		//	else if (child.startsWith(rtd.getOld())) {
+		//		node.jjtAddChild(child.changeStartingPart(rtd.getOld(), rtd.getNew()), 0);
+		//	}
+		//}
+
+		return node.childrenAccept(this, data);
+	}
+
+	/**
+	 *  To visit a node
+	 *
+	 *@param  node  The node we are visiting
+	 *@param  data  The rename type data
+	 *@return       The rename type data
+	 */
+	public Object visit(ASTReferenceType node, Object data) {
 		if (node.jjtGetNumChildren() == 0) {
 			return data;
 		}
@@ -166,11 +207,11 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 
 
 	/**
-	 *  To visit a node 
+	 *  To visit a node
 	 *
-	 *@param  node  The node we are visiting 
-	 *@param  data  The rename type data 
-	 *@return       The rename type data 
+	 *@param  node  The node we are visiting
+	 *@param  data  The rename type data
+	 *@return       The rename type data
 	 */
 	public Object visit(ASTPrimaryExpression node, Object data) {
 		ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetChild(0);
@@ -199,11 +240,11 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 
 
 	/**
-	 *  To visit a node 
+	 *  To visit a node
 	 *
-	 *@param  node  The node we are visiting 
-	 *@param  data  The rename type data 
-	 *@return       The rename type data 
+	 *@param  node  The node we are visiting
+	 *@param  data  The rename type data
+	 *@return       The rename type data
 	 */
 	public Object visit(ASTAllocationExpression node, Object data) {
 		if (node.jjtGetNumChildren() == 0) {
@@ -227,10 +268,10 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 
 
 	/**
-	 *  Determines if the node is a method invocation 
+	 *  Determines if the node is a method invocation
 	 *
-	 *@param  node  the node in question 
-	 *@return       true when we are looking at a method 
+	 *@param  node  the node in question
+	 *@return       true when we are looking at a method
 	 */
 	private boolean isMethod(ASTPrimaryExpression node) {
 		if (node.jjtGetNumChildren() <= 1) {
@@ -243,12 +284,12 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 
 
 	/**
-	 *  Gets the Static attribute of the RenameTypeVisitor object 
+	 *  Gets the Static attribute of the RenameTypeVisitor object
 	 *
-	 *@param  data      Description of Parameter 
-	 *@param  name      Description of Parameter 
-	 *@param  isMethod  Description of Parameter 
-	 *@return           The Static value 
+	 *@param  data      Description of Parameter
+	 *@param  name      Description of Parameter
+	 *@param  isMethod  Description of Parameter
+	 *@return           The Static value
 	 */
 	private boolean isStatic(RenameTypeData data, ASTName name, boolean isMethod) {
 		int last = name.getNameSize();
@@ -259,10 +300,10 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 
 
 	/**
-	 *  Description of the Method 
+	 *  Description of the Method
 	 *
-	 *@param  nameList  Description of Parameter 
-	 *@param  rtd       Description of Parameter 
+	 *@param  nameList  Description of Parameter
+	 *@param  rtd       Description of Parameter
 	 */
 	private void processExceptions(ASTNameList nameList, RenameTypeData rtd) {
 		int last = nameList.jjtGetNumChildren();
@@ -271,10 +312,10 @@ public class RenameTypeVisitor extends ChildrenVisitor {
 			ASTName next = (ASTName) nameList.jjtGetChild(ndx);
 
 			if (next.equals(rtd.getOld())) {
-				nameList.jjtAddChild(rtd.getNew(), 0);
+				nameList.jjtAddChild(rtd.getNew(), ndx);
 			}
 			else if (next.startsWith(rtd.getOld())) {
-				nameList.jjtAddChild(next.changeStartingPart(rtd.getOld(), rtd.getNew()), 0);
+				nameList.jjtAddChild(next.changeStartingPart(rtd.getOld(), rtd.getNew()), ndx);
 			}
 		}
 	}

@@ -34,6 +34,9 @@ import org.acm.seguin.summary.MethodSummary;
 import org.acm.seguin.summary.ParameterSummary;
 import org.acm.seguin.summary.TypeDeclSummary;
 
+import org.acm.seguin.parser.ast.ASTReferenceType;
+import org.acm.seguin.parser.ast.ASTVariance;
+
 /**
  *  A series of transformations taht adds a new constructor to a class.
  *  The constructor invokes the super classes's constructor.  This
@@ -262,17 +265,11 @@ public class AddConstructor extends TransformAST {
 	 */
 	private ASTType buildType(TypeDeclSummary summary) {
 		ASTType type = new ASTType(0);
-		if (summary.isPrimitive()) {
-			ASTPrimitiveType addition = new ASTPrimitiveType(0);
-			addition.setName(summary.getLongName());
-			type.jjtAddChild(addition, 0);
+		if (summary.getArrayCount()==0 && summary.isPrimitive()) {
+			type.jjtAddChild(buildPrimitive(summary), 0);
+		} else {
+                        type.jjtAddChild(buildReferenceType(summary), 0);
 		}
-		else {
-			ASTName name = buildName(summary);
-			type.jjtAddChild(name, 0);
-		}
-
-		type.setArrayCount(summary.getArrayCount());
 		return type;
 	}
 
@@ -287,5 +284,40 @@ public class AddConstructor extends TransformAST {
 		ASTName name = new ASTName(0);
 		name.fromString(summary.getLongName());
 		return name;
+	}
+        
+        
+	/**
+	 *  Builds the name of the type from the type decl summary
+	 *
+	 *@param  summary  the summary
+	 *@return          the name node
+	 */
+	private ASTPrimitiveType buildPrimitive(TypeDeclSummary summary) {
+		ASTPrimitiveType primitive = new ASTPrimitiveType(0);
+		primitive.setName(summary.getLongName());
+		return primitive;
+	}
+        
+        
+	/**
+	 *  Builds the name of the type from the type decl summary
+	 *
+	 *@param  summary  the summary
+	 *@return          the name node
+	 */
+	private ASTReferenceType buildReferenceType(TypeDeclSummary summary) {
+                ASTReferenceType reference = new ASTReferenceType(0);
+		if (summary.isPrimitive()) {
+			reference.jjtAddChild(buildPrimitive(summary), 0);
+		} else {
+                        reference.jjtAddChild(buildName(summary), 0);
+		}
+                for (int ndx = 0; ndx<summary.getArrayCount(); ndx++) {
+                        ASTVariance variance = new ASTVariance(0);
+                        reference.jjtAddChild(variance, ndx+1);
+                }
+                reference.setArrayCount(summary.getArrayCount());
+		return reference;
 	}
 }

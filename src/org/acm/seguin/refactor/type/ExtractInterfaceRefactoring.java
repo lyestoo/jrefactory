@@ -12,19 +12,21 @@ import java.io.*;
 import java.util.*;
 import org.acm.seguin.parser.ast.*;
 import org.acm.seguin.pretty.ModifierHolder;
-import org.acm.seguin.refactor.*;
+import org.acm.seguin.refactor.AddImportTransform;
+import org.acm.seguin.refactor.ComplexTransform;
+import org.acm.seguin.refactor.Refactoring;
+import org.acm.seguin.refactor.RefactoringException;
 import org.acm.seguin.refactor.method.AddConcreteMethod;
 import org.acm.seguin.summary.*;
 import org.acm.seguin.summary.query.*;
 
 /**
- *  Description of the Class
+ *  Refactoring that extracts the interface from the dialog
  *
  *@author     Grant Watson
  *@created    November 27, 2000
  */
-public class ExtractInterfaceRefactoring extends Refactoring
-{
+public class ExtractInterfaceRefactoring extends Refactoring {
 	private String m_interfaceName;
 	private String m_packageName;
 	private Vector m_summaryList = new Vector();
@@ -48,13 +50,11 @@ public class ExtractInterfaceRefactoring extends Refactoring
 	 */
 	public void setInterfaceName(String interfaceName)
 	{
-		if (interfaceName.indexOf('.') != -1)
-		{
+		if (interfaceName.indexOf('.') != -1) {
 			m_packageName = interfaceName.substring(0, interfaceName.lastIndexOf('.'));
 			m_interfaceName = interfaceName.substring(interfaceName.lastIndexOf('.') + 1);
 		}
-		else
-		{
+		else {
 			m_interfaceName = interfaceName;
 		}
 	}
@@ -116,8 +116,7 @@ public class ExtractInterfaceRefactoring extends Refactoring
 	 */
 	public void addImplementingClass(TypeSummary summary)
 	{
-		if (summary != null)
-		{
+		if (summary != null) {
 			m_summaryList.addElement(summary);
 		}
 	}
@@ -130,46 +129,41 @@ public class ExtractInterfaceRefactoring extends Refactoring
 	 */
 	protected void preconditions() throws RefactoringException
 	{
-		if (m_interfaceName == null)
-		{
+		if (m_interfaceName == null) {
 			throw new RefactoringException("Interface name is not specified");
 		}
-		if (m_summaryList.size() == 0)
-		{
+		if (m_summaryList.size() == 0) {
 			throw new RefactoringException("Unable to find type to extract interface from");
 		}
 	}
 
 
 	/**
-	 *  Description of the Method
+	 *  this performs the refactoring
 	 */
 	protected void transform()
 	{
 		File newFile = createInterfaceFile();
 		// Add declarations of the common methods to the interface
 		Vector methodSummaries = getMethodSummaries();
-		for (int i = 0; i < methodSummaries.size(); i++)
-		{
+		for (int i = 0; i < methodSummaries.size(); i++) {
 			MethodSummary ms = (MethodSummary) methodSummaries.elementAt(i);
 			m_complexTransform.add(new AddConcreteMethod(ms));
 		}
 		// Add necessary import statements to support parameter and return types
 		Iterator importTypes = getImportTypes(methodSummaries);
-		while ((importTypes != null) && (importTypes.hasNext()))
-		{
+		while ((importTypes != null) && (importTypes.hasNext())) {
 			TypeDeclSummary decl = (TypeDeclSummary) importTypes.next();
 			TypeSummary type = GetTypeSummary.query(decl);
 			// If the type is not found, don't attempt to add an import statement
-			if (type != null)
-			{
+			if (type != null) {
 				m_complexTransform.add(new AddImportTransform(type));
 			}
 		}
 		m_complexTransform.apply(newFile, newFile);
 		/*
-		 * Delete the backup file for the intermediate new interface file to
-		 * ensure that an 'undo' does not recover it.
+		 *  Delete the backup file for the intermediate new interface file to
+		 *  ensure that an 'undo' does not recover it.
 		 */
 		newFile = new File(newFile.getAbsolutePath() + ".0");
 		newFile.delete();
@@ -189,18 +183,16 @@ public class ExtractInterfaceRefactoring extends Refactoring
 		// Add all relevant methods from the first class.
 		TypeSummary ts = (TypeSummary) m_summaryList.elementAt(0);
 		Iterator methods = ts.getMethods();
-		while (methods.hasNext())
-		{
+		while (methods.hasNext()) {
 			MethodSummary ms = (MethodSummary) methods.next();
 			ModifierHolder mh = ms.getModifiers();
 			/*
-			 * Include only public, non-static, non-constructor methods.
-			 * Private and protected methods are not allowed in interfaces and
-			 * methods that are package-protected in an interface need to be
-			 * implemented by public methods in implementing classes (I think).
+			 *  Include only public, non-static, non-constructor methods.
+			 *  Private and protected methods are not allowed in interfaces and
+			 *  methods that are package-protected in an interface need to be
+			 *  implemented by public methods in implementing classes (I think).
 			 */
-			if (mh.isPublic() && (!ms.isConstructor()) && (!mh.isStatic()))
-			{
+			if (mh.isPublic() && (!ms.isConstructor()) && (!mh.isStatic())) {
 				// synchronized modifier is not allowed for interfaces.
 				mh.setSynchronized(false);
 				firstClassMethods.addElement(ms);
@@ -220,36 +212,30 @@ public class ExtractInterfaceRefactoring extends Refactoring
 	private Iterator getImportTypes(Vector methodSummaries)
 	{
 		HashMap importTypes = new HashMap();
-		for (int i = 0; i < methodSummaries.size(); i++)
-		{
+		for (int i = 0; i < methodSummaries.size(); i++) {
 			MethodSummary ms = (MethodSummary) methodSummaries.elementAt(i);
 			// Add return type to list
 			TypeDeclSummary retType = ms.getReturnType();
 			String typeName = retType.getName();
-			if ((!(typeName.equals("void"))) && (importTypes.get(typeName) == null))
-			{
+			if ((!(typeName.equals("void"))) && (importTypes.get(typeName) == null)) {
 				importTypes.put(typeName, retType);
 			}
 			Iterator params = ms.getParameters();
 			// Add parameter types to list
-			while ((params != null) && (params.hasNext()))
-			{
+			while ((params != null) && (params.hasNext())) {
 				VariableSummary vs = (VariableSummary) params.next();
 				TypeDeclSummary param = vs.getTypeDecl();
 				typeName = param.getName();
-				if (importTypes.get(typeName) == null)
-				{
+				if (importTypes.get(typeName) == null) {
 					importTypes.put(typeName, param);
 				}
 			}
 			// Add exception types to list
 			Iterator exceptions = ms.getExceptions();
-			while ((exceptions != null) && (exceptions.hasNext()))
-			{
+			while ((exceptions != null) && (exceptions.hasNext())) {
 				TypeDeclSummary exception = (TypeDeclSummary) exceptions.next();
 				typeName = exception.getName();
-				if (importTypes.get(typeName) == null)
-				{
+				if (importTypes.get(typeName) == null) {
 					importTypes.put(typeName, exception);
 				}
 			}
@@ -264,27 +250,30 @@ public class ExtractInterfaceRefactoring extends Refactoring
 	 */
 	private void addInterfaceToClasses()
 	{
-		for (int i = 0; i < m_summaryList.size(); i++)
-		{
+		for (int i = 0; i < m_summaryList.size(); i++) {
 			TypeSummary ts = (TypeSummary) m_summaryList.elementAt(i);
 			FileSummary fileSummary = (FileSummary) ts.getParent();
 			File file = fileSummary.getFile();
 			ASTName interfaceName = new ASTName(0);
+
+			String currentPackageName = ts.getPackageSummary().getName();
 			/*
-			 * If the interface package differs from the class package, then
-			 * specify the interface package name
+			 *  If the interface package differs from the class package, then
+			 *  specify the interface package name
 			 */
-			if (!(ts.getPackageSummary().getName().equals(m_packageName)))
-			{
+			if ((m_packageName.length() > 0) && !(currentPackageName.equals(m_packageName))) {
 				interfaceName.fromString(m_packageName + "." + m_interfaceName);
 			}
-			else
-			{
+			else {
 				interfaceName.fromString(m_interfaceName);
 			}
 			m_complexTransform.clear();
 			// Very Important so we don't re-apply the interface transforms
 			m_complexTransform.add(new AddImplementedInterfaceTransform(interfaceName));
+
+			if (!m_packageName.equals(currentPackageName)) {
+				m_complexTransform.add(new AddImportTransform(interfaceName));
+			}
 			m_complexTransform.apply(file, new File(file.getAbsolutePath()));
 		}
 	}
@@ -300,26 +289,21 @@ public class ExtractInterfaceRefactoring extends Refactoring
 	private Vector commonMethods(Vector initialMethods)
 	{
 		Vector result = new Vector();
-		for (int i = 0; i < initialMethods.size(); i++)
-		{
+		for (int i = 0; i < initialMethods.size(); i++) {
 			boolean keep = true;
 			outerloop :
-			for (int j = 1; j < m_summaryList.size(); j++)
-			{
+			for (int j = 1; j < m_summaryList.size(); j++) {
 				TypeSummary ts = (TypeSummary) m_summaryList.elementAt(j);
 				Iterator methods = ts.getMethods();
-				while (methods.hasNext())
-				{
+				while (methods.hasNext()) {
 					MethodSummary ms = (MethodSummary) methods.next();
-					if (ms.equals((MethodSummary) initialMethods.elementAt(i)))
-					{
+					if (ms.equals((MethodSummary) initialMethods.elementAt(i))) {
 						continue outerloop;
 					}
 				}
 				keep = false;
 			}
-			if (keep)
-			{
+			if (keep) {
 				MethodSummary ms = (MethodSummary) initialMethods.elementAt(i);
 				result.addElement(initialMethods.elementAt(i));
 			}
@@ -339,18 +323,14 @@ public class ExtractInterfaceRefactoring extends Refactoring
 		TypeSummary ts = (TypeSummary) m_summaryList.elementAt(0);
 		PackageSummary ps = ts.getPackageSummary();
 
-		if (m_packageName == null)
-		{
+		if (m_packageName == null) {
 			m_packageName = ps.getName();
 		}
-		File rootDir = TopLevelDirectory.query();
-		CreateNewInterface cni = new CreateNewInterface(rootDir, m_packageName, m_interfaceName);
-		try
-		{
+		CreateNewInterface cni = new CreateNewInterface(ts, m_packageName, m_interfaceName);
+		try {
 			newFile = cni.run();
 		}
-		catch (RefactoringException re)
-		{
+		catch (RefactoringException re) {
 			re.printStackTrace();
 			return null;
 		}

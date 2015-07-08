@@ -25,6 +25,7 @@ import java.text.MessageFormat;
  *  Holds a method declaration in a class
  *
  *@author     Chris Seguin
+ *@author     Mike Atkinson
  *@created    October 13, 1999
  */
 public class ASTMethodDeclaration extends SimpleNode implements JavaDocable {
@@ -191,10 +192,14 @@ public class ASTMethodDeclaration extends SimpleNode implements JavaDocable {
 	/**
 	 *  Returns a string containing all the modifiers
 	 *
-	 *@return    the iterator
+	 *@param code the code used to determine the order of the modifiers
+	 *@return    the string representationof the order
 	 */
-	public String getModifiersString() {
-		return modifiers.toString();
+	public String getModifiersString(int code) {
+		if (code == PrintData.ALPHABETICAL_ORDER)
+			return modifiers.toString();
+		else
+			return modifiers.toStandardOrderString();
 	}
 
 
@@ -237,7 +242,7 @@ public class ASTMethodDeclaration extends SimpleNode implements JavaDocable {
 	 *@return    a string representing this object
 	 */
 	public String toString() {
-		return super.toString() + " [" + getModifiersString() + "]";
+		return super.toString() + " [" + getModifiersString(PrintData.ALPHABETICAL_ORDER) + "]";
 	}
 
 
@@ -286,8 +291,15 @@ public class ASTMethodDeclaration extends SimpleNode implements JavaDocable {
 
 		//  Require the other tags
 		FileSettings bundle = FileSettings.getSettings("Refactory", "pretty");
-		ASTMethodDeclarator child = (ASTMethodDeclarator) jjtGetChild(1);
-		RequiredTags.getTagger().addTags(bundle, "method", child.getName(), jdi);
+                int child =0;
+                if (jjtGetChild(0) instanceof ASTAttribute) {
+                    child++; // skip possible attributes
+                }
+                if (jjtGetChild(child) instanceof ASTTypeParameters) {
+                    child++; // skip possible type parameters
+                }
+                ASTMethodDeclarator method = (ASTMethodDeclarator) jjtGetChild(child+1);
+                RequiredTags.getTagger().addTags(bundle, "method", method.getName(), jdi);
 	}
 
 

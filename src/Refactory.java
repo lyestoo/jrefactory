@@ -1,21 +1,28 @@
 /*
- * Copyright 1999
+ *  Author:  Chris Seguin
  *
- * Chris Seguin
+ *  This software has been developed under the copyleft
+ *  rules of the GNU General Public License.  Please
+ *  consult the GNU General Public License for more
+ *  details about use and distribution of this software.
  */
 import java.io.File;
 import java.util.Iterator;
 import javax.swing.JFileChooser;
-import org.acm.seguin.summary.*;
+import org.acm.seguin.ide.command.CommandLineSourceBrowser;
+import org.acm.seguin.ide.common.SourceBrowser;
+import org.acm.seguin.ide.command.PackageSelectorPanel;
 import org.acm.seguin.io.AllFileFilter;
+import org.acm.seguin.summary.*;
 import org.acm.seguin.tools.install.RefactoryInstaller;
 import org.acm.seguin.uml.loader.ReloaderSingleton;
-import org.acm.seguin.ide.command.PackageSelectorPanel;
+import org.acm.seguin.util.FileSettings;
 
 /**
  *  Draws a UML diagram for all the classes in a package
  *
  *@author    Chris Seguin
+ *@author    Mike Atkinson
  */
 public class Refactory {
 	/**
@@ -23,9 +30,27 @@ public class Refactory {
 	 *
 	 *@param  args  the command line arguments
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
+            try {
+		System.setOut(new java.io.PrintStream(new java.io.FileOutputStream("out.txt")));
+		System.setErr(new java.io.PrintStream(new java.io.FileOutputStream("err.txt")));
+            } catch (java.io.FileNotFoundException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+            org.acm.seguin.parser.JavaParser.setTargetJDK("jdk1.4.2");
+		for (int ndx = 0; ndx < args.length; ndx++) {
+			if (args[ndx].equals("-config")) {
+				String dir = args[ndx + 1];
+                		ndx++;
+                		FileSettings.setSettingsRoot(dir);
+            		}
+		}
+
 		//  Make sure everything is installed properly
 		(new RefactoryInstaller(true)).run();
+		SourceBrowser.set(new CommandLineSourceBrowser());
 
 		if (args.length == 0) {
 			elixir();
@@ -33,6 +58,7 @@ public class Refactory {
 		else {
 			selectionPanel(args[0]);
 		}
+                //System.exit(0);
 	}
 
 
@@ -41,7 +67,8 @@ public class Refactory {
 	 *
 	 *@param  directory  Description of Parameter
 	 */
-	public static void selectionPanel(String directory) {
+	public static void selectionPanel(String directory)
+	{
 		PackageSelectorPanel panel = PackageSelectorPanel.getMainPanel(directory);
 		ReloaderSingleton.register(panel);
 	}
@@ -50,7 +77,8 @@ public class Refactory {
 	/**
 	 *  Insertion point for elixir
 	 */
-	public static void elixir() {
+	public static void elixir()
+	{
 		if (PackageSelectorPanel.getMainPanel(null) != null) {
 			return;
 		}

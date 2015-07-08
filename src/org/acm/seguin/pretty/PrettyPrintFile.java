@@ -116,7 +116,7 @@ public class PrettyPrintFile {
 	 */
 	public void apply(File inputFile, SimpleNode root) {
 		if (root != null) {
-			FileSettings pretty = FileSettings.getSettings("Refactory", "pretty");
+			FileSettings pretty = FileSettings.getRefactoryPrettySettings();
 			pretty.setReloadNow(true);
 
 			//  Create the visitor
@@ -167,6 +167,8 @@ public class PrettyPrintFile {
 	 *@return        the print data
 	 */
 	protected PrintData getPrintData(File input) {
+		JavadocTags.get().reload();
+
 		//  Create the new stream
 		return new PrintData(getOutputStream(input));
 	}

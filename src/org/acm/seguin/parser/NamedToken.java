@@ -11,6 +11,7 @@ package org.acm.seguin.parser;
  *  Description of the Class 
  *
  *@author     Chris Seguin 
+ *@author    Mike Atkinson
  *@created    October 14, 1999 
  */
 public class NamedToken {
@@ -60,4 +61,14 @@ public class NamedToken {
 	public boolean check(String match) {
 		return (match.equals(id));
 	}
+        
+	/**
+	 *  Create a human readable representation of the token
+	 *
+	 *@return        A representation of the token 
+         *@since         JRefactory 2.7.00
+	 */
+        public String toString() {
+            return "id="+id+" token="+token.toString(true);
+        }
 }

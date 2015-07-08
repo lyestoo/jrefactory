@@ -22,6 +22,7 @@ import org.acm.seguin.parser.JavaParser;
 public class ASTPrimaryPrefix extends SimpleNode {
 	//  Instance Variables
 	private String name = "";
+	private int count = 0;
 
 
 	/**
@@ -85,4 +86,7 @@ public class ASTPrimaryPrefix extends SimpleNode {
 	public Object jjtAccept(JavaParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
+
+	public int getCount() { return count; }
+	public void setCount(int value) { count = value; }
 }

@@ -29,7 +29,7 @@ public class ForceJavadocComments {
 	 */
 	public boolean isJavaDocRequired(String type, ModifierHolder mods) {
 		//  Get the resource bundle
-		FileSettings bundle = FileSettings.getSettings("Refactory", "pretty");
+		FileSettings bundle = FileSettings.getRefactoryPrettySettings();
 
 		//  Determine the minimum acceptable level
 		String minimumLevel = "none";

@@ -18,5 +18,15 @@ of a file, you should just return:<P>
   return result;
 </BLOCKQUOTE>
 }</TT>
+
+<P>The code in JavaParser.java has 2 other changes.  First,
+we add the following at the top:</P>
+<PRE>
+package org.acm.seguin.parser;
+import org.acm.seguin.parser.ast.*;
+import org.acm.seguin.parser.io.CharStream;
+</PRE>
+<P>Second you need to change all the UCode_CharStream to just
+CharStream and all the new CharStream to CharStream.make.</P>
 </BODY>
 </HTML>

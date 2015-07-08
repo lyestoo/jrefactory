@@ -97,12 +97,29 @@ import org.acm.seguin.parser.ast.ASTVariableDeclarator;
 import org.acm.seguin.parser.ast.ASTVariableDeclaratorId;
 import org.acm.seguin.parser.ast.ASTVariableInitializer;
 import org.acm.seguin.parser.ast.ASTWhileStatement;
+import org.acm.seguin.parser.ast.ASTAssertionStatement;
 import org.acm.seguin.parser.ast.SimpleNode;
+
+import org.acm.seguin.parser.ast.ASTTypeParameterList;
+import org.acm.seguin.parser.ast.ASTTypeParameter;
+import org.acm.seguin.parser.ast.ASTTypeArguments;
+import org.acm.seguin.parser.ast.ASTReferenceTypeList;
+import org.acm.seguin.parser.ast.ASTReferenceType;
+import org.acm.seguin.parser.ast.ASTReferenceVariance;
+import org.acm.seguin.parser.ast.ASTTypeParameters;
+import org.acm.seguin.parser.ast.ASTGenericNameList;
+import org.acm.seguin.parser.ast.ASTVariance;
+import org.acm.seguin.parser.ast.ASTEnumDeclaration;
+import org.acm.seguin.parser.ast.ASTEnumElement;
+import org.acm.seguin.parser.ast.ASTIdentifier;
+import org.acm.seguin.parser.ast.ASTAttribute;
+
 
 /**
  *  Processes special tokens
  *
  *@author     Chris Seguin
+ *@author     Mike Atkinson
  *@created    October 13, 1999
  *@date       March 10, 1999
  */
@@ -130,6 +147,189 @@ public class SpecialTokenVisitor implements JavaParserVisitor
 	}
 
 
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTTypeParameterList node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTTypeParameter node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTTypeArguments node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTReferenceTypeList node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTReferenceType node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTReferenceVariance node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTTypeParameters node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTGenericNameList node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTVariance node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTEnumDeclaration node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTEnumElement node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTIdentifier node, Object data) {
+		return processSpecialToken(node, data);
+        }
+
+	/**
+	 *  process the special tokens (Javadoc, newlines, etc.) for this node.
+	 *
+         *  It uses processSpecialToken() to do all the work.
+         *
+	 *@param  node  process this node.
+	 *@param  data  of class PrintData
+	 *@return       Updated PrintData
+         *@since        JRefactory 2.7.00
+	 */
+        public Object visit(ASTAttribute node, Object data) {
+		return processSpecialToken(node, data);
+        }
+            
+            
 	/**
 	 *  Description of the Method
 	 *
@@ -1249,6 +1449,19 @@ public class SpecialTokenVisitor implements JavaParserVisitor
 
 
 	/**
+	 *  Visit the assertion node
+	 *
+	 *@param  node  the node
+	 *@param  data  the data needed to perform the visit
+	 *@return       the result of visiting the node
+	 */
+	public Object visit(ASTAssertionStatement node, Object data)
+	{
+		return processSpecialToken(node, data);
+	}
+
+
+	/**
 	 *  Process the special token data
 	 *
 	 *@param  node  the node that the special token data is associated with
@@ -1264,6 +1477,11 @@ public class SpecialTokenVisitor implements JavaParserVisitor
 		boolean wasIndented = printData.isLineIndented();
 		int endOfChain = chain.size() - 1;
 
+                // This partly fixes bug 761890 by pretending that a program line ending 
+                // with a C Style comment is a single line comment.
+                if (tokenData.getSpecialToken() != null && !printData.getCStyleOwnline()) {
+                    tokenData.convertFirstCStyleCommentToSingleLine();
+                }
 		while (tokenData.getSpecialToken() != null)
 		{
 			checkLocation(tokenData.getSpecialToken(), printData);
@@ -1347,6 +1565,10 @@ public class SpecialTokenVisitor implements JavaParserVisitor
 		else if (printData.getSurpriseReturn() == printData.PARAM_INDENT)
 		{
 			printData.indentParam();
+		}
+		else if (printData.getSurpriseReturn() == printData.NO_INDENT)
+		{
+			printData.indent();
 		}
 	}
 }

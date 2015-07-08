@@ -50,7 +50,7 @@ public class LineCounter {
 			in.close();
 		}
 		catch (IOException ioe) {
-			ExceptionPrinter.print(ioe);
+			ExceptionPrinter.print(ioe, false);
 		}
 
 		return count;

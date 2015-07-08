@@ -34,6 +34,7 @@ import org.acm.seguin.util.FileSettings;
  */
 public abstract class Refactoring {
 	private ComplexTransform complex = null;
+        private static Class transform = DefaultComplexTransform.class;
 
 	/**
 	 *  The repackage refactoring
@@ -149,6 +150,30 @@ public abstract class Refactoring {
 	}
 
 
+        /**
+         * This sets the class that does complex transforms.
+         *
+         *  If not called the org.acm.seguin.refactor.ComplexTransform class
+         *  is used.
+         *
+         * @param complexTransform a class that implements org.acm.seguin.refactor.ComplexTransform
+         * @throws IllegalArgumentException if the class cannot be instantiated or does not implement ComplexTransform
+         */
+        public static void setComplexTransform(Class complexTransform) throws IllegalArgumentException {
+            try {
+                if (!(transform.newInstance() instanceof ComplexTransform)) {
+                    throw new IllegalArgumentException("the undo class must implement org.acm.seguin.refactor.ComplexTransform");
+                }
+            } catch (IllegalAccessException ex) {
+                IllegalArgumentException e = new IllegalArgumentException("your ComplexTransform class cannot be accessed");
+                e.initCause(ex);
+            } catch (InstantiationException ex) {
+                IllegalArgumentException e = new IllegalArgumentException("your ComplexTransform class must have a zero argument constructor");
+                e.initCause(ex);
+            }
+            transform = complexTransform;
+        }
+
 	/**
 	 *  Gets a complex transform object for this refactoring
 	 *
@@ -158,7 +183,15 @@ public abstract class Refactoring {
 	{
 		if (complex == null) {
 			UndoAction undo = UndoStack.get().add(this);
-			complex = new ComplexTransform(undo);
+                        try {
+                            complex = (ComplexTransform)transform.newInstance();
+                            complex.setUndoAction(undo);
+                        } catch (IllegalAccessException ex) {
+                            // should not happen as checked in setComplexTransform
+                        } catch (InstantiationException ex) {
+                            // should not happen as checked in setComplexTransform
+                        }
+			//complex = new ComplexTransform(undo);
 		}
 
 		return complex;
@@ -213,8 +246,10 @@ public abstract class Refactoring {
 	private void recordUsage()
 	{
 		try {
-			String dir = FileSettings.getSettingsRoot();
-			FileWriter fileWriter = new FileWriter(dir + File.separator + "log.txt", true);
+			//String dir = FileSettings.getSettingsRoot();
+			//FileWriter fileWriter = new FileWriter(dir + File.separator + ".Refactory" + File.separator + "log.txt", true);
+         File dir = new File(FileSettings.getRefactorySettingsRoot(), "log.txt");
+			FileWriter fileWriter = new FileWriter(dir, true);
 			PrintWriter output = new PrintWriter(fileWriter);
 			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 			output.println(getID() + ", " + df.format(new Date()));

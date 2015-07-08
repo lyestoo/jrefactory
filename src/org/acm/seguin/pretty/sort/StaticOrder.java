@@ -15,6 +15,7 @@ import org.acm.seguin.parser.ast.ASTFieldDeclaration;
 import org.acm.seguin.parser.ast.ASTNestedInterfaceDeclaration;
 import org.acm.seguin.parser.ast.ASTMethodDeclaration;
 import org.acm.seguin.parser.ast.ASTNestedClassDeclaration;
+import org.acm.seguin.parser.ast.ASTEnumDeclaration;
 import org.acm.seguin.parser.ast.ASTConstructorDeclaration;
 import org.acm.seguin.parser.ast.SimpleNode;
 
@@ -23,6 +24,7 @@ import org.acm.seguin.parser.ast.SimpleNode;
  *  Orders the items in a class according to type.
  *
  *@author     Chris Seguin
+ *@author     Mike Atkinson
  *@created    August 3, 1999
  */
 public class StaticOrder extends Ordering {
@@ -67,6 +69,9 @@ public class StaticOrder extends Ordering {
 		//  Now that we have data, determine the type of data
 		if (data instanceof ASTFieldDeclaration) {
 			currentIsStatic = ((ASTFieldDeclaration) data).isStatic();
+		}
+		else if (data instanceof ASTEnumDeclaration) {
+			currentIsStatic = ((ASTEnumDeclaration) data).isStatic();
 		}
 		else if (data instanceof ASTConstructorDeclaration) {
 			currentIsStatic = false;

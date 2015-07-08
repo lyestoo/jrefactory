@@ -104,6 +104,9 @@ public class RenameFieldRefactoring extends FieldRefactoring {
 	 */
 	protected void transform()
 	{
+		if (oldField.getName().equals(newName))
+			return;
+
 		FileSummary fileSummary = (FileSummary) getFileSummary(typeSummary);
 		RenameFieldTransform rft = new RenameFieldTransform(oldField, newName);
 		ComplexTransform transform = getComplexTransform();

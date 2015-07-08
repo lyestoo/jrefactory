@@ -102,7 +102,6 @@ public class RemoveImportTransform extends TransformAST {
 				ASTName nameNode = (ASTName) importDecl.jjtGetChild(0);
 				String code = nameNode.getName();
 				String packageName = name.getName();
-
 				return (code.equals(packageName));
 			}
 		}

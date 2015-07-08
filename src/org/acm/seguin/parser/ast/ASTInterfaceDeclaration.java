@@ -8,23 +8,24 @@
  */
 package org.acm.seguin.parser.ast;
 
-import org.acm.seguin.pretty.ModifierHolder;
+import java.text.DateFormat;
+import java.util.Date;
+import org.acm.seguin.parser.JavaParser;
+import org.acm.seguin.parser.JavaParserVisitor;
+import org.acm.seguin.pretty.ForceJavadocComments;
 import org.acm.seguin.pretty.JavaDocComponent;
 import org.acm.seguin.pretty.JavaDocable;
 import org.acm.seguin.pretty.JavaDocableImpl;
+import org.acm.seguin.pretty.ModifierHolder;
 import org.acm.seguin.pretty.PrintData;
-import org.acm.seguin.parser.JavaParserVisitor;
-import org.acm.seguin.parser.JavaParser;
-import org.acm.seguin.pretty.ForceJavadocComments;
 import org.acm.seguin.pretty.ai.RequiredTags;
-import java.text.DateFormat;
-import java.util.Date;
 import org.acm.seguin.util.FileSettings;
 import org.acm.seguin.util.MissingSettingsException;
+import org.acm.seguin.pretty.DescriptionPadder;
 
 /**
- *  Holds an interface declaration.  Essentially this is the method
- *  declaration inside an interface.
+ *  Holds an interface declaration. Essentially this is the method declaration
+ *  inside an interface.
  *
  *@author     Chris Seguin
  *@created    October 13, 1999
@@ -40,7 +41,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@param  id  Description of Parameter
 	 */
-	public ASTInterfaceDeclaration(int id) {
+	public ASTInterfaceDeclaration(int id)
+	{
 		super(id);
 		modifiers = new ModifierHolder();
 		jdi = new JavaDocableImpl();
@@ -53,7 +55,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *@param  p   Description of Parameter
 	 *@param  id  Description of Parameter
 	 */
-	public ASTInterfaceDeclaration(JavaParser p, int id) {
+	public ASTInterfaceDeclaration(JavaParser p, int id)
+	{
 		super(p, id);
 		modifiers = new ModifierHolder();
 		jdi = new JavaDocableImpl();
@@ -65,7 +68,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an ABSTRACT flag
 	 */
-	public boolean isAbstract() {
+	public boolean isAbstract()
+	{
 		return modifiers.isAbstract();
 	}
 
@@ -75,7 +79,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an EXPLICIT flag
 	 */
-	public boolean isExplicit() {
+	public boolean isExplicit()
+	{
 		return modifiers.isExplicit();
 	}
 
@@ -85,7 +90,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an FINAL flag
 	 */
-	public boolean isFinal() {
+	public boolean isFinal()
+	{
 		return modifiers.isFinal();
 	}
 
@@ -95,7 +101,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an INTERFACE flag
 	 */
-	public boolean isInterface() {
+	public boolean isInterface()
+	{
 		return modifiers.isInterface();
 	}
 
@@ -105,7 +112,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an NATIVE flag
 	 */
-	public boolean isNative() {
+	public boolean isNative()
+	{
 		return modifiers.isNative();
 	}
 
@@ -115,7 +123,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an PRIVATE flag
 	 */
-	public boolean isPrivate() {
+	public boolean isPrivate()
+	{
 		return modifiers.isPrivate();
 	}
 
@@ -125,7 +134,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an PROTECTED flag
 	 */
-	public boolean isProtected() {
+	public boolean isProtected()
+	{
 		return modifiers.isProtected();
 	}
 
@@ -135,7 +145,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an PUBLIC flag
 	 */
-	public boolean isPublic() {
+	public boolean isPublic()
+	{
 		return modifiers.isPublic();
 	}
 
@@ -145,7 +156,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an static flag
 	 */
-	public boolean isStatic() {
+	public boolean isStatic()
+	{
 		return modifiers.isStatic();
 	}
 
@@ -155,7 +167,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an STRICT flag
 	 */
-	public boolean isStrict() {
+	public boolean isStrict()
+	{
 		return modifiers.isStrict();
 	}
 
@@ -165,7 +178,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an SYNCHRONIZED flag
 	 */
-	public boolean isSynchronized() {
+	public boolean isSynchronized()
+	{
 		return modifiers.isSynchronized();
 	}
 
@@ -175,7 +189,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an TRANSIENT flag
 	 */
-	public boolean isTransient() {
+	public boolean isTransient()
+	{
 		return modifiers.isTransient();
 	}
 
@@ -185,7 +200,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if this stores an VOLATILE flag
 	 */
-	public boolean isVolatile() {
+	public boolean isVolatile()
+	{
 		return modifiers.isVolatile();
 	}
 
@@ -193,10 +209,14 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	/**
 	 *  Returns a string containing all the modifiers
 	 *
-	 *@return    the iterator
+	 *@param code the code used to determine the order of the modifiers
+	 *@return    the string representationof the order
 	 */
-	public String getModifiersString() {
-		return modifiers.toString();
+	public String getModifiersString(int code) {
+		if (code == PrintData.ALPHABETICAL_ORDER)
+			return modifiers.toString();
+		else
+			return modifiers.toStandardOrderString();
 	}
 
 
@@ -205,7 +225,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    the holder
 	 */
-	public ModifierHolder getModifiers() {
+	public ModifierHolder getModifiers()
+	{
 		return modifiers;
 	}
 
@@ -215,7 +236,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    true if it still needs to be printed
 	 */
-	public boolean isRequired() {
+	public boolean isRequired()
+	{
 		ForceJavadocComments fjc = new ForceJavadocComments();
 
 		return jdi.isRequired() &&
@@ -228,7 +250,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@param  modifier  the next modifier
 	 */
-	public void addModifier(String modifier) {
+	public void addModifier(String modifier)
+	{
 		modifiers.add(modifier);
 	}
 
@@ -238,8 +261,9 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@return    a string representing this object
 	 */
-	public String toString() {
-		return super.toString() + " [" + getModifiersString() + "]";
+	public String toString()
+	{
+		return super.toString() + " [" + getModifiersString(PrintData.ALPHABETICAL_ORDER) + "]";
 	}
 
 
@@ -248,7 +272,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@param  component  the component that can be added
 	 */
-	public void addJavaDocComponent(JavaDocComponent component) {
+	public void addJavaDocComponent(JavaDocComponent component)
+	{
 		jdi.addJavaDocComponent(component);
 	}
 
@@ -258,7 +283,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *
 	 *@param  printData  the print data
 	 */
-	public void printJavaDocComponents(PrintData printData) {
+	public void printJavaDocComponents(PrintData printData)
+	{
 		FileSettings bundle = FileSettings.getSettings("Refactory", "pretty");
 		jdi.printJavaDocComponents(printData, bundle.getString("class.tags"));
 	}
@@ -268,12 +294,13 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *  Makes sure all the java doc components are present. For classes and
 	 *  interfaces, this means a date and an author.
 	 */
-	public void finish() {
+	public void finish()
+	{
 		//  Get the resource bundle
 		FileSettings bundle = FileSettings.getSettings("Refactory", "pretty");
 
 		//  Description of the interface
-		jdi.require("", bundle.getString("interface.descr"));
+		jdi.require("", DescriptionPadder.find(bundle, "interface.descr"));
 
 		//  Require the other tags
 		ASTUnmodifiedInterfaceDeclaration child = (ASTUnmodifiedInterfaceDeclaration) jjtGetChild(0);
@@ -288,7 +315,8 @@ public class ASTInterfaceDeclaration extends SimpleNode implements JavaDocable {
 	 *@param  data     Description of Parameter
 	 *@return          Description of the Returned Value
 	 */
-	public Object jjtAccept(JavaParserVisitor visitor, Object data) {
+	public Object jjtAccept(JavaParserVisitor visitor, Object data)
+	{
 		return visitor.visit(this, data);
 	}
 }

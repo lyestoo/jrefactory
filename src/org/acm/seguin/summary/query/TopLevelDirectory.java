@@ -1,10 +1,53 @@
-/*
- *  Author:  Chris Seguin
+/* ====================================================================
+ * The JRefactory License, Version 1.0
  *
- *  This software has been developed under the copyleft
- *  rules of the GNU General Public License.  Please
- *  consult the GNU General Public License for more
- *  details about use and distribution of this software.
+ * Copyright (c) 2001 JRefactory.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        JRefactory (http://www.sourceforge.org/projects/jrefactory)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "JRefactory" must not be used to endorse or promote
+ *    products derived from this software without prior written
+ *    permission. For written permission, please contact seguin@acm.org.
+ *
+ * 5. Products derived from this software may not be called "JRefactory",
+ *    nor may "JRefactory" appear in their name, without prior written
+ *    permission of Chris Seguin.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE CHRIS SEGUIN OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of JRefactory.  For more information on
+ * JRefactory, please see
+ * <http://www.sourceforge.org/projects/jrefactory>.
  */
 package org.acm.seguin.summary.query;
 
@@ -19,146 +62,189 @@ import org.acm.seguin.parser.factory.ParserFactory;
 import org.acm.seguin.parser.query.PackageNameGetter;
 import org.acm.seguin.summary.FileSummary;
 import org.acm.seguin.summary.PackageSummary;
+import org.acm.seguin.summary.Summary;
 
 /**
  *  This class is used to infer the top level directory
  *
- *@author    Chris Seguin
+ *@author     Chris Seguin
+ *@created    September 12, 2001
  */
 public class TopLevelDirectory {
-	/**
-	 *  Return the top level directory from a FileSummary
-	 *
-	 *@param  fileSummary  Description of Parameter
-	 *@return              Description of the Returned Value
-	 */
-	public static File query(FileSummary fileSummary)
-	{
-		File current = fileSummary.getFile();
-		if (current == null)
-			return null;
+    /**
+     *  Gets the PackageDirectory attribute of the TopLevelDirectory class
+     *
+     *@param  initialSummary  Description of Parameter
+     *@param  packageName     Description of Parameter
+     *@return                 The PackageDirectory value
+     */
+    public static File getPackageDirectory(Summary initialSummary, String packageName) {
+        File rootDir = null;
 
-		File currentDir = current.getParentFile();
-		PackageSummary packageSummary = (PackageSummary) fileSummary.getParent();
+        if (initialSummary != null) {
+            FileSummary fileSummary = getFileSummary(initialSummary);
+            rootDir = query(fileSummary);
+        }
 
-		String name = packageSummary.getName();
-		if (name.length() == 0) {
-			return currentDir;
-		}
+        if (rootDir == null) {
+            rootDir = query();
+        }
 
-		int index = name.indexOf(".");
-		currentDir = currentDir.getParentFile();
+        StringTokenizer tok = new StringTokenizer(packageName, ".");
+        File current = rootDir;
+        while (tok.hasMoreTokens()) {
+            current = new File(current, tok.nextToken());
+        }
 
-		while (index != -1) {
-			index = name.indexOf(".", index + 1);
-			currentDir = currentDir.getParentFile();
-		}
-
-		return currentDir;
-	}
+        return current;
+    }
 
 
-	/**
-	 *  Return the top level directory
-	 *
-	 *@param  initialDir  Description of Parameter
-	 *@param  filename    Description of Parameter
-	 *@return             the top level directory
-	 */
-	public static File query(File initialDir, String filename)
-	{
-		//  Create a factory to get a root
-		File inputFile = new File(initialDir, filename);
-		ParserFactory factory = new FileParserFactory(inputFile);
-		SimpleNode root = factory.getAbstractSyntaxTree(false);
+    /**
+     *  Return the top level directory from a FileSummary
+     *
+     *@param  fileSummary  Description of Parameter
+     *@return              Description of the Returned Value
+     */
+    public static File query(FileSummary fileSummary) {
+        File current = fileSummary.getFile();
+        if (current == null) {
+            return null;
+        }
 
-		File topLevel = getParent(inputFile);
-		ASTName packageName = PackageNameGetter.query(root);
-		if (packageName != null) {
-			for (int ndx = 0; ndx < packageName.getNameSize(); ndx++) {
-				topLevel = getParent(topLevel);
-			}
-		}
+        File currentDir = current.getParentFile();
+        PackageSummary packageSummary = (PackageSummary) fileSummary.getParent();
 
-		//  Return that directory
-		return topLevel;
-	}
+        String name = packageSummary.getName();
+        if (name.length() == 0) {
+            return currentDir;
+        }
 
+        int index = name.indexOf(".");
+        currentDir = currentDir.getParentFile();
 
-	/**
-	 *  Searches all the packages for an appropriate file and infers the source
-	 *  root directory
-	 *
-	 *@return    the root directory
-	 */
-	public static File query()
-	{
-		FileSummary appropriate = findFileSummary();
-		if (appropriate == null) {
-			return new File(System.getProperty("user.dir"));
-		}
+        while (index != -1) {
+            index = name.indexOf(".", index + 1);
+            currentDir = currentDir.getParentFile();
+        }
 
-		PackageSummary packageSummary = (PackageSummary) appropriate.getParent();
-		String packageName = packageSummary.getName();
-		StringTokenizer tok = new StringTokenizer(packageName, ".");
-		File startingPoint = null;
-		try {
-			startingPoint = new File(appropriate.getFile().getCanonicalPath());
-		}
-		catch (IOException ioe) {
-			startingPoint = appropriate.getFile();
-		}
-
-		File current = startingPoint.getParentFile();
-		while (tok.hasMoreTokens()) {
-			current = current.getParentFile();
-			String value = tok.nextToken();
-		}
-
-		return current;
-	}
+        return currentDir;
+    }
 
 
-	/**
-	 *  Given a file, it returns the parent file
-	 *
-	 *@param  input  the input file
-	 *@return        the parent of that file
-	 */
-	private static File getParent(File input)
-	{
-		try {
-			String path = input.getCanonicalPath();
-			File temp = new File(path);
-			return temp.getParentFile();
-		}
-		catch (IOException ioe) {
-		}
+    /**
+     *  Return the top level directory
+     *
+     *@param  initialDir  Description of Parameter
+     *@param  filename    Description of Parameter
+     *@return             the top level directory
+     */
+    public static File query(File initialDir, String filename) {
+        //  Create a factory to get a root
+        File inputFile = new File(initialDir, filename);
+        ParserFactory factory = new FileParserFactory(inputFile);
+        SimpleNode root = factory.getAbstractSyntaxTree(false);
 
-		return input.getParentFile();
-	}
+        File topLevel = getParent(inputFile);
+        ASTName packageName = PackageNameGetter.query(root);
+        if (packageName != null) {
+            for (int ndx = 0; ndx < packageName.getNameSize(); ndx++) {
+                topLevel = getParent(topLevel);
+            }
+        }
+
+        //  Return that directory
+        return topLevel;
+    }
 
 
-	/**
-	 *  Searches for a file summary with a file (rather than a null) in the file
-	 *
-	 *@return    the file summary
-	 */
-	private static FileSummary findFileSummary()
-	{
-		Iterator iter = PackageSummary.getAllPackages();
-		if (iter != null) {
-			while (iter.hasNext()) {
-				PackageSummary next = (PackageSummary) iter.next();
-				Iterator iter2 = next.getFileSummaries();
-				while ((iter2 != null) && iter2.hasNext()) {
-					FileSummary fileSummary = (FileSummary) iter2.next();
-					if (fileSummary.getFile() != null) {
-						return fileSummary;
-					}
-				}
-			}
-		}
-		return null;
-	}
+    /**
+     *  Given a file, it returns the parent file
+     *
+     *@param  input  the input file
+     *@return        the parent of that file
+     */
+    private static File getParent(File input) {
+        try {
+            String path = input.getCanonicalPath();
+            File temp = new File(path);
+            return temp.getParentFile();
+        } catch (IOException ioe) {
+        }
+
+        return input.getParentFile();
+    }
+
+
+    /**
+     *  Gets the FileSummary attribute of the TopLevelDirectory class
+     *
+     *@param  initialSummary  Description of Parameter
+     *@return                 The FileSummary value
+     */
+    private static FileSummary getFileSummary(Summary initialSummary) {
+        Summary currentSummary = initialSummary;
+        while (!(currentSummary instanceof FileSummary)) {
+            currentSummary = currentSummary.getParent();
+            if (currentSummary == null) {
+                return null;
+            }
+        }
+        return (FileSummary) currentSummary;
+    }
+
+
+    /**
+     *  Searches all the packages for an appropriate file and infers the source
+     *  root directory
+     *
+     *@return    the root directory
+     */
+    private static File query() {
+        FileSummary appropriate = findFileSummary();
+        if (appropriate == null) {
+            return new File(System.getProperty("user.dir"));
+        }
+
+        PackageSummary packageSummary = (PackageSummary) appropriate.getParent();
+        String packageName = packageSummary.getName();
+        StringTokenizer tok = new StringTokenizer(packageName, ".");
+        File startingPoint = null;
+        try {
+            startingPoint = new File(appropriate.getFile().getCanonicalPath());
+        } catch (IOException ioe) {
+            startingPoint = appropriate.getFile();
+        }
+
+        File current = startingPoint.getParentFile();
+        while (tok.hasMoreTokens()) {
+            current = current.getParentFile();
+            String value = tok.nextToken();
+        }
+
+        return current;
+    }
+
+
+    /**
+     *  Searches for a file summary with a file (rather than a null) in the file
+     *
+     *@return    the file summary
+     */
+    private static FileSummary findFileSummary() {
+        Iterator iter = PackageSummary.getAllPackages();
+        if (iter != null) {
+            while (iter.hasNext()) {
+                PackageSummary next = (PackageSummary) iter.next();
+                Iterator iter2 = next.getFileSummaries();
+                while ((iter2 != null) && iter2.hasNext()) {
+                    FileSummary fileSummary = (FileSummary) iter2.next();
+                    if (fileSummary.getFile() != null) {
+                        return fileSummary;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

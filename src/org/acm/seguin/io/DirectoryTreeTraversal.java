@@ -11,12 +11,12 @@ package org.acm.seguin.io;
 import java.io.*;
 
 /**
- *  Traverses a directory structure and backups all java files found
+ *  Traverses a directory structure.
  *
  *@author    Chris Seguin
  *@date      May 12, 1999
  */
-public abstract class DirectoryTreeTraversal
+public abstract class DirectoryTreeTraversal implements Runnable 
 {
 	//  Instance Variables
 	private File startingPoint;
@@ -36,7 +36,7 @@ public abstract class DirectoryTreeTraversal
 	/**
 	 *  Starts the tree traversal
 	 */
-	public void go()
+	public void run()
 	{
 		if (startingPoint.exists())
 		{

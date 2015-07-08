@@ -167,8 +167,13 @@ public class CreateClass {
 		ASTCompilationUnit root = new ASTCompilationUnit(0);
 
 		//  Create the package statement
-		ASTPackageDeclaration packDecl = createPackageDeclaration();
-		root.jjtAddChild(packDecl, 0);
+		int nextIndex = 0;
+
+		if ((packageNameString != null) && (packageNameString.length() > 0)) {
+			ASTPackageDeclaration packDecl = createPackageDeclaration();
+			root.jjtAddChild(packDecl, 0);
+			nextIndex++;
+		}
 
 		TypeSummary parentSummary = null;
 		ASTName parentName;
@@ -187,8 +192,8 @@ public class CreateClass {
 		parentName = getNameFromSummary(parentSummary);
 
 		//  If necessary, create the import statement
-		int typeIndex = 1;
-		boolean added = addImportStatement(parentSummary, parentName, root);
+		int typeIndex = nextIndex;
+		boolean added = addImportStatement(parentSummary, parentName, root, nextIndex);
 		if (added) {
 			typeIndex++;
 
@@ -281,7 +286,8 @@ public class CreateClass {
 	 *@return                true if the import statement was added
 	 */
 	boolean addImportStatement(TypeSummary parentSummary,
-			ASTName parentName, ASTCompilationUnit root)
+			ASTName parentName, ASTCompilationUnit root,
+			int index)
 	{
 		if (!isImportRequired(parentSummary)) {
 			return false;
@@ -290,7 +296,7 @@ public class CreateClass {
 		//  Create the import statement
 		ASTImportDeclaration importDecl = new ASTImportDeclaration(0);
 		importDecl.jjtAddChild(parentName, 0);
-		root.jjtAddChild(importDecl, 1);
+		root.jjtAddChild(importDecl, index);
 		return true;
 	}
 
@@ -453,27 +459,7 @@ public class CreateClass {
 	 */
 	private File getDirectory()
 	{
-		File rootDir = null;
-
-		if (typeSummary != null) {
-			Summary currentSummary = typeSummary;
-			while (!(currentSummary instanceof FileSummary)) {
-				currentSummary = currentSummary.getParent();
-			}
-
-			rootDir = TopLevelDirectory.query((FileSummary) currentSummary);
-		}
-
-		if (rootDir == null) {
-			rootDir = TopLevelDirectory.query();
-		}
-
-		StringTokenizer tok = new StringTokenizer(packageNameString, ".");
-		File current = rootDir;
-		while (tok.hasMoreTokens()) {
-			current = new File(current, tok.nextToken());
-		}
-		return current;
+		return TopLevelDirectory.getPackageDirectory(typeSummary, packageNameString);
 	}
 
 

@@ -28,6 +28,7 @@ import org.acm.seguin.parser.build.BuildExpression;
 import org.acm.seguin.parser.factory.BufferParserFactory;
 import org.acm.seguin.parser.query.Found;
 import org.acm.seguin.parser.query.Search;
+import org.acm.seguin.pretty.JavadocTags;
 import org.acm.seguin.pretty.ModifierHolder;
 import org.acm.seguin.pretty.PrettyPrintVisitor;
 import org.acm.seguin.pretty.PrintData;
@@ -502,6 +503,7 @@ public class ExtractMethodRefactoring extends Refactoring
 		ByteArrayOutputStream baos;
 
 		baos = new ByteArrayOutputStream();
+		JavadocTags.get().reload();
 		PrintData pd = new PrintData(baos);
 		PrettyPrintVisitor ppv = new PrettyPrintVisitor();
 		ppv.visit((ASTCompilationUnit) root, pd);

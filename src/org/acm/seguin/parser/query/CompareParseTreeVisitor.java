@@ -17,6 +17,7 @@ import org.acm.seguin.parser.ast.ASTArgumentList;
 import org.acm.seguin.parser.ast.ASTArguments;
 import org.acm.seguin.parser.ast.ASTArrayDimsAndInits;
 import org.acm.seguin.parser.ast.ASTArrayInitializer;
+import org.acm.seguin.parser.ast.ASTAssertionStatement;
 import org.acm.seguin.parser.ast.ASTAssignmentOperator;
 import org.acm.seguin.parser.ast.ASTBlock;
 import org.acm.seguin.parser.ast.ASTBlockStatement;
@@ -97,6 +98,21 @@ import org.acm.seguin.parser.ast.ASTVariableInitializer;
 import org.acm.seguin.parser.ast.ASTWhileStatement;
 import org.acm.seguin.parser.ast.SimpleNode;
 
+import org.acm.seguin.parser.ast.ASTTypeParameterList;
+import org.acm.seguin.parser.ast.ASTTypeParameter;
+import org.acm.seguin.parser.ast.ASTTypeArguments;
+import org.acm.seguin.parser.ast.ASTReferenceTypeList;
+import org.acm.seguin.parser.ast.ASTReferenceType;
+import org.acm.seguin.parser.ast.ASTReferenceVariance;
+import org.acm.seguin.parser.ast.ASTTypeParameters;
+import org.acm.seguin.parser.ast.ASTGenericNameList;
+import org.acm.seguin.parser.ast.ASTVariance;
+import org.acm.seguin.parser.ast.ASTEnumDeclaration;
+import org.acm.seguin.parser.ast.ASTEnumElement;
+import org.acm.seguin.parser.ast.ASTIdentifier;
+import org.acm.seguin.parser.ast.ASTAttribute;
+
+
 /**
  *  This object allows the user to compare two parse trees. The most basic
  *  instance of this type, it only checks that the types are the same and that
@@ -108,6 +124,7 @@ import org.acm.seguin.parser.ast.SimpleNode;
  *
  *
  *@author    Chris Seguin
+ *@author    Mike Atkinson
  */
 class CompareParseTreeVisitor implements JavaParserVisitor {
 	/**
@@ -123,6 +140,189 @@ class CompareParseTreeVisitor implements JavaParserVisitor {
 		return Boolean.FALSE;
 	}
 
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTTypeParameterList node, Object data) {
+		return defaultComparison(node, data);
+        }
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTTypeParameter node, Object data) {
+		return defaultComparison(node, data);
+        }
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTTypeArguments node, Object data) {
+		return defaultComparison(node, data);
+        }
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTReferenceTypeList node, Object data) {
+		return defaultComparison(node, data);
+        }
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTReferenceType node, Object data) {
+		return defaultComparison(node, data);
+        }
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTReferenceVariance node, Object data) {
+		return defaultComparison(node, data);
+        }
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTTypeParameters node, Object data) {
+		return defaultComparison(node, data);
+        }  
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTGenericNameList node, Object data) {
+		return defaultComparison(node, data);
+        }  
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTVariance node, Object data) {
+		return defaultComparison(node, data);
+        }
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTEnumDeclaration node, Object data) {
+		return defaultComparison(node, data);
+        }
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTEnumElement node, Object data) {
+		return defaultComparison(node, data);
+        }
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTIdentifier node, Object data) {
+		return defaultComparison(node, data);
+        }
+
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+         *
+         *  It used the defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTAttribute node, Object data) {
+		return defaultComparison(node, data);
+        }
+            
+            
 
 	/**
 	 *  Description of the Method
@@ -1224,6 +1424,19 @@ class CompareParseTreeVisitor implements JavaParserVisitor {
 	 *@return       Description of the Returned Value
 	 */
 	public Object visit(ASTTryStatement node, Object data)
+	{
+		return defaultComparison(node, data);
+	}
+
+
+	/**
+	 *  Visit the assertion node
+	 *
+	 *@param  node  the node
+	 *@param  data  the data needed to perform the visit
+	 *@return       the result of visiting the node
+	 */
+	public Object visit(ASTAssertionStatement node, Object data)
 	{
 		return defaultComparison(node, data);
 	}

@@ -16,6 +16,7 @@ import org.acm.seguin.parser.ast.ASTNestedInterfaceDeclaration;
 import org.acm.seguin.parser.ast.ASTMethodDeclaration;
 import org.acm.seguin.parser.ast.ASTNestedClassDeclaration;
 import org.acm.seguin.parser.ast.ASTConstructorDeclaration;
+import org.acm.seguin.parser.ast.ASTEnumDeclaration;
 import org.acm.seguin.parser.ast.SimpleNode;
 import org.acm.seguin.pretty.ModifierHolder;
 
@@ -24,6 +25,7 @@ import org.acm.seguin.pretty.ModifierHolder;
  *  Orders the items in a class according to type.
  *
  *@author     Chris Seguin
+ *@author     Mike Atkinson
  *@created    August 3, 1999
  */
 public class ProtectionOrder extends Ordering {
@@ -70,7 +72,10 @@ public class ProtectionOrder extends Ordering {
 		int protection = 0;
 
 		//  Now that we have data, determine the type of data
-		if (data instanceof ASTFieldDeclaration) {
+		if (data instanceof ASTEnumDeclaration) {
+			protection = getProtection(((ASTEnumDeclaration) data).getModifiers());
+		}
+		else if (data instanceof ASTFieldDeclaration) {
 			protection = getProtection(((ASTFieldDeclaration) data).getModifiers());
 		}
 		else if (data instanceof ASTConstructorDeclaration) {

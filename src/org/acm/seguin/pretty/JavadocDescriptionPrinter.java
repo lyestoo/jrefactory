@@ -16,10 +16,10 @@ import org.acm.seguin.util.Settings;
  *  Prints a description from a java doc comment with HTML tags formatted.
  *
  *@author     Chris Seguin
+ *@author     Mike Atkinson
  *@created    July 23, 1999
  */
-public class JavadocDescriptionPrinter
-{
+public class JavadocDescriptionPrinter {
 	/*<Instance Variables>*/
 	private PrintData printData;
 	private StringBuffer buffer;
@@ -27,6 +27,7 @@ public class JavadocDescriptionPrinter
 	private int mode;
 	private boolean newline;
 	private int owedLines;
+        private boolean withinID; // are we within a "$Id: JavadocDescriptionPrinter.java,v 1.6 2003/07/18 16:14:51 mikeatkinson Exp $" sequence (if so don't do line breaks)
 	/*</Instance Variables>*/
 
 	/*<Class Variables>*/
@@ -54,6 +55,7 @@ public class JavadocDescriptionPrinter
 		buffer = new StringBuffer(description);
 		indent = printData.getJavadocIndent();
 		newline = false;
+                withinID = false;
 		mode = NORMAL;
 	}
 
@@ -70,10 +72,10 @@ public class JavadocDescriptionPrinter
 		printData = data;
 		buffer = new StringBuffer(description);
 		indent = initIndent;
+                withinID = false;
 	}
-
-
 	/*</Constructors>*/
+
 
 	/*<Methods>*/
 	/**
@@ -81,22 +83,19 @@ public class JavadocDescriptionPrinter
 	 */
 	public void run()
 	{
-		if (printData.isReformatComments())
-		{
+		if (printData.isReformatComments()) {
 			int MIN = printData.getJavadocWordWrapMinimum();
 			int MAX = printData.getJavadocWordWrapMaximum();
 
 			JavadocTokenizer tok = new JavadocTokenizer(buffer.toString());
 			mode = NORMAL;
 			boolean first = true;
-			while (tok.hasNext())
-			{
+			while (tok.hasNext()) {
 				Token nextToken = tok.next();
 				first = printToken(nextToken, MIN, MAX, first);
 			}
 		}
-		else
-		{
+		else {
 			maintainCurrentFormat();
 		}
 	}
@@ -107,14 +106,17 @@ public class JavadocDescriptionPrinter
 	 */
 	protected void indent()
 	{
+		if (printData.isCurrentSingle())
+			return;
+
 		newline = true;
 		printData.indent();
-		printData.appendComment(" *", PrintData.JAVADOC_COMMENT);
+		if (!printData.isStarsAlignedWithSlash())
+			printData.space();
+		printData.appendComment("*", PrintData.JAVADOC_COMMENT);
 
-		if (printData.isReformatComments() && (mode != PREFORMATTED))
-		{
-			for (int ndx = 0; ndx < indent; ndx++)
-			{
+		if (printData.isReformatComments() && (mode != PREFORMATTED)) {
+			for (int ndx = 0; ndx < indent; ndx++) {
 				printData.space();
 			}
 		}
@@ -129,115 +131,171 @@ public class JavadocDescriptionPrinter
 	 */
 	protected boolean startMode(String token)
 	{
-		if (startsWith(token, "<PRE") || startsWith(token, "<CODE"))
-		{
+		if (startsWith(token, "<PRE") || startsWith(token, "<CODE")) {
 			mode = PREFORMATTED;
 		}
-		else if (startsWith(token, "</PRE") || startsWith(token, "</CODE"))
-		{
+		else if (startsWith(token, "</PRE") || startsWith(token, "</CODE")) {
 			mode = NORMAL;
 		}
-		else if (startsWith(token, "<P"))
-		{
+		else if (startsWith(token, "<P")) {
 			mode = PARA;
 		}
-		else if (startsWith(token, "<BR"))
-		{
+		else if (startsWith(token, "<BR")) {
 			mode = LINE_BREAK;
 		}
-		else if (startsWith(token, "<UL"))
-		{
+		else if (startsWith(token, "<UL")) {
 			mode = LIST;
 			indent();
 			indent += 2;
 			return true;
 		}
-		else if (startsWith(token, "<OL"))
-		{
+		else if (startsWith(token, "<OL")) {
 			mode = LIST;
 			indent();
 			indent += 2;
 			return true;
 		}
-		else if (startsWith(token, "</UL"))
-		{
+		else if (startsWith(token, "<DL")) {
+			mode = LIST;
+			indent();
+			indent += 2;
+			return true;
+		}
+		else if (startsWith(token, "</UL")) {
 			mode = END_LIST;
 			indent -= 2;
 			indent();
 			return true;
 		}
-		else if (startsWith(token, "</OL"))
-		{
+		else if (startsWith(token, "</OL")) {
 			mode = END_LIST;
 			indent -= 2;
 			indent();
 			return true;
 		}
-		else if (startsWith(token, "<LI"))
-		{
+		else if (startsWith(token, "</DL")) {
+			mode = END_LIST;
+			indent -= 2;
+			indent();
+			return true;
+		}
+		else if (startsWith(token, "<LI")) {
 			indent();
 			mode = END_TAG;
 			return true;
 		}
-		else if (startsWith(token, "<TABLE"))
-		{
-			mode = TABLE;
+		else if (startsWith(token, "<DD")) {
 			indent();
-			indent += 2;
-			return true;
-		}
-		else if (startsWith(token, "<TR"))
-		{
-			mode = TABLE;
-			indent();
-			indent += 2;
-			return true;
-		}
-		else if (startsWith(token, "<TD"))
-		{
-			mode = TABLE;
-			indent();
-			indent += 2;
-			return true;
-		}
-		else if (startsWith(token, "<TH"))
-		{
-			mode = TABLE;
-			indent();
-			indent += 2;
-			return true;
-		}
-		else if (startsWith(token, "</TABLE"))
-		{
-			mode = TABLE;
-			indent -= 2;
-			indent();
-			return true;
-		}
-		else if (startsWith(token, "</TR"))
-		{
-			mode = TABLE;
-			indent -= 2;
-			indent();
-			return true;
-		}
-		else if (startsWith(token, "</TD"))
-		{
-			mode = TABLE;
-			indent -= 2;
-			indent();
-			return true;
-		}
-		else if (startsWith(token, "</TH"))
-		{
-			mode = TABLE;
-			indent -= 2;
-			indent();
-			return true;
-		}
-		else if (startsWith(token, "</") && !newline)
-		{
 			mode = END_TAG;
+			return true;
+		}
+		else if (startsWith(token, "<DT")) {
+			indent();
+			mode = END_TAG;
+			return true;
+		}
+		else if (startsWith(token, "<TABLE")) {
+			mode = TABLE;
+			indent();
+			indent += 2;
+			return true;
+		}
+		else if (startsWith(token, "<TR")) {
+			mode = TABLE;
+			indent();
+			indent += 2;
+			return true;
+		}
+		else if (startsWith(token, "<TD")) {
+			mode = TABLE;
+			indent();
+			indent += 2;
+			return true;
+		}
+		else if (startsWith(token, "<TH")) {
+			mode = TABLE;
+			indent();
+			indent += 2;
+			return true;
+		}
+		else if (startsWith(token, "</TABLE")) {
+			mode = TABLE;
+			indent -= 2;
+			indent();
+			return true;
+		}
+		else if (startsWith(token, "</TR")) {
+			mode = TABLE;
+			indent -= 2;
+			indent();
+			return true;
+		}
+		else if (startsWith(token, "</TD")) {
+			mode = TABLE;
+			indent -= 2;
+			indent();
+			return true;
+		}
+		else if (startsWith(token, "</TH")) {
+			mode = TABLE;
+			indent -= 2;
+			indent();
+			return true;
+		}
+		else if (startsWith(token, "</") && !newline) {
+			mode = END_TAG;
+		}
+
+		return false;
+	}
+
+	/**
+	 *  Certain tags require that we insert a new line after them.
+	 *
+	 *@param  token  the tag that we are considering
+	 *@return        true if we just printed a space or a newline
+         *@since         JRefactory 2.7.00
+	 */
+	protected boolean spaceRequired(Token tok)
+	{
+                String token = tok.image.toUpperCase();
+		if (startsWithThenSpace(token, "<PRE")) {
+			return true;
+                } else if (startsWithThenSpace(token, "<P")) {
+			return true;
+		}
+		else if (startsWithThenSpace(token, "<BR")) {
+			return true;
+		}
+		else if (startsWithThenSpace(token, "<UL")) {
+			return true;
+		}
+		else if (startsWithThenSpace(token, "<OL")) {
+			return true;
+		}
+		else if (startsWithThenSpace(token, "<DL")) {
+			return true;
+		}
+		else if (startsWithThenSpace(token, "<LI")) {
+			return true;
+		}
+		else if (startsWithThenSpace(token, "<DD")) {
+			return true;
+		}
+		else if (startsWithThenSpace(token, "<DT")) {
+			return true;
+		}
+		else if (startsWithThenSpace(token, "<TABLE")) {
+			return true;
+		}
+		else if (startsWithThenSpace(token, "<TR")) {
+			return true;
+		}
+		else if (startsWithThenSpace(token, "<TD")) {
+			return true;
+		}
+		else if (startsWithThenSpace(token, "<TH")) {
+			return true;
 		}
 
 		return false;
@@ -252,37 +310,31 @@ public class JavadocDescriptionPrinter
 	 */
 	protected boolean endMode(String token)
 	{
-		if (mode == END_TAG)
-		{
+		if (mode == END_TAG) {
 			mode = NORMAL;
 			printData.space();
 			return true;
 		}
-		if (mode == PARA)
-		{
+		if (mode == PARA) {
 			mode = NORMAL;
 			indent();
 			indent();
 			return true;
 		}
-		if (mode == LINE_BREAK)
-		{
+		if (mode == LINE_BREAK) {
 			mode = NORMAL;
 			indent();
 			return true;
 		}
-		if (mode == LIST)
-		{
+		if (mode == LIST) {
 			mode = NORMAL;
 		}
-		if (mode == END_LIST)
-		{
+		if (mode == END_LIST) {
 			mode = NORMAL;
 			indent();
 			return true;
 		}
-		if (mode == TABLE)
-		{
+		if (mode == TABLE) {
 			mode = NORMAL;
 			indent();
 			return true;
@@ -307,6 +359,23 @@ public class JavadocDescriptionPrinter
 
 
 	/**
+	 *  Checks to see if this tag is the same as what we want and ignores case
+	 *  troubles
+	 *
+	 *@param  have  the token that we have
+	 *@param  want  the token that we are interested in
+	 *@return       true if what we have is the same as what we want
+         *@since        JRefactory 2.7.00
+	 */
+	protected boolean startsWithThenSpace(String have, String want)
+	{
+		return have.toUpperCase().startsWith(want)
+                       && have.length()==want.length();
+
+	}
+
+
+	/**
 	 *  Description of the Method
 	 *
 	 *@param  nextToken  Description of Parameter
@@ -317,49 +386,58 @@ public class JavadocDescriptionPrinter
 	 */
 	private boolean printToken(Token nextToken, int MIN, int MAX, boolean isFirst)
 	{
-		if (nextToken.kind == JavadocTokenizer.WORD)
-		{
+		if (nextToken.kind == JavadocTokenizer.WORD) {
 			newline = false;
+                        if (nextToken.image.equals("$Id:")) {
+                            withinID = true;
+                        } 
 			int length = nextToken.image.length();
-			if ((printData.getLineLength() > MIN) &&
+			if (!withinID &&
+                            (printData.getLineLength() > MIN) &&
 					(printData.getLineLength() + length > MAX) &&
-					(mode != PREFORMATTED))
-			{
+					(mode != PREFORMATTED)) {
 				indent();
 				newline = true;
 			}
-			if (nextToken.image.charAt(0) == '<')
-			{
+			if (nextToken.image.charAt(0) == '<') {
 				newline = startMode(nextToken.image.toUpperCase());
 			}
-			else
-			{
+			else {
 				newline = false;
 			}
-			printData.appendComment(nextToken.image, PrintData.JAVADOC_COMMENT);
-			if (nextToken.image.charAt(nextToken.image.length() - 1) == '>')
+                        if (nextToken.image.equals("$")) {
+                            withinID = false;
+                        }
+
+			if ((newline && (indent == 0) && nextToken.image.startsWith("/")))
 			{
+				printData.space();
+			}
+
+			printData.appendComment(nextToken.image, PrintData.JAVADOC_COMMENT);
+                        
+			if (spaceRequired(nextToken))
+			{
+				printData.space();
+			}
+                        
+			if (nextToken.image.charAt(nextToken.image.length() - 1) == '>') {
 				newline = endMode(nextToken.image) || newline;
 			}
 
 			return newline;
 		}
-		else
-		{
-			if (mode != PREFORMATTED)
-			{
-				if (!isFirst)
-				{
+		else {
+			if (mode != PREFORMATTED) {
+				if (!isFirst) {
 					printData.space();
 					return true;
 				}
 			}
-			else if (nextToken.kind == JavadocTokenizer.SPACE)
-			{
+			else if (nextToken.kind == JavadocTokenizer.SPACE) {
 				printData.appendComment(nextToken.image, PrintData.JAVADOC_COMMENT);
 			}
-			else
-			{
+			else {
 				indent();
 			}
 
@@ -392,8 +470,7 @@ public class JavadocDescriptionPrinter
 		}
 		mcfOutputToken(current, printData);
 
-		while (tok.hasNext())
-		{
+		while (tok.hasNext()) {
 			Token nextToken = tok.next();
 			mcfOutputToken(nextToken, printData);
 		}
@@ -402,15 +479,16 @@ public class JavadocDescriptionPrinter
 
 	/**
 	 *  Description of the Method
+	 *
+	 *@param  nextToken  Description of Parameter
+	 *@param  printData  Description of Parameter
 	 */
 	private void mcfOutputToken(Token nextToken, PrintData printData)
 	{
-		if (nextToken.kind == JavadocTokenizer.NEWLINE)
-		{
+		if (nextToken.kind == JavadocTokenizer.NEWLINE) {
 			owedLines++;
 		}
-		else
-		{
+		else {
 			while (owedLines > 0) {
 				indent();
 				owedLines--;

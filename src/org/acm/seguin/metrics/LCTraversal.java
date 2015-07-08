@@ -41,9 +41,9 @@ public class LCTraversal extends DirectoryTreeTraversal {
 	/**
 	 *  Starts the tree traversal
 	 */
-	public void go()
+	public void run()
 	{
-		super.go();
+		super.run();
 
 		long count = total;
 		if (count < 10) {
@@ -116,6 +116,6 @@ public class LCTraversal extends DirectoryTreeTraversal {
 			return;
 		}
 
-		(new LCTraversal(args[0])).go();
+		(new LCTraversal(args[0])).run();
 	}
 }

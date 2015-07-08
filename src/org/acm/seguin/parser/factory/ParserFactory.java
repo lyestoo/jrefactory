@@ -44,18 +44,14 @@ public abstract class ParserFactory {
 					root = parser.CompilationUnit();
 				}
 				catch (ParseException pe) {
-					ExceptionPrinter.print(pe);
 					System.out.println("ParserFactory Version 0.1:  Encountered errors during parse:  " + getKey());
-
-					if (interactive) {
-						ExceptionPrinter.dialog(pe);
-					}
+					ExceptionPrinter.print(pe, interactive);
 
 					return null;
 				}
 				catch (EmptyStackException ese) {
-					ExceptionPrinter.print(ese);
 					System.out.println("ParserFactory Version 0.1:  Encountered errors during parse:  " + getKey());
+					ExceptionPrinter.print(ese, false);
 					root = null;
 				}
 			}

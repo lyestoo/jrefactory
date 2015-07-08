@@ -30,12 +30,15 @@ import org.acm.seguin.util.FileSettings;
  *  responsible for storing the refactorings that can be undone.
  *
  *@author    Chris Seguin
+ *@author     Mike Atkinson (<a href="mailto:javastyle@ladyshot.demon.co.uk">Mike</a>)
+ *@version    $Version: $
  */
 public class UndoStack {
 	/**
 	 *  The stack that contains the actual elements
 	 */
 	private Stack stack;
+        private Class undoer = DefaultUndoAction.class;
 
 	private static UndoStack singleton;
 
@@ -49,6 +52,29 @@ public class UndoStack {
 		}
 	}
 
+        /**
+         * This sets the class that holds undo actions.
+         *
+         *  If not called the org.acm.seguin.refactor.undo.DefaultUndoAction class
+         * is used. This creates file backups with extensions of incrementing integers.
+         *
+         * @param undoer a class that implements org.acm.seguin.refactor.undo.UndoAction
+         * @throws IllegalArgumentException if the class cannot be instantiated or does not implement UndoAction
+         */
+        public void setUndoAction(Class undoer) throws IllegalArgumentException {
+            try {
+                if (!(undoer.newInstance() instanceof UndoAction)) {
+                    throw new IllegalArgumentException("the undo class must implement org.acm.seguin.refactor.undo.UndoAction");
+                }
+            } catch (IllegalAccessException ex) {
+                IllegalArgumentException e = new IllegalArgumentException("your UndoAction class cannot be accessed");
+                e.initCause(ex);
+            } catch (InstantiationException ex) {
+                IllegalArgumentException e = new IllegalArgumentException("your UndoAction class must have a zero argument constructor");
+                e.initCause(ex);
+            }
+            this.undoer = undoer;
+        }
 
 	/**
 	 *  Gets the StackEmpty attribute of the UndoStack object
@@ -68,9 +94,19 @@ public class UndoStack {
 	 *@return      an undo action
 	 */
 	public UndoAction add(Refactoring ref) {
-		UndoAction action = new UndoAction(ref.getDescription());
-		stack.push(action);
-		return action;
+		//UndoAction action = new UndoAction(ref.getDescription());
+                try {
+                    UndoAction action = (UndoAction)undoer.newInstance();
+                    action.setDescription(ref.getDescription());
+                    
+                    stack.push(action);
+  		    return action;
+                } catch (IllegalAccessException ex) {
+                    // this should not occur as we checked we could instantiate in setUndoAction().
+                } catch (InstantiationException ex) {
+                    // this should not occur as we checked we could instantiate in setUndoAction().
+                }
+                return null;
 	}
 
 
@@ -128,8 +164,8 @@ public class UndoStack {
 	 *@return    The File value
 	 */
 	private File getFile() {
-		File dir = new File(FileSettings.getSettingsRoot());
-		return new File(dir, "undo.stk");
+		//File dir = new File(FileSettings.getSettingsRoot() + File.separator + ".Refactory");
+		return new File(FileSettings.getRefactorySettingsRoot(), "undo.stk");
 	}
 
 

@@ -70,11 +70,11 @@ public class UndoCleaner extends DirectoryTreeTraversal {
 	 */
 	public static void main(String[] args) {
 		if (args.length > 0) {
-			(new UndoCleaner(args[0])).go();
+			(new UndoCleaner(args[0])).run();
 		}
 		else {
 			String dir = System.getProperty("user.dir");
-			(new UndoCleaner(dir)).go();
+			(new UndoCleaner(dir)).run();
 		}
 	}
 }

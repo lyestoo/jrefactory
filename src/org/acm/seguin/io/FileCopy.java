@@ -22,9 +22,10 @@ import org.acm.seguin.awt.ExceptionPrinter;
  *  simply overload the getInputStream or getOutputStream operations.
  *
  *@author    Chris Seguin
+ *@author    Mike Atkinson
  *@date      May 12, 1999
  */
-public class FileCopy extends Thread {
+public class FileCopy implements Runnable {
 	//  Instance Variables
 	private File source;
 	private File dest;
@@ -61,7 +62,7 @@ public class FileCopy extends Thread {
 	/**
 	 *  Copy the thread
 	 */
-	public void run() {
+	public synchronized void run() {
 		try {
 			if (noisy) {
 				System.out.println("Copying from " + source.getCanonicalPath() + " to " + dest.getCanonicalPath());
@@ -82,7 +83,7 @@ public class FileCopy extends Thread {
 			fis.close();
 		}
 		catch (IOException ioe) {
-			ExceptionPrinter.print(ioe);
+			ExceptionPrinter.print(ioe, false);
 		}
 	}
 
@@ -93,7 +94,7 @@ public class FileCopy extends Thread {
 	 *@return                            The InputStream value
 	 *@exception  FileNotFoundException  Unable to open the file
 	 */
-	protected InputStream getInputStream() throws IOException {
+	protected synchronized InputStream getInputStream() throws IOException {
 		return new FileInputStream(source);
 	}
 
@@ -104,7 +105,7 @@ public class FileCopy extends Thread {
 	 *@return                            The OutputStream value
 	 *@exception  FileNotFoundException  Unable to open the file
 	 */
-	protected OutputStream getOutputStream() throws IOException {
+	protected synchronized OutputStream getOutputStream() throws IOException {
 		File parent = dest.getParentFile();
 		if ((parent != null) && !parent.exists())
 			parent.mkdirs();

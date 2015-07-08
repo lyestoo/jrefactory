@@ -414,7 +414,7 @@ public class CharStream extends Object {
 	 */
 	private static synchronized void initCharStreamType() {
 		try {
-			FileSettings bundle = FileSettings.getSettings("Refactory", "pretty");
+			FileSettings bundle = FileSettings.getRefactoryPrettySettings();
 			charStreamType = bundle.getInteger("char.stream.type");
 		}
 		catch (MissingSettingsException mse) {

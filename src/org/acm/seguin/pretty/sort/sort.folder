@@ -1,3 +1,8 @@
+.\org\acm\seguin\pretty\sort\CVS\CVS.folder
+.\org\acm\seguin\pretty\sort\AlphabeticalOrder.java
+.\org\acm\seguin\pretty\sort\BeanTogetherOrder.java
+.\org\acm\seguin\pretty\sort\FieldInitializerOrder.java
+.\org\acm\seguin\pretty\sort\FinalOrder.java
 .\org\acm\seguin\pretty\sort\MultipleOrdering.java
 .\org\acm\seguin\pretty\sort\Ordering.java
 .\org\acm\seguin\pretty\sort\ProtectionOrder.java
@@ -6,3 +11,4 @@
 .\org\acm\seguin\pretty\sort\StaticOrder.java
 .\org\acm\seguin\pretty\sort\TopLevelOrdering.java
 .\org\acm\seguin\pretty\sort\TypeOrder.java
+.\org\acm\seguin\pretty\sort\package.uml

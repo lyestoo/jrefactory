@@ -13,6 +13,7 @@ import org.acm.seguin.parser.ast.ASTArguments;
 import org.acm.seguin.parser.ast.ASTBlockStatement;
 import org.acm.seguin.parser.ast.ASTLocalVariableDeclaration;
 import org.acm.seguin.parser.ast.ASTMethodDeclaration;
+import org.acm.seguin.parser.ast.ASTConstructorDeclaration;
 import org.acm.seguin.parser.ast.ASTName;
 import org.acm.seguin.parser.ast.ASTPrimaryExpression;
 import org.acm.seguin.parser.ast.ASTPrimaryPrefix;
@@ -28,8 +29,7 @@ import org.acm.seguin.summary.MethodSummary;
  *
  *@author    Chris Seguin
  */
-class RenameParameterVisitor extends IdentifyMethodVisitor
-{
+class RenameParameterVisitor extends IdentifyMethodVisitor {
 	/**
 	 *  Constructor for the RenameParameterVisitor object
 	 *
@@ -51,8 +51,33 @@ class RenameParameterVisitor extends IdentifyMethodVisitor
 	public Object visit(ASTMethodDeclaration node, Object data)
 	{
 		RenameParameterTransform rpt = (RenameParameterTransform) data;
-		if (isFound(node))
-		{
+		if (isFound(node)) {
+			rpt.setRightTree(true);
+
+			//  Update the javadoc
+
+			//  Continue traversal
+			super.visit(node, data);
+
+			rpt.setRightTree(false);
+			return null;
+		}
+
+		return super.visit(node, data);
+	}
+
+
+	/**
+	 *  Search and find the correct method
+	 *
+	 *@param  node  Description of Parameter
+	 *@param  data  Description of Parameter
+	 *@return       Description of the Returned Value
+	 */
+	public Object visit(ASTConstructorDeclaration node, Object data)
+	{
+		RenameParameterTransform rpt = (RenameParameterTransform) data;
+		if (isFound(node)) {
 			rpt.setRightTree(true);
 
 			//  Update the javadoc
@@ -78,10 +103,8 @@ class RenameParameterVisitor extends IdentifyMethodVisitor
 	public Object visit(ASTVariableDeclaratorId node, Object data)
 	{
 		RenameParameterTransform rpt = (RenameParameterTransform) data;
-		if (rpt.isRightTree())
-		{
-			if (node.getName().equals(rpt.getParameter().getName()))
-			{
+		if (rpt.isRightTree()) {
+			if (node.getName().equals(rpt.getParameter().getName())) {
 				node.setName(rpt.getNewName());
 			}
 		}
@@ -91,8 +114,7 @@ class RenameParameterVisitor extends IdentifyMethodVisitor
 
 
 	/**
-	 *  Visits a block node.  Stops traversing the tree if we come to a new
-	 *  class.
+	 *  Visits a block node. Stops traversing the tree if we come to a new class.
 	 *
 	 *@param  node  Description of Parameter
 	 *@param  data  Description of Parameter
@@ -101,12 +123,10 @@ class RenameParameterVisitor extends IdentifyMethodVisitor
 	public Object visit(ASTBlockStatement node, Object data)
 	{
 		RenameParameterTransform rpt = (RenameParameterTransform) data;
-		if (rpt.isRightTree())
-		{
+		if (rpt.isRightTree()) {
 			Node child = node.jjtGetChild(0);
 			if ((child instanceof ASTUnmodifiedClassDeclaration) ||
-					(child instanceof ASTUnmodifiedInterfaceDeclaration))
-			{
+					(child instanceof ASTUnmodifiedInterfaceDeclaration)) {
 				return null;
 			}
 		}
@@ -125,8 +145,7 @@ class RenameParameterVisitor extends IdentifyMethodVisitor
 	public Object visit(ASTPrimaryExpression node, Object data)
 	{
 		RenameParameterTransform rpt = (RenameParameterTransform) data;
-		if (rpt.isRightTree())
-		{
+		if (rpt.isRightTree()) {
 			ASTPrimaryPrefix prefix = (ASTPrimaryPrefix) node.jjtGetChild(0);
 			ASTPrimarySuffix suffix = null;
 			if (node.jjtGetNumChildren() > 1) {
@@ -134,16 +153,23 @@ class RenameParameterVisitor extends IdentifyMethodVisitor
 			}
 
 			if ((prefix.jjtGetNumChildren() > 0) && (prefix.jjtGetChild(0) instanceof ASTName) &&
-					((suffix == null) || (suffix.jjtGetNumChildren() == 0) || !(suffix.jjtGetChild(0) instanceof ASTArguments)))
-			{
+					((suffix == null) || (suffix.jjtGetNumChildren() == 0) || !isMethodCall(prefix, suffix))) {
 				ASTName name = (ASTName) prefix.jjtGetChild(0);
-				if (name.getNamePart(0).equals(rpt.getParameter().getName()))
-				{
+				if (name.getNamePart(0).equals(rpt.getParameter().getName())) {
 					name.setNamePart(0, rpt.getNewName());
 				}
 			}
 		}
 
 		return super.visit(node, data);
+	}
+
+	private boolean isMethodCall(ASTPrimaryPrefix prefix, ASTPrimarySuffix suffix)
+	{
+		if (!(suffix.jjtGetChild(0) instanceof ASTArguments))
+			return false;
+
+		ASTName name = (ASTName) prefix.jjtGetChild(0);
+		return (name.getNameSize() == 1);
 	}
 }

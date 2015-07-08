@@ -11,15 +11,19 @@ package org.acm.seguin.refactor.method;
 import org.acm.seguin.parser.ChildrenVisitor;
 import org.acm.seguin.parser.ast.SimpleNode;
 import org.acm.seguin.parser.ast.ASTMethodDeclaration;
+import org.acm.seguin.parser.ast.ASTConstructorDeclaration;
+import org.acm.seguin.parser.ast.ASTFormalParameters;
 import org.acm.seguin.parser.ast.SimpleNode;
 import org.acm.seguin.parser.ast.ASTMethodDeclarator;
 import java.util.Iterator;
 import org.acm.seguin.parser.ast.ASTFormalParameter;
 import org.acm.seguin.parser.ast.ASTType;
+import org.acm.seguin.parser.ast.ASTReferenceType;
 import org.acm.seguin.parser.ast.ASTPrimitiveType;
 import org.acm.seguin.parser.ast.ASTName;
 import org.acm.seguin.summary.ParameterSummary;
 import org.acm.seguin.summary.MethodSummary;
+import org.acm.seguin.parser.ast.ASTTypeParameters;
 
 /**
  *  A visitor that is able to identify the method that we are operating on
@@ -50,11 +54,18 @@ abstract class IdentifyMethodVisitor extends ChildrenVisitor {
 	 *@return       The Found value
 	 */
 	protected boolean isFound(SimpleNode next) {
-		if (!(next instanceof ASTMethodDeclaration)) {
-			return false;
+		if (next instanceof ASTMethodDeclaration) {
+                    if (next.jjtGetChild(0) instanceof ASTTypeParameters) {
+		        return checkDeclaration((ASTMethodDeclarator) next.jjtGetChild(2));
+                    } else {
+		        return checkDeclaration((ASTMethodDeclarator) next.jjtGetChild(1));
+                    }
+		}
+		if (next instanceof ASTConstructorDeclaration) {
+		        return checkDeclaration((ASTConstructorDeclaration) next);
 		}
 
-		return checkDeclaration((SimpleNode) next.jjtGetChild(1));
+			return false;
 	}
 
 
@@ -65,10 +76,29 @@ abstract class IdentifyMethodVisitor extends ChildrenVisitor {
 	 *@param  next  the method declaration that we are checking
 	 *@return       true if we have found the method
 	 */
-	protected boolean checkDeclaration(SimpleNode next) {
-		ASTMethodDeclarator decl = (ASTMethodDeclarator) next;
+	protected boolean checkDeclaration(ASTMethodDeclarator decl) {
 		if (decl.getName().equals(methodSummary.getName())) {
-			return checkParameters((SimpleNode) next.jjtGetChild(0));
+                        if (decl.jjtGetChild(0) instanceof ASTTypeParameters) {
+                                return checkParameters((ASTFormalParameters) decl.jjtGetChild(1));
+                        } else {
+                                return checkParameters((ASTFormalParameters) decl.jjtGetChild(0));
+                        }
+		}
+
+		return false;
+	}
+
+
+	/**
+	 *  Checks a single variable declaration to see if it is the one we are
+	 *  looking for
+	 *
+	 *@param  next  the method declaration that we are checking
+	 *@return       true if we have found the method
+	 */
+	protected boolean checkDeclaration(ASTConstructorDeclaration decl) {
+		if (methodSummary.isConstructor()) {
+			return checkParameters((ASTFormalParameters) decl.jjtGetChild(0));
 		}
 
 		return false;
@@ -81,7 +111,7 @@ abstract class IdentifyMethodVisitor extends ChildrenVisitor {
 	 *@param  params  Description of Parameter
 	 *@return         Description of the Returned Value
 	 */
-	protected boolean checkParameters(SimpleNode params) {
+	protected boolean checkParameters(ASTFormalParameters params) {
 		int length = params.jjtGetNumChildren();
 		Iterator iter = methodSummary.getParameters();
 
@@ -97,6 +127,14 @@ abstract class IdentifyMethodVisitor extends ChildrenVisitor {
 
 			if (type.jjtGetChild(0) instanceof ASTPrimitiveType) {
 				name = ((ASTPrimitiveType) type.jjtGetChild(0)).getName();
+			}
+			else if (type.jjtGetChild(0) instanceof ASTReferenceType) {
+                                ASTReferenceType reference = (ASTReferenceType) type.jjtGetChild(0);
+                                if (reference.jjtGetChild(0) instanceof ASTName) {
+                                        name = ((ASTName) reference.jjtGetChild(0)).getName();
+                                } else {
+                                        name = ((ASTPrimitiveType) type.jjtGetChild(0)).getName();
+                                }
 			}
 			else {
 				name = ((ASTName) type.jjtGetChild(0)).getName();

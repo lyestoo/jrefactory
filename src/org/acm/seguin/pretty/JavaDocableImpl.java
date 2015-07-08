@@ -17,6 +17,7 @@ import org.acm.seguin.util.MissingSettingsException;
  *  Stores the java doc components
  *
  *@author    Chris Seguin
+ *@author    Mike Atkinson
  *@date      April 15, 1999
  */
 public class JavaDocableImpl implements JavaDocable {
@@ -28,7 +29,8 @@ public class JavaDocableImpl implements JavaDocable {
 	/**
 	 *  Constructor
 	 */
-	public JavaDocableImpl() {
+	public JavaDocableImpl()
+	{
 		docs = new Vector();
 		printed = false;
 	}
@@ -39,13 +41,20 @@ public class JavaDocableImpl implements JavaDocable {
 	 *
 	 *@return    true if it still needs to be printed
 	 */
-	public boolean isRequired() {
+	public boolean isRequired()
+	{
 		return !printed;
 	}
 
-/**  Determines if the javadoc comments were printed */
-	public boolean isPrinted() {
-		return printed && (docs.size() > 0);
+
+	/**
+	 *  Determines if the javadoc comments were printed
+	 *
+	 *@return    The Printed value
+	 */
+	public boolean isPrinted()
+	{
+		return printed;
 	}
 
 
@@ -54,19 +63,64 @@ public class JavaDocableImpl implements JavaDocable {
 	 *
 	 *@param  component  the component that can be added
 	 */
-	public void addJavaDocComponent(JavaDocComponent component) {
+	public void addJavaDocComponent(JavaDocComponent component)
+	{
 		if (component != null) {
 			docs.addElement(component);
 		}
 	}
 
+	/**
+	 *  Allows you to add a java doc component
+	 *
+	 *@param  type  The @tag to sort (e.g. "@param").
+	 *@param  names  The order of identifies desired after sort (e.g. for this method {"type", "names"} ).
+         *@since JRefactory 2.7.00
+	 */
+        public void sort(String type, String[] names) {
+		//  Local Variables
+		Vector newDocs = new Vector();
+		Vector typeDocs = new Vector();
+
+		//  Iterate through the components adding those that are not of type.
+		for (int ndx = 0; ndx < docs.size(); ndx++) {
+			Object next = docs.elementAt(ndx);
+			if (next instanceof NamedJavaDocComponent) {
+				NamedJavaDocComponent jdc = (NamedJavaDocComponent) next;
+				if (jdc.getType().equalsIgnoreCase(type)) {
+                                	typeDocs.add(next);
+                                        continue;
+				}
+			}
+                        newDocs.add(next);
+		}
+                boolean[] added = new boolean[typeDocs.size()];
+                for (int i=0; i<names.length; i++) {
+			for (int ndx = 0; ndx < typeDocs.size(); ndx++) {
+				NamedJavaDocComponent jdc = (NamedJavaDocComponent)typeDocs.elementAt(ndx);
+				if (jdc.getID().equals(names[i])) {
+                                	newDocs.add(jdc);
+                                        added[ndx] = true;
+                        	}
+			}
+		}
+		for (int ndx = 0; ndx < typeDocs.size(); ndx++) {
+                    if (!added[ndx]) {
+                        newDocs.add(typeDocs.elementAt(ndx));
+                    }
+                }
+
+		docs = newDocs;
+            
+        }
 
 	/**
 	 *  Prints all the java doc components
 	 *
 	 *@param  printData  the print data
 	 */
-	public void printJavaDocComponents(PrintData printData) {
+	public void printJavaDocComponents(PrintData printData)
+	{
 		printJavaDocComponents(printData, "");
 	}
 
@@ -77,7 +131,8 @@ public class JavaDocableImpl implements JavaDocable {
 	 *@param  printData  the print data
 	 *@param  order      the order for the tags
 	 */
-	public void printJavaDocComponents(PrintData printData, String order) {
+	public void printJavaDocComponents(PrintData printData, String order)
+	{
 		//  Saying that we are done
 		printed = true;
 
@@ -100,14 +155,20 @@ public class JavaDocableImpl implements JavaDocable {
 		for (int ndx = 0; ndx < loop; ndx++) {
 			printData.appendComment("*", PrintData.JAVADOC_COMMENT);
 		}
-		printData.newline();
+		boolean onSingleLine = isOnSingleLine(printData);
+		if (!onSingleLine) {
+			printData.newline();
+		}
 
 		//  Print all the components
-		print(printData, order);
+		print(printData, order, onSingleLine);
 
 		//  Finish the comment
-		printData.indent();
-		printData.appendComment(" ", PrintData.JAVADOC_COMMENT);
+		if (!onSingleLine) {
+			printData.indent();
+		}
+		if (!printData.isStarsAlignedWithSlash())
+			printData.space();
 		for (int ndx = 0; ndx < loop; ndx++) {
 			printData.appendComment("*", PrintData.JAVADOC_COMMENT);
 		}
@@ -115,23 +176,26 @@ public class JavaDocableImpl implements JavaDocable {
 
 		//  Newline
 		printData.newline();
+
+		//  Reset once they have been printed
+		docs = new Vector();
 	}
 
 
 	/**
 	 *  Makes sure all the java doc components are present
 	 */
-	public void finish() {
-	}
+	public void finish() { }
 
 
 	/**
 	 *  Contains a particular item
 	 *
 	 *@param  type  the type we are looking for
-	 *@return       Description of the Returned Value
+	 *@return       true if we found a tag with that name
 	 */
-	public boolean contains(String type) {
+	public boolean contains(String type)
+	{
 		//  Local Variables
 		int last = docs.size();
 		boolean found = false;
@@ -146,8 +210,9 @@ public class JavaDocableImpl implements JavaDocable {
 
 				if (typeName.equals("param") || typeName.equals("return") ||
 						typeName.equals("exception") || typeName.equals("throws") ||
-						typeName.equals(""))
+						typeName.equals("")) {
 					return true;
+				}
 			}
 		}
 
@@ -163,7 +228,8 @@ public class JavaDocableImpl implements JavaDocable {
 	 *@param  id    the id
 	 *@return       Description of the Returned Value
 	 */
-	public boolean contains(String type, String id) {
+	public boolean contains(String type, String id)
+	{
 		//  Local Variables
 		int last = docs.size();
 
@@ -191,7 +257,8 @@ public class JavaDocableImpl implements JavaDocable {
 	 *@param  tag    the tag
 	 *@param  descr  the default description
 	 */
-	public void require(String tag, String descr) {
+	public void require(String tag, String descr)
+	{
 		if (!contains(tag)) {
 			JavaDocComponent jdc = new JavaDocComponent();
 			jdc.setType(tag);
@@ -209,7 +276,8 @@ public class JavaDocableImpl implements JavaDocable {
 	 *@param  id     the id
 	 *@param  descr  the default description
 	 */
-	public void require(String tag, String id, String descr) {
+	public void require(String tag, String id, String descr)
+	{
 		if (!contains(tag, id)) {
 			NamedJavaDocComponent jdc = new NamedJavaDocComponent();
 			jdc.setType(tag);
@@ -226,7 +294,8 @@ public class JavaDocableImpl implements JavaDocable {
 	 *
 	 *@param  length  the longest length
 	 */
-	private void setLongest(int length) {
+	private void setLongest(int length)
+	{
 		int last = docs.size();
 		for (int ndx = 0; ndx < last; ndx++) {
 			((JavaDocComponent) docs.elementAt(ndx)).setLongestLength(length);
@@ -239,7 +308,8 @@ public class JavaDocableImpl implements JavaDocable {
 	 *
 	 *@return    the maximum length
 	 */
-	private int getLongest() {
+	private int getLongest()
+	{
 		int longest = 0;
 		int last = docs.size();
 		for (int ndx = 0; ndx < last; ndx++) {
@@ -256,7 +326,8 @@ public class JavaDocableImpl implements JavaDocable {
 	 *@param  current  the current tag
 	 *@return          true if it is a description
 	 */
-	private boolean isDescription(JavaDocComponent current) {
+	private boolean isDescription(JavaDocComponent current)
+	{
 		return current.getType().length() == 0;
 	}
 
@@ -267,9 +338,10 @@ public class JavaDocableImpl implements JavaDocable {
 	 *@param  tag  Description of Parameter
 	 *@return      The TagRequired value
 	 */
-	private boolean isTagRequired(String tag) {
+	private boolean isTagRequired(String tag)
+	{
 		try {
-			FileSettings bundle = FileSettings.getSettings("Refactory", "pretty");
+			FileSettings bundle = FileSettings.getRefactoryPrettySettings();
 			bundle.getString(tag + ".descr");
 			return true;
 		}
@@ -280,16 +352,57 @@ public class JavaDocableImpl implements JavaDocable {
 
 
 	/**
+	 *  Determines if the javadoc will fit on a single line
+	 *
+	 *@param  printData  the print data
+	 *@return            true if it can fit (and is allowed to fit) on a single
+	 *      line
+	 */
+	private boolean isOnSingleLine(PrintData printData)
+	{
+		if (!printData.isAllowSingleLineJavadoc()) {
+			return false;
+		}
+
+		if (docs.size() > 1) {
+			return false;
+		}
+
+		JavaDocComponent single = (JavaDocComponent) docs.elementAt(0);
+		if (!single.isDescription()) {
+			return false;
+		}
+
+		String text = single.getDescription();
+		if (text.length() > printData.getJavadocWordWrapMaximum()) {
+			return false;
+		}
+
+		text = text.toUpperCase();
+		if ((text.indexOf("<P>") >= 0) ||
+				(text.indexOf("<BR") >= 0) ||
+				(text.indexOf("<DL") >= 0) ||
+				(text.indexOf("<OL") >= 0) ||
+				(text.indexOf("<UL") >= 0)) {
+			return false;
+		}
+
+		return true;
+	}
+
+
+	/**
 	 *  Actually prints the components
 	 *
 	 *@param  printData  the print data
 	 *@param  order      the order that stuff should be printed in
 	 */
-	private void print(PrintData printData, String order) {
+	private void print(PrintData printData, String order, boolean singleLine)
+	{
 		StringTokenizer tok = new StringTokenizer(order, ", \t\r\n");
 
 		//  First print the description
-		printDescription(printData);
+		printDescription(printData, singleLine);
 
 		//  Now order the tags we know about
 		while (tok.hasMoreTokens()) {
@@ -311,7 +424,8 @@ public class JavaDocableImpl implements JavaDocable {
 	 *@param  printData  the print data
 	 *@param  req        Description of Parameter
 	 */
-	private void tagPass(String next, PrintData printData, boolean req) {
+	private void tagPass(String next, PrintData printData, boolean req)
+	{
 		JavaDocComponent current;
 		int last = docs.size();
 
@@ -326,9 +440,12 @@ public class JavaDocableImpl implements JavaDocable {
 			//  If it is time, print it
 			if (now) {
 				if (required) {
-					printCurrentTag(current, printData, false);
+					printCurrentTag(current, printData, false, false);
 				}
-				else {
+				else if (printData.isKeepErroneousJavadocTags()) {
+                    current.setType(current.getType() + "-error");
+                }
+                else {
 					current.setPrinted(true);
 				}
 			}
@@ -341,7 +458,8 @@ public class JavaDocableImpl implements JavaDocable {
 	 *
 	 *@param  printData  the print data
 	 */
-	private void printDescription(PrintData printData) {
+	private void printDescription(PrintData printData, boolean singleLine)
+	{
 		JavaDocComponent current;
 		int last = docs.size();
 
@@ -352,7 +470,7 @@ public class JavaDocableImpl implements JavaDocable {
 			if (current.getType().equals("")) {
 				String descr = current.getDescription();
 				if (JavadocTokenizer.hasContent(descr)) {
-					printCurrentTag(current, printData, last == 1);
+					printCurrentTag(current, printData, last == 1, singleLine);
 				}
 				current.setPrinted(true);
 			}
@@ -365,7 +483,8 @@ public class JavaDocableImpl implements JavaDocable {
 	 *
 	 *@param  printData  the print data
 	 */
-	private void finalPass(PrintData printData) {
+	private void finalPass(PrintData printData)
+	{
 		JavaDocComponent current;
 		int last = docs.size();
 
@@ -375,7 +494,7 @@ public class JavaDocableImpl implements JavaDocable {
 
 			//  If it is time, print it
 			if (!current.isPrinted()) {
-				printCurrentTag(current, printData, false);
+				printCurrentTag(current, printData, false, false);
 			}
 		}
 	}
@@ -388,9 +507,12 @@ public class JavaDocableImpl implements JavaDocable {
 	 *@param  printData        the print data
 	 *@param  onlyDescription  if it is the only tag
 	 */
-	private void printCurrentTag(JavaDocComponent current, PrintData printData, boolean onlyDescription) {
+	private void printCurrentTag(JavaDocComponent current, PrintData printData, boolean onlyDescription, boolean singleLine)
+	{
 		//  Print the element
+		printData.setCurrentIsSingle(singleLine);
 		current.print(printData);
+		printData.setCurrentIsSingle(false);
 		if (!onlyDescription && isDescription(current)) {
 			printSpaceAfterDescription(printData);
 		}
@@ -402,9 +524,12 @@ public class JavaDocableImpl implements JavaDocable {
 	 *
 	 *@param  printData  the print data
 	 */
-	private void printSpaceAfterDescription(PrintData printData) {
+	private void printSpaceAfterDescription(PrintData printData)
+	{
 		printData.indent();
-		printData.appendComment(" *", PrintData.JAVADOC_COMMENT);
+		if (!printData.isStarsAlignedWithSlash())
+			printData.space();
+		printData.appendComment("*", PrintData.JAVADOC_COMMENT);
 		printData.newline();
 	}
 }

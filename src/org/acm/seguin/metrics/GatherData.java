@@ -336,10 +336,10 @@ public class GatherData implements SummaryVisitor {
 	 */
 	public static void main(String[] args) {
 		if (args.length == 0) {
-			(new SummaryTraversal(System.getProperty("user.dir"))).go();
+			(new SummaryTraversal(System.getProperty("user.dir"))).run();
 		}
 		else {
-			(new SummaryTraversal(args[0])).go();
+			(new SummaryTraversal(args[0])).run();
 		}
 
 		//  Now print everything

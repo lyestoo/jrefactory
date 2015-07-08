@@ -26,8 +26,7 @@ import org.acm.seguin.summary.query.TopLevelDirectory;
  *
  *@author    Chris Seguin
  */
-public class RemoveEmptyClassRefactoring extends Refactoring
-{
+public class RemoveEmptyClassRefactoring extends Refactoring {
 	private TypeSummary typeSummary;
 	private File base;
 
@@ -35,9 +34,7 @@ public class RemoveEmptyClassRefactoring extends Refactoring
 	/**
 	 *  Constructor for the RemoveEmptyClassRefactoring object
 	 */
-	protected RemoveEmptyClassRefactoring()
-	{
-	}
+	protected RemoveEmptyClassRefactoring() { }
 
 
 	/**
@@ -88,6 +85,18 @@ public class RemoveEmptyClassRefactoring extends Refactoring
 
 
 	/**
+	 *  Gets the FileSummary attribute of the RemoveEmptyClassRefactoring object
+	 *
+	 *@return    The FileSummary value
+	 */
+	protected FileSummary getFileSummary()
+	{
+		FileSummary fileSummary = (FileSummary) typeSummary.getParent();
+		return fileSummary;
+	}
+
+
+	/**
 	 *  Checks the preconditions that must be true for this refactoring to be
 	 *  applied.
 	 *
@@ -95,57 +104,47 @@ public class RemoveEmptyClassRefactoring extends Refactoring
 	 */
 	protected void preconditions() throws RefactoringException
 	{
-		if (typeSummary == null)
-		{
+		if (typeSummary == null) {
 			throw new RefactoringException("No type specified");
 		}
 
 		TypeDeclSummary parentDecl = typeSummary.getParentClass();
 		TypeSummary parentSummary;
-		if (parentDecl == null)
-		{
+		if (parentDecl == null) {
 			parentSummary = GetTypeSummary.query(
 					PackageSummary.getPackageSummary("java.lang"),
 					"Object");
 		}
-		else
-		{
+		else {
 			parentSummary = GetTypeSummary.query(parentDecl);
 		}
 
-		if (parentSummary == null)
-		{
+		if (parentSummary == null) {
 			throw new RefactoringException("Could not find the parent class for the specified class in the metadata");
 		}
+		FileSummary fileSummary = getFileSummary();
 
-		FileSummary fileSummary = (FileSummary) typeSummary.getParent();
-
-		if (fileSummary.getFile() == null)
-		{
+		if (fileSummary.getFile() == null) {
 			throw new RefactoringException("This type is contained in a stub.  No refactorings allowed.");
 		}
 
-		if (fileSummary.getTypeCount() != 1)
-		{
+		if (fileSummary.getTypeCount() != 1) {
 			throw new RefactoringException("This refactoring works only when the " +
 					"type is alone in a file.  Please remove other types from " +
 					fileSummary.getFile().getName());
 		}
 
-		if ((typeSummary.getFieldCount() > 0) || (typeSummary.getMethodCount() > 0))
-		{
+		if ((typeSummary.getFieldCount() > 0) || (typeSummary.getMethodCount() > 0)) {
 			throw new RefactoringException("The " + typeSummary.getName() + " class has at least one method or field");
 		}
 
 		//  Finish the setup
 		File deadFile = fileSummary.getFile();
 		String path = null;
-		try
-		{
+		try {
 			path = deadFile.getCanonicalPath();
 		}
-		catch (IOException ioe)
-		{
+		catch (IOException ioe) {
 			path = deadFile.getPath();
 		}
 		File startDir = (new File(path)).getParentFile();
@@ -161,8 +160,7 @@ public class RemoveEmptyClassRefactoring extends Refactoring
 	protected void transform()
 	{
 		ComplexTransform complex = getComplexTransform();
-
-		FileSummary fileSummary = (FileSummary) typeSummary.getParent();
+		FileSummary fileSummary = getFileSummary();
 		complex.removeFile(fileSummary.getFile());
 
 		String srcPackage = ((PackageSummary) fileSummary.getParent()).getName();
@@ -171,18 +169,15 @@ public class RemoveEmptyClassRefactoring extends Refactoring
 
 		TypeDeclSummary parent = typeSummary.getParentClass();
 		String destPackage;
-		if (parent == null)
-		{
+		if (parent == null) {
 			newClassName = "Object";
 			destPackage = "java.lang";
 		}
-		else
-		{
+		else {
 			newClassName = parent.getType();
 			TypeSummary parentTypeSummary = GetTypeSummary.query(parent);
 			Summary one = parentTypeSummary.getParent();
-			while (!(one instanceof PackageSummary))
-			{
+			while (!(one instanceof PackageSummary)) {
 				one = one.getParent();
 			}
 			destPackage = ((PackageSummary) one).getName();

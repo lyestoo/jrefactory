@@ -20,6 +20,7 @@ import org.acm.seguin.refactor.EliminatePackageImportVisitor;
 import org.acm.seguin.refactor.Refactoring;
 import org.acm.seguin.refactor.RefactoringException;
 import org.acm.seguin.summary.*;
+import org.acm.seguin.summary.query.GetTypeSummary;
 import org.acm.seguin.summary.query.PackageContainsClass;
 import org.acm.seguin.summary.query.TopLevelDirectory;
 
@@ -28,15 +29,26 @@ import org.acm.seguin.summary.query.TopLevelDirectory;
  *
  *@author    Chris Seguin
  */
-public class RenameClassRefactoring extends Refactoring
-{
+public class RenameClassRefactoring extends Refactoring {
 	//  Instance Variables
 	private String initDir;
-	private String oldPackage;
-	private String oldClassName;
-	private String newClassName;
-	private String srcPackage;
-	private File base;
+
+	/**
+	 *  The root directory
+	 */
+	protected File base;
+	/**
+	 *  The name of the class
+	 */
+	protected String oldClassName;
+	/**
+	 *  The new name of the class
+	 */
+	protected String newClassName;
+	/**
+	 *  The source package
+	 */
+	protected String srcPackage;
 
 
 	/**
@@ -105,19 +117,30 @@ public class RenameClassRefactoring extends Refactoring
 
 
 	/**
+	 *  Gets the file summary that we are changing
+	 *
+	 *@return    The FileSummary value
+	 */
+	protected FileSummary getFileSummary()
+	{
+		PackageSummary packageSummary = PackageSummary.getPackageSummary(srcPackage);
+		TypeSummary typeSummary = GetTypeSummary.query(packageSummary, oldClassName);
+		return (FileSummary) typeSummary.getParent();
+	}
+
+
+	/**
 	 *  Preconditions for the refactoring to be applied
 	 *
 	 *@exception  RefactoringException  Description of Exception
 	 */
 	protected void preconditions() throws RefactoringException
 	{
-		if (oldClassName == null)
-		{
+		if (oldClassName == null) {
 			throw new RefactoringException("No old class specified");
 		}
 
-		if (newClassName == null)
-		{
+		if (newClassName == null) {
 			throw new RefactoringException("No new class specified");
 		}
 
@@ -125,25 +148,21 @@ public class RenameClassRefactoring extends Refactoring
 		String firstFilename = oldClassName + ".java";
 		ASTName srcPackageName = PackageNameGetter.query(startDir, firstFilename);
 		srcPackage = "";
-		if (srcPackageName != null)
-		{
+		if (srcPackageName != null) {
 			srcPackage = srcPackageName.getName();
 		}
 
 		base = TopLevelDirectory.query(startDir, firstFilename);
 
 		String topLevelDir = base.getPath();
-		try
-		{
+		try {
 			topLevelDir = base.getCanonicalPath();
 		}
-		catch (IOException ioe)
-		{
+		catch (IOException ioe) {
 		}
-		(new SummaryTraversal(topLevelDir)).go();
+		(new SummaryTraversal(topLevelDir)).run();
 
-		if (PackageContainsClass.query(srcPackage, newClassName))
-		{
+		if (PackageContainsClass.query(srcPackage, newClassName)) {
 			throw new RefactoringException(srcPackage + " already contains a class named " + newClassName);
 		}
 	}

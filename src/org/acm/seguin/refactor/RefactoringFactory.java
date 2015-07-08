@@ -73,6 +73,7 @@ public class RefactoringFactory {
 	 */
 	public AddChildRefactoring addChild()
 	{
+		prepare();
 		return typeFactory.addChild();
 	}
 
@@ -85,17 +86,19 @@ public class RefactoringFactory {
 	 */
 	public AddAbstractParent addParent()
 	{
+		prepare();
 		return typeFactory.addParent();
 	}
 
 
 	/**
-	 *  Description of the Method
+	 *  Creates a move class refactoring object
 	 *
-	 *@return    Description of the Returned Value
+	 *@return    the move class refactoring object
 	 */
 	public MoveClass moveClass()
 	{
+		prepare();
 		return typeFactory.moveClass();
 	}
 
@@ -107,6 +110,7 @@ public class RefactoringFactory {
 	 */
 	public RenameClassRefactoring renameClass()
 	{
+		prepare();
 		return typeFactory.renameClass();
 	}
 
@@ -118,6 +122,7 @@ public class RefactoringFactory {
 	 */
 	public RemoveEmptyClassRefactoring removeEmptyClass()
 	{
+		prepare();
 		return typeFactory.removeEmptyClass();
 	}
 
@@ -129,6 +134,7 @@ public class RefactoringFactory {
 	 */
 	public ExtractInterfaceRefactoring extractInterface()
 	{
+		prepare();
 		return typeFactory.extractInterface();
 	}
 
@@ -140,6 +146,7 @@ public class RefactoringFactory {
 	 */
 	public PushDownFieldRefactoring pushDownField()
 	{
+		prepare();
 		return fieldFactory.pushDownField();
 	}
 
@@ -151,6 +158,7 @@ public class RefactoringFactory {
 	 */
 	public RenameFieldRefactoring renameField()
 	{
+		prepare();
 		return fieldFactory.renameField();
 	}
 
@@ -162,6 +170,7 @@ public class RefactoringFactory {
 	 */
 	public PushUpFieldRefactoring pushUpField()
 	{
+		prepare();
 		return fieldFactory.pushUpField();
 	}
 
@@ -173,6 +182,7 @@ public class RefactoringFactory {
 	 */
 	public PushUpMethodRefactoring pushUpMethod()
 	{
+		prepare();
 		return methodFactory.pushUpMethod();
 	}
 
@@ -184,6 +194,7 @@ public class RefactoringFactory {
 	 */
 	public PushUpAbstractMethodRefactoring pushUpAbstractMethod()
 	{
+		prepare();
 		return methodFactory.pushUpAbstractMethod();
 	}
 
@@ -195,6 +206,7 @@ public class RefactoringFactory {
 	 */
 	public PushDownMethodRefactoring pushDownMethod()
 	{
+		prepare();
 		return methodFactory.pushDownMethod();
 	}
 
@@ -206,6 +218,7 @@ public class RefactoringFactory {
 	 */
 	public MoveMethodRefactoring moveMethod()
 	{
+		prepare();
 		return methodFactory.moveMethod();
 	}
 
@@ -217,6 +230,7 @@ public class RefactoringFactory {
 	 */
 	public RenameParameterRefactoring renameParameter()
 	{
+		prepare();
 		return methodFactory.renameParameter();
 	}
 
@@ -230,6 +244,15 @@ public class RefactoringFactory {
 	{
 		return methodFactory.extractMethod();
 	}
+
+
+	/**
+	 *  Prepare to create a refactoring that operates on files on the disk. This
+	 *  is an IDE's last opportunity to save files before the refactoring is
+	 *  performed. This is not used for ExtractMethod which works on code that is
+	 *  in memory (rather than on the disk)
+	 */
+	protected void prepare() { }
 
 
 	/**

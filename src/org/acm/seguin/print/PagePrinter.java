@@ -130,14 +130,14 @@ public abstract class PagePrinter implements Printable {
 
 		//  Get the header height
 		try {
-			FileSettings bundle = FileSettings.getSettings("Refactory", "printing");
+			FileSettings bundle = FileSettings.getRefactorySettings("printing");
 			setHeaderHeight(Integer.parseInt(bundle.getString("header.space")));
 		}
 		catch (MissingSettingsException mre) {
-			ExceptionPrinter.print(mre);
+			ExceptionPrinter.print(mre, true);
 		}
 		catch (NumberFormatException inf) {
-			ExceptionPrinter.print(inf);
+			ExceptionPrinter.print(inf, true);
 		}
 
 		return pf;

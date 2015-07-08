@@ -8,10 +8,10 @@
  */
 package org.acm.seguin.parser.ast;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import org.acm.seguin.parser.JavaParserVisitor;
 import org.acm.seguin.parser.JavaParser;
-import org.acm.seguin.util.Comparator;
-import org.acm.seguin.util.InsertionSortArray;
 
 /**
  *  Top level unit for compilation which is able to sort
@@ -49,7 +49,7 @@ public class ASTCompilationUnit extends SimpleNode {
 	 */
 	public void sort(Comparator order) {
 		if (children != null) {
-			(new InsertionSortArray()).sort(children, order);
+			Arrays.sort(children, order);
 		}
 	}
 

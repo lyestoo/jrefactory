@@ -18,11 +18,14 @@ import org.acm.seguin.parser.ast.ASTMethodDeclarator;
 import org.acm.seguin.parser.ast.ASTNestedClassDeclaration;
 import org.acm.seguin.parser.ast.ASTNestedInterfaceDeclaration;
 import org.acm.seguin.parser.ast.SimpleNode;
+import org.acm.seguin.parser.ast.ASTEnumDeclaration;
+import org.acm.seguin.parser.ast.ASTTypeParameters;
 
 /**
  *  Orders the items in a class according to type.
  *
  *@author     Chris Seguin
+ *@author     Mike Atkinson
  *@created    July 4, 1999
  */
 public class TypeOrder extends Ordering {
@@ -40,14 +43,15 @@ public class TypeOrder extends Ordering {
 	{
 		//  Create instance variables
 		usingMain = false;
-		order = new Class[7];
-		order[0] = ASTFieldDeclaration.class;
-		order[1] = ASTConstructorDeclaration.class;
-		order[2] = ASTMethodDeclaration.class;
-		order[3] = ASTNestedInterfaceDeclaration.class;
-		order[4] = ASTNestedClassDeclaration.class;
-		order[5] = ASTInitializer.class;
+		order = new Class[8];
+		order[0] = ASTEnumDeclaration.class;
+		order[1] = ASTFieldDeclaration.class;
+		order[2] = ASTConstructorDeclaration.class;
+		order[3] = ASTMethodDeclaration.class;
+		order[4] = ASTNestedInterfaceDeclaration.class;
+		order[5] = ASTNestedClassDeclaration.class;
 		order[6] = ASTInitializer.class;
+		order[7] = ASTInitializer.class;
 
 		//  Local Variables
 		int nextItem = 0;
@@ -57,7 +61,10 @@ public class TypeOrder extends Ordering {
 		while (tok.hasMoreTokens() && (nextItem < 7)) {
 			String next = tok.nextToken();
 			String lowerCase = next.toLowerCase();
-			if (lowerCase.startsWith("f")) {
+			if (lowerCase.startsWith("e")) {
+				order[nextItem] = ASTEnumDeclaration.class;
+			}
+			else if (lowerCase.startsWith("f")) {
 				order[nextItem] = ASTFieldDeclaration.class;
 			}
 			else if (lowerCase.startsWith("c")) {
@@ -127,11 +134,14 @@ public class TypeOrder extends Ordering {
 	{
 		if (usingMain && (current.equals(String.class))) {
 			if (type.equals(ASTMethodDeclaration.class)) {
-				ASTMethodDeclaration declaration = (ASTMethodDeclaration) data;
-				ASTMethodDeclarator declar = (ASTMethodDeclarator) (declaration.jjtGetChild(1));
-				String name = declar.getName();
-
-				return name.equals("main") && declaration.getModifiers().isStatic();
+                            ASTMethodDeclaration declaration = (ASTMethodDeclaration) data;
+                            int child = 1;
+                            if (declaration.jjtGetChild(0) instanceof ASTTypeParameters) {
+                                child++;
+                            }                            
+                            ASTMethodDeclarator declar = (ASTMethodDeclarator) (declaration.jjtGetChild(child));
+                            String name = declar.getName();
+                            return name.equals("main") && declaration.getModifiers().isStatic();
 			}
 
 			return false;

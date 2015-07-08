@@ -14,10 +14,197 @@ import org.acm.seguin.pretty.ModifierHolder;
 
 /**
  *  This software compares a parse tree to insure that they are identical.
- *
+ *  @FIXME: add in comparisons for Enum, Generics, etc.
  *@author    Chris Seguin
+ *@author    Mike Atkinson
  */
 public class EqualTree extends CompareParseTreeVisitor {
+    
+    
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the CompareParseTreeVisitor.defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTTypeParameterList node, Object data) {
+		return defaultComparison(node, data);
+        }
+    
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the CompareParseTreeVisitor.defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTTypeParameter node, Object data) {
+		return defaultComparison(node, data);
+        }
+    
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the CompareParseTreeVisitor.defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTTypeArguments node, Object data) {
+		return defaultComparison(node, data);
+        }
+    
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the CompareParseTreeVisitor.defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTReferenceTypeList node, Object data) {
+		return defaultComparison(node, data);
+        }
+    
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTReferenceType node, Object data) {
+		if (super.visit(node, data).equals(Boolean.TRUE)) {
+			if (node.getArrayCount() == ((ASTReferenceType) data).getArrayCount()) {
+				return Boolean.TRUE;
+			}
+		}
+
+		//System.out.println("Different type:  different structure");
+		return Boolean.FALSE;
+        }
+    
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the CompareParseTreeVisitor.defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTTypeParameters node, Object data) {
+		return defaultComparison(node, data);
+        }  
+    
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the CompareParseTreeVisitor.defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTGenericNameList node, Object data) {
+		return defaultComparison(node, data);
+        }  
+    
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTVariance node, Object data) {
+		if (super.visit(node, data).equals(Boolean.TRUE)) {
+                        String nodeName = node.getName();
+                        String otherName = ((ASTVariance) data).getName();
+			if (nodeName== null && otherName==null) {
+				return Boolean.TRUE;
+			} else if (nodeName!=null && nodeName.equals(otherName)) {
+                                return Boolean.TRUE;
+                        }
+		}
+
+		//System.out.println("Different type:  different structure");
+		return Boolean.FALSE;
+        }
+    
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the CompareParseTreeVisitor.defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTEnumDeclaration node, Object data) {
+		return defaultComparison(node, data);
+        }
+    
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the CompareParseTreeVisitor.defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTEnumElement node, Object data) {
+		return defaultComparison(node, data);
+        }
+    
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the CompareParseTreeVisitor.defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTIdentifier node, Object data) {
+		return defaultComparison(node, data);
+        }
+    
+	/**
+	 *  Visit a node, comparing it with that supplied in data.
+	 *
+         *  It used the CompareParseTreeVisitor.defaultComparison() method to do the comparison.
+	 *  
+	 *@param  node  The node we are visiting
+	 *@param  data  The simple node to compare
+	 *@return       Boolean.TRUE or Boolean.FALSE
+         *@since        JRefactory 2.7.00
+         */
+        public Object visit(ASTAttribute node, Object data) {
+		return defaultComparison(node, data);
+        }
+                
 	/**
 	 *  Description of the Method
 	 *
@@ -185,7 +372,7 @@ public class EqualTree extends CompareParseTreeVisitor {
 	{
 		if (super.visit(node, data).equals(Boolean.TRUE)) {
 			if (node.getModifiers().equals(((ASTConstructorDeclaration) data).getModifiers()) &&
-					node.getName().equals(((ASTConstructorDeclaration) data).getName())) {
+				node.getName().equals(((ASTConstructorDeclaration) data).getName())) {
 				return Boolean.TRUE;
 			}
 		}

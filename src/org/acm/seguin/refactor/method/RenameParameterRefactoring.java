@@ -124,6 +124,9 @@ public class RenameParameterRefactoring extends Refactoring
 	 */
 	protected void transform()
 	{
+		if (param.getName().equals(newName))
+			return;
+
 		//  Get the complex transformation
 		ComplexTransform transform = getComplexTransform();
 

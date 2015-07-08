@@ -33,6 +33,9 @@ import org.acm.seguin.parser.build.BuildExpression;
 import org.acm.seguin.summary.VariableSummary;
 import org.acm.seguin.summary.TypeDeclSummary;
 
+import org.acm.seguin.parser.ast.ASTReferenceType;
+import org.acm.seguin.parser.ast.ASTVariance;
+
 /**
  *  Builds the invocation of the method that is extracted for insertion into
  *  the place where the method was extracted
@@ -241,8 +244,7 @@ class EMBuilder
 		statement.jjtAddChild(type, 0);
 
 		TypeDeclSummary typeDecl = returnSummary.getTypeDecl();
-		type.setArrayCount(typeDecl.getArrayCount());
-		if (typeDecl.isPrimitive())
+                if (typeDecl.getArrayCount()==0 && typeDecl.isPrimitive())
 		{
 			ASTPrimitiveType primitiveType = new ASTPrimitiveType(0);
 			primitiveType.setName(typeDecl.getType());
@@ -250,9 +252,21 @@ class EMBuilder
 		}
 		else
 		{
-			ASTName name = new ASTName(0);
-			name.fromString(typeDecl.getLongName());
-			type.jjtAddChild(name, 0);
+                        ASTReferenceType reference = new ASTReferenceType(0);
+                        type.jjtAddChild(reference, 0);
+                        if (typeDecl.isPrimitive()) {
+                            ASTPrimitiveType primitiveType = new ASTPrimitiveType(0);
+                            primitiveType.setName(typeDecl.getType());
+                            reference.jjtAddChild(primitiveType, 0);
+                        } else {
+                            ASTName name = new ASTName(0);
+                            name.fromString(typeDecl.getLongName());
+                            reference.jjtAddChild(name, 0);
+                        }
+                        for (int ndx=0; ndx<typeDecl.getArrayCount(); ndx++) {
+                                ASTVariance variance = new ASTVariance(0);
+                                reference.jjtAddChild(variance, ndx+1);
+                        }
 		}
 
 		ASTVariableDeclarator varDecl = new ASTVariableDeclarator(0);

@@ -461,6 +461,79 @@ public class ModifierHolder implements Serializable {
 
 
 	/**
+	 *  Convert the object to a string
+	 *
+	 *@return    a string describing the modifiers
+	 */
+	public String toStandardOrderString()
+	{
+		//  Local Variables
+		StringBuffer buf = new StringBuffer();
+
+		//  Protection first
+		if (isPrivate()) {
+			buf.append(names[5]);
+			buf.append(" ");
+		}
+		if (isProtected()) {
+			buf.append(names[6]);
+			buf.append(" ");
+		}
+		if (isPublic()) {
+			buf.append(names[7]);
+			buf.append(" ");
+		}
+
+		//  Others next
+		if (isAbstract()) {
+			buf.append(names[0]);
+			buf.append(" ");
+		}
+		if (isExplicit()) {
+			buf.append(names[1]);
+			buf.append(" ");
+		}
+		if (isInterface()) {
+			buf.append(names[3]);
+			buf.append(" ");
+		}
+		if (isStatic()) {
+			buf.append(names[8]);
+			buf.append(" ");
+		}
+		if (isStrict()) {
+			buf.append(names[9]);
+			buf.append(" ");
+		}
+		if (isFinal()) {
+			buf.append(names[2]);
+			buf.append(" ");
+		}
+		if (isSynchronized()) {
+			buf.append(names[11]);
+			buf.append(" ");
+		}
+		if (isTransient()) {
+			buf.append(names[12]);
+			buf.append(" ");
+		}
+		if (isVolatile()) {
+			buf.append(names[13]);
+			buf.append(" ");
+		}
+		if (isNative()) {
+			buf.append(names[4]);
+			buf.append(" ");
+		}
+		if (isStrictFP()) {
+			buf.append(names[10]);
+			buf.append(" ");
+		}
+
+		return buf.toString();
+	}
+
+	/**
 	 *  Copies the modifiers from another source
 	 *
 	 *@param  source  the source

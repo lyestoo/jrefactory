@@ -18,6 +18,7 @@ import org.acm.seguin.pretty.ai.RequiredTags;
 import org.acm.seguin.parser.JavaParserVisitor;
 import org.acm.seguin.parser.JavaParser;
 import org.acm.seguin.util.FileSettings;
+import org.acm.seguin.pretty.DescriptionPadder;
 
 /**
  *  Holds a field declaration.  The two components that this structure
@@ -191,10 +192,14 @@ public class ASTFieldDeclaration extends SimpleNode implements JavaDocable {
 	/**
 	 *  Returns a string containing all the modifiers
 	 *
-	 *@return    the iterator
+	 *@param code the code used to determine the order of the modifiers
+	 *@return    the string representationof the order
 	 */
-	public String getModifiersString() {
-		return modifiers.toString();
+	public String getModifiersString(int code) {
+		if (code == PrintData.ALPHABETICAL_ORDER)
+			return modifiers.toString();
+		else
+			return modifiers.toStandardOrderString();
 	}
 
 
@@ -237,7 +242,7 @@ public class ASTFieldDeclaration extends SimpleNode implements JavaDocable {
 	 *@return    a string representing this object
 	 */
 	public String toString() {
-		return super.toString() + " [" + getModifiersString() + "]";
+		return super.toString() + " [" + getModifiersString(PrintData.ALPHABETICAL_ORDER) + "]";
 	}
 
 
@@ -271,7 +276,7 @@ public class ASTFieldDeclaration extends SimpleNode implements JavaDocable {
 		FileSettings bundle = FileSettings.getSettings("Refactory", "pretty");
 
 		//  Description of the field
-		jdi.require("", bundle.getString("field.descr"));
+		jdi.require("", DescriptionPadder.find(bundle, "field.descr"));
 
 		//  Require the other tags
 		ASTVariableDeclarator decl = (ASTVariableDeclarator) jjtGetChild(1);

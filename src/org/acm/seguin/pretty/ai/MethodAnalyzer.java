@@ -22,17 +22,27 @@ import org.acm.seguin.parser.ast.ASTVariableDeclaratorId;
 import org.acm.seguin.pretty.JavaDocableImpl;
 import org.acm.seguin.util.FileSettings;
 import org.acm.seguin.util.MissingSettingsException;
+import org.acm.seguin.pretty.DescriptionPadder;
+import org.acm.seguin.pretty.JavadocTags;
+
+import org.acm.seguin.parser.ast.ASTReferenceType;
+import org.acm.seguin.parser.ast.ASTVariance;
+import org.acm.seguin.parser.ast.ASTTypeParameters;
+import org.acm.seguin.parser.ast.ASTAttribute;
 
 /**
  *  Basis for the artificial intelligence that analyzes the method and
  *  determines the appropriate javadoc descriptions
  *
  *@author    Chris Seguin
+ *@author    Mike Atkinson
  */
 public class MethodAnalyzer
 {
 	private ASTMethodDeclaration node;
 	private JavaDocableImpl jdi;
+	private ParseVariableName pvn;
+	private JavadocTags jt;
 
 
 	/**
@@ -45,6 +55,8 @@ public class MethodAnalyzer
 	{
 		this.node = node;
 		this.jdi = jdi;
+		pvn = new ParseVariableName();
+		jt = JavadocTags.get();
 	}
 
 
@@ -58,12 +70,12 @@ public class MethodAnalyzer
 	public void finish(String className)
 	{
 		//  Get the resource bundle
-		FileSettings bundle = FileSettings.getSettings("Refactory", "pretty");
+		FileSettings bundle = FileSettings.getRefactoryPrettySettings();
 
 		//  Require a description of this method
 		requireDescription(bundle, className);
 
-		String methodTags = "return,param,exception";
+		String methodTags = "return,param,exception,throws";
 		try {
 			methodTags = bundle.getString("method.tags");
 		}
@@ -79,9 +91,12 @@ public class MethodAnalyzer
 		if (methodTags.indexOf("param") >= 0) {
 			finishParameters(bundle);
 		}
+		sortParameters(); // sort parameters into order the occur in the method
 
 		//  Check for exceptions
-		if (methodTags.indexOf("exception") >= 0) {
+		if ((methodTags.indexOf("exception") >= 0) ||
+		    (methodTags.indexOf("throws") >= 0) ||
+		    (methodTags.indexOf(jt.getExceptionTag()) >= 0)) {
 			finishExceptions(bundle);
 		}
 	}
@@ -150,6 +165,15 @@ public class MethodAnalyzer
 			return false;
 		}
 
+                // If it has JDK 1.5 type parameters it cannot be a main() method.
+                if (node.jjtGetChild(0) instanceof ASTTypeParameters) {
+			return false;
+                }
+                // If it has JDK 1.5 attributes it cannot be a main() method.
+                if (node.jjtGetChild(0) instanceof ASTAttribute) {
+			return false;
+                }
+                
 		//  Check for the void return type
 		ASTResultType result = (ASTResultType) node.jjtGetChild(0);
 		if (result.hasAnyChildren())
@@ -168,20 +192,21 @@ public class MethodAnalyzer
 
 		ASTFormalParameter nextParam = (ASTFormalParameter) params.jjtGetChild(0);
 		ASTType type = (ASTType) nextParam.jjtGetChild(0);
-		if (type.getArrayCount() != 1)
-		{
-			return false;
-		}
-
 		Node child = type.jjtGetChild(0);
-		if (child instanceof ASTName)
-		{
-			ASTName nameNode = (ASTName) child;
-			if (nameNode.getName().equals("String") ||
-					nameNode.getName().equals("java.lang.String"))
-			{
-				return true;
-			}
+		if (child instanceof ASTReferenceType) {
+                        ASTReferenceType reference = (ASTReferenceType)child;
+                        childCount = reference.jjtGetNumChildren();
+                        if (childCount != 2) {
+                            return false;
+                        }
+                        if (reference.jjtGetChild(0) instanceof ASTName) {
+                                ASTName nameNode = (ASTName) reference.jjtGetChild(0);
+                                if (nameNode.getName().equals("String") || nameNode.getName().equals("java.lang.String")) {
+                                        if (reference.jjtGetChild(1) instanceof ASTVariance) {
+                                                return true;
+                                        }
+                                }
+                        }
 		}
 
 		return false;
@@ -243,8 +268,17 @@ public class MethodAnalyzer
 	 */
 	private String getName()
 	{
-		ASTMethodDeclarator decl = (ASTMethodDeclarator) node.jjtGetChild(1);
-		return decl.getName();
+                int child = 0;
+                if (node.jjtGetChild(0) instanceof ASTAttribute) {
+                    child = 1;
+                }
+                if (node.jjtGetChild(child) instanceof ASTTypeParameters) {
+                    ASTMethodDeclarator decl = (ASTMethodDeclarator) node.jjtGetChild(child+2);
+                    return decl.getName();
+                } else {
+                    ASTMethodDeclarator decl = (ASTMethodDeclarator) node.jjtGetChild(child+1);
+                    return decl.getName();
+                }
 	}
 
 
@@ -297,7 +331,7 @@ public class MethodAnalyzer
 		}
 		else
 		{
-			pattern = bundle.getString("param.descr");
+			pattern = jt.getParamDescr();
 		}
 
 		return createDescription(pattern, getAttributeName(), param);
@@ -324,7 +358,7 @@ public class MethodAnalyzer
 		}
 		else
 		{
-			pattern = bundle.getString("return.descr");
+			pattern = jt.getReturnDescr();
 		}
 
 		return createDescription(pattern, getAttributeName(), "");
@@ -338,7 +372,14 @@ public class MethodAnalyzer
 	 */
 	private void finishReturn(FileSettings bundle)
 	{
-		ASTResultType result = (ASTResultType) node.jjtGetChild(0);
+            int child = 0;
+            if (node.jjtGetChild(0) instanceof ASTAttribute) {
+                child++;
+            }
+            if (node.jjtGetChild(child) instanceof ASTTypeParameters) {
+                child++;
+            }
+            ASTResultType result = (ASTResultType) node.jjtGetChild(child);
 		if (result.hasAnyChildren())
 		{
 			if (!jdi.contains("@return"))
@@ -356,8 +397,16 @@ public class MethodAnalyzer
 	 */
 	private void finishParameters(FileSettings bundle)
 	{
-		ASTMethodDeclarator decl = (ASTMethodDeclarator) node.jjtGetChild(1);
-		ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetChild(0);
+                int child = 0;
+                if (node.jjtGetChild(0) instanceof ASTAttribute) {
+                    child++;
+                }
+                if (node.jjtGetChild(child++) instanceof ASTTypeParameters) {
+                    child++;
+                }
+                ASTMethodDeclarator decl = (ASTMethodDeclarator) node.jjtGetChild(child);
+                ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetChild(0);
+                
 		int childCount = params.jjtGetNumChildren();
 		for (int ndx = 0; ndx < childCount; ndx++)
 		{
@@ -372,6 +421,35 @@ public class MethodAnalyzer
 
 
 	/**
+	 *  Sort the "@param" elements of the method.
+	 *
+         *@since JRefactory 2.7.00
+	 */
+	private void sortParameters()
+	{
+                int child = 0;
+                if (node.jjtGetChild(0) instanceof ASTAttribute) {
+                    child = 1;
+                }
+                if (node.jjtGetChild(child++) instanceof ASTTypeParameters) {
+                    child++;
+                }
+                ASTMethodDeclarator decl = (ASTMethodDeclarator) node.jjtGetChild(child);
+                ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetChild(0);
+                
+		int childCount = params.jjtGetNumChildren();
+                String[] methodParams = new String[childCount];
+		for (int ndx = 0; ndx < childCount; ndx++)
+		{
+			ASTFormalParameter nextParam = (ASTFormalParameter) params.jjtGetChild(ndx);
+			ASTVariableDeclaratorId id = (ASTVariableDeclaratorId) nextParam.jjtGetChild(1);
+                        methodParams[ndx] = id.getName();
+		}
+                jdi.sort("@param", methodParams);
+	}
+
+
+	/**
 	 *  Description of the Method
 	 *
 	 *@param  bundle  Description of Parameter
@@ -380,25 +458,18 @@ public class MethodAnalyzer
 	{
 		if ((node.jjtGetNumChildren() > 2) && (node.jjtGetChild(2) instanceof ASTNameList))
 		{
-			String exceptionTagName = "@exception";
-			try {
-				exceptionTagName = bundle.getString("exception.tag.name");
-				if (exceptionTagName.length() == 0)
-					exceptionTagName = "@exception";
-				else if (exceptionTagName.charAt(0) != '@')
-					exceptionTagName = "@" + exceptionTagName;
-			}
-			catch (MissingSettingsException mse) {
-			}
+			String exceptionTagName = jt.getExceptionTag();
 
 			ASTNameList exceptions = (ASTNameList) node.jjtGetChild(2);
 			int childCount = exceptions.jjtGetNumChildren();
 			for (int ndx = 0; ndx < childCount; ndx++)
 			{
 				ASTName name = (ASTName) exceptions.jjtGetChild(ndx);
-				if (!jdi.contains("@exception", name.getName()) && !jdi.contains("@throws", name.getName()))
+				if (!jdi.contains("@exception", name.getName()) &&
+				    !jdi.contains("@throws", name.getName()) &&
+				    !jdi.contains(exceptionTagName, name.getName()))
 				{
-					jdi.require(exceptionTagName, name.getName(), bundle.getString("exception.descr"));
+					jdi.require(exceptionTagName, name.getName(), jt.getExceptionDescr());
 				}
 			}
 		}
@@ -416,7 +487,7 @@ public class MethodAnalyzer
 	private String createDescription(String pattern, String attribute, String className)
 	{
 		//  Description of the constructor
-		Object[] nameArray = new Object[4];
+		Object[] nameArray = new Object[5];
 		nameArray[0] = attribute;
 		nameArray[1] = className;
 
@@ -430,6 +501,7 @@ public class MethodAnalyzer
 		}
 
 		nameArray[3] = lowerCaseFirstLetter(attribute);
+		nameArray[4] = pvn.parse(attribute);
 
 		String msg = MessageFormat.format(pattern, nameArray);
 		return msg;
@@ -487,8 +559,9 @@ public class MethodAnalyzer
 			pattern = bundle.getString("method.descr");
 		}
 
-		String msg = createDescription(pattern, getAttributeName(), className);
-		jdi.require("", msg);
+		String message = createDescription(pattern, getAttributeName(), className);
+		message = DescriptionPadder.padBuffer(message, bundle);
+		jdi.require("", message);
 	}
 
 

@@ -23,34 +23,17 @@ import org.acm.seguin.util.MissingSettingsException;
  *  The files that have changed are indexed files, in that they have an index
  *  appended to the name of the file.
  *
- *@author    Chris Seguin
+ *@author     Mike Atkinson (<a href="mailto:javastyle@ladyshot.demon.co.uk">Mike</a>)
+ *@version    $Version: $
+ *@since      2.7.05
  */
-public class UndoAction implements Serializable {
+public interface UndoAction {
 	/**
-	 *  A description of the refactoring
+	 *  Sets the Description attribute of the UndoAction object
 	 *
-	 *@serial    true
+	 *@param description    The Description value
 	 */
-	private String description;
-
-	/**
-	 *  A linked list
-	 *
-	 *@serial    true
-	 */
-	private LinkedList list;
-
-
-	/**
-	 *  Constructor for the UndoAction object
-	 *
-	 *@param  init  the description of the action
-	 */
-	public UndoAction(String init)
-	{
-		description = init;
-		list = new LinkedList();
-	}
+	public void setDescription(String description);
 
 
 	/**
@@ -58,10 +41,7 @@ public class UndoAction implements Serializable {
 	 *
 	 *@return    The Description value
 	 */
-	public String getDescription()
-	{
-		return description;
-	}
+	public String getDescription();
 
 
 	/**
@@ -70,93 +50,12 @@ public class UndoAction implements Serializable {
 	 *@param  oldFile  the original file
 	 *@param  newFile  the new file
 	 */
-	public void add(File oldFile, File newFile)
-	{
-		File dest = null;
-		if (oldFile == null) {
-			dest = null;
-		}
-		else {
-			//  Get the parent directory and the name
-			File parent = oldFile.getParentFile();
-			String name = oldFile.getName();
-
-			//  Find the file's next index location
-			dest = findNextStorageSlot(parent, name);
-
-			//  Renames the file
-			oldFile.renameTo(dest);
-		}
-
-		list.add(new FileSet(oldFile, dest, newFile));
-	}
+	public void add(File oldFile, File newFile);
 
 
 	/**
 	 *  Undo the current action
 	 */
-	public void undo()
-	{
-		Iterator iter = list.iterator();
-		while (iter.hasNext()) {
-			((FileSet) iter.next()).undo();
-		}
-	}
+	public void undo();
 
-
-	/**
-	 *  Gets the NextName attribute of the UndoAction object
-	 *
-	 *@param  name     Description of Parameter
-	 *@param  index    Description of Parameter
-	 *@param  pattern  Description of Parameter
-	 *@return          The NextName value
-	 */
-	private String getNextName(String name, int index, String pattern)
-	{
-		StringBuffer buffer = new StringBuffer(name);
-		char ch;
-
-		for (int ndx = 0; ndx < pattern.length(); ndx++) {
-			ch = pattern.charAt(ndx);
-			if (ch == '#') {
-				buffer.append(index);
-			}
-			else {
-				buffer.append(ch);
-			}
-		}
-
-		return buffer.toString();
-	}
-
-
-	/**
-	 *  Finds the next slot to store the original file
-	 *
-	 *@param  dir   the directory that the original file is contained in
-	 *@param  name  the name of the original file
-	 *@return       Description of the Returned Value
-	 */
-	private File findNextStorageSlot(File dir, String name)
-	{
-		String pattern = ".#";
-
-		try {
-			FileSettings umlBundle = FileSettings.getSettings("Refactory", "uml");
-			umlBundle.setContinuallyReload(true);
-			pattern = umlBundle.getString("backup.ext");
-		}
-		catch (MissingSettingsException mse) {
-			//  The default is fine
-		}
-
-		File dest = null;
-		int index = 0;
-		do {
-			dest = new File(dir, getNextName(name, index, pattern));
-			index++;
-		} while (dest.exists());
-		return dest;
-	}
 }

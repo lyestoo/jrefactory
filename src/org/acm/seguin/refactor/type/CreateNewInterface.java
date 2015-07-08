@@ -1,3 +1,11 @@
+/*
+ *  Author:  Chris Seguin
+ *
+ *  This software has been developed under the copyleft
+ *  rules of the GNU General Public License.  Please
+ *  consult the GNU General Public License for more
+ *  details about use and distribution of this software.
+ */
 package org.acm.seguin.refactor.type;
 
 import java.io.File;
@@ -13,6 +21,7 @@ import org.acm.seguin.summary.TypeDeclSummary;
 import org.acm.seguin.summary.TypeSummary;
 import org.acm.seguin.summary.query.GetTypeSummary;
 import org.acm.seguin.summary.query.SamePackage;
+import org.acm.seguin.summary.query.TopLevelDirectory;
 
 /**
  *  This object creates an interface from nothing. It is responsible for
@@ -22,9 +31,9 @@ import org.acm.seguin.summary.query.SamePackage;
  *@created    November 28, 2000
  */
 public class CreateNewInterface {
-	private File m_rootDir;
 	private String m_interfaceName;
 	private String m_packageName;
+	private Summary m_summary;
 
 
 	/**
@@ -32,10 +41,11 @@ public class CreateNewInterface {
 	 *
 	 *@param  interfaceName  Description of Parameter
 	 *@param  packageName    Description of Parameter
-	 *@param  rootDir        Description of Parameter
+	 *@param  summary        Description of Parameter
 	 */
-	public CreateNewInterface(File rootDir, String packageName, String interfaceName) {
-		m_rootDir = rootDir;
+	public CreateNewInterface(Summary summary, String packageName, String interfaceName)
+	{
+		m_summary = summary;
 		m_packageName = packageName;
 		m_interfaceName = interfaceName;
 	}
@@ -44,7 +54,8 @@ public class CreateNewInterface {
 	/**
 	 *  Constructor for the CreateNewInterface object
 	 */
-	CreateNewInterface() {
+	CreateNewInterface()
+	{
 		m_interfaceName = null;
 		m_packageName = null;
 	}
@@ -56,7 +67,8 @@ public class CreateNewInterface {
 	 *@return                           Description of the Returned Value
 	 *@exception  RefactoringException  Description of Exception
 	 */
-	public File run() throws RefactoringException {
+	public File run() throws RefactoringException
+	{
 		if (m_packageName == null) {
 			throw new RefactoringException("No package name specified");
 		}
@@ -69,31 +81,23 @@ public class CreateNewInterface {
 		ASTCompilationUnit root = new ASTCompilationUnit(0);
 
 		//  Create the package statement
-		ASTPackageDeclaration packDecl = createPackageDeclaration();
-		root.jjtAddChild(packDecl, 0);
+		int nextIndex = 0;
+
+		if ((m_packageName != null) && (m_packageName.length() > 0)) {
+			ASTPackageDeclaration packDecl = createPackageDeclaration();
+			root.jjtAddChild(packDecl, 0);
+			nextIndex++;
+		}
 
 		ASTName parentName = new ASTName(0);
 
 		//  Create the class
 		ASTTypeDeclaration td = createTypeDeclaration();
-		root.jjtAddChild(td, 1);
+		root.jjtAddChild(td, nextIndex);
 
 		//  Print this new one
-		File dest = print(getFullPath(), m_interfaceName, root);
+		File dest = print(m_interfaceName, root);
 		return dest;
-	}
-
-
-	/**
-	 *  Gets the FullPath of the type summary
-	 *
-	 *@return    The FullPath value
-	 */
-	String getFullPath() {
-		String result = m_packageName + "." + m_interfaceName;
-		result = result.replace('.', '/');
-		result = m_rootDir.toString() + File.separator + result;
-		return result;
 	}
 
 
@@ -102,7 +106,8 @@ public class CreateNewInterface {
 	 *
 	 *@return    the package declaration
 	 */
-	ASTPackageDeclaration createPackageDeclaration() {
+	ASTPackageDeclaration createPackageDeclaration()
+	{
 		ASTPackageDeclaration packDecl = new ASTPackageDeclaration(0);
 		ASTName packName = new ASTName(0);
 		packName.fromString(m_packageName);
@@ -117,7 +122,8 @@ public class CreateNewInterface {
 	 *
 	 *@return    the modified class
 	 */
-	ASTTypeDeclaration createTypeDeclaration() {
+	ASTTypeDeclaration createTypeDeclaration()
+	{
 		ASTTypeDeclaration td = new ASTTypeDeclaration(0);
 		ASTInterfaceDeclaration id = createModifiedClass();
 		td.jjtAddChild(id, 0);
@@ -131,7 +137,8 @@ public class CreateNewInterface {
 	 *
 	 *@return    the modified class
 	 */
-	ASTInterfaceDeclaration createModifiedClass() {
+	ASTInterfaceDeclaration createModifiedClass()
+	{
 		ASTInterfaceDeclaration id = new ASTInterfaceDeclaration(0);
 		id.addModifier("public");
 		ASTUnmodifiedInterfaceDeclaration uid = createClassBody(m_interfaceName);
@@ -147,7 +154,8 @@ public class CreateNewInterface {
 	 *@param  parentName  Description of Parameter
 	 *@return             the class
 	 */
-	ASTUnmodifiedInterfaceDeclaration createClassBody(String parentName) {
+	ASTUnmodifiedInterfaceDeclaration createClassBody(String parentName)
+	{
 		ASTUnmodifiedInterfaceDeclaration uid = new ASTUnmodifiedInterfaceDeclaration(0);
 		uid.setName(parentName);
 		ASTInterfaceBody ib = new ASTInterfaceBody(0);
@@ -159,18 +167,19 @@ public class CreateNewInterface {
 	/**
 	 *  Prints the file
 	 *
-	 *@param  fullpath    Description of Parameter
-	 *@param  parentName  Description of Parameter
-	 *@param  root        Description of Parameter
-	 *@return             Description of the Returned Value
+	 *@param  root           Description of Parameter
+	 *@param  interfaceName  Description of Parameter
+	 *@return                Description of the Returned Value
 	 */
-	File print(String fullpath, String parentName, SimpleNode root) {
-		File parent = (new File(fullpath)).getParentFile();
+	File print(String interfaceName, SimpleNode root)
+	{
+		File parent = TopLevelDirectory.getPackageDirectory(m_summary, m_packageName);
+
 		// Create directory if it doesn't exist
 		if (!parent.exists()) {
 			parent.mkdir();
 		}
-		File destFile = new File(parent, parentName + ".java");
+		File destFile = new File(parent, interfaceName + ".java");
 
 		try {
 			(new PrettyPrintFile()).apply(destFile, root);
@@ -189,7 +198,8 @@ public class CreateNewInterface {
 	 *@param  base  Description of Parameter
 	 *@return       the package summary
 	 */
-	private PackageSummary getPackageSummary(Summary base) {
+	private PackageSummary getPackageSummary(Summary base)
+	{
 		Summary current = base;
 		while (!(current instanceof PackageSummary)) {
 			current = current.getParent();
@@ -205,7 +215,8 @@ public class CreateNewInterface {
 	 *@param  two  Description of Parameter
 	 *@return      The SameParent value
 	 */
-	private boolean isSameParent(TypeSummary one, TypeSummary two) {
+	private boolean isSameParent(TypeSummary one, TypeSummary two)
+	{
 		if (isObject(one)) {
 			return isObject(two);
 		}
@@ -224,7 +235,8 @@ public class CreateNewInterface {
 	 *@param  item  Description of Parameter
 	 *@return       The Object value
 	 */
-	private boolean isObject(TypeSummary item) {
+	private boolean isObject(TypeSummary item)
+	{
 		if (item == null) {
 			return true;
 		}

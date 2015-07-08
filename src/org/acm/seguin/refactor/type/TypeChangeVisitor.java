@@ -91,7 +91,6 @@ public abstract class TypeChangeVisitor extends TraversalVisitor {
 		if (refactoring.hasAnyChanges()) {
 			File oldFile = node.getFile();
 			File newFile = getNewFile(node);
-			System.out.println("Updating:  " + oldFile.getName());
 			refactoring.add(new RemoveSamePackageTransform());
 			refactoring.apply(oldFile, newFile);
 		}

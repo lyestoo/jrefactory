@@ -19,6 +19,7 @@ import org.acm.seguin.refactor.Refactoring;
 import org.acm.seguin.refactor.RefactoringException;
 import org.acm.seguin.summary.*;
 import org.acm.seguin.summary.query.TopLevelDirectory;
+import org.acm.seguin.refactor.RefactoringException;
 
 /**
  *  Main program for repackaging. This object simply stores the main program
@@ -28,15 +29,20 @@ import org.acm.seguin.summary.query.TopLevelDirectory;
  *@author     Chris Seguin
  *@created    June 2, 1999
  */
-public class MoveClass extends Refactoring
-{
+public class MoveClass extends Refactoring {
 	//  Instance Variables
-	private String destPackage;
-	private String initDir;
-	private LinkedList fileList;
+	/**
+	 *  The directory
+	 */
+	protected String initDir;
+	/**
+	 *  The list of filenames
+	 */
+	protected LinkedList fileList;
 	private String oldPackage;
 	private File base;
 	private String srcPackage;
+	private String destPackage;
 
 
 	/**
@@ -113,31 +119,33 @@ public class MoveClass extends Refactoring
 	 */
 	protected void preconditions() throws RefactoringException
 	{
-		if ((destPackage == null) || (fileList.size() == 0))
-		{
+		if ((destPackage == null) || (fileList.size() == 0)) {
+		   if (destPackage == null)
+		       System.out.println("destPackage can not be null");
+		   if (fileList.size() == 0)
+		       System.out.println("No files provided");
 			return;
 		}
+		//Checks if the class extension  is valid
+		validateClassName(fileList);
 
 		File startDir = new File(initDir);
 		String firstFilename = (String) fileList.get(0);
 		ASTName srcPackageName = PackageNameGetter.query(startDir, firstFilename);
 		srcPackage = "";
-		if (srcPackageName != null)
-		{
+		if (srcPackageName != null) {
 			srcPackage = srcPackageName.getName();
 		}
 
 		base = TopLevelDirectory.query(startDir, firstFilename);
 
 		String topLevelDir = base.getPath();
-		try
-		{
+		try {
 			topLevelDir = base.getCanonicalPath();
 		}
-		catch (IOException ioe)
-		{
+		catch (IOException ioe) {
 		}
-		(new SummaryTraversal(topLevelDir)).go();
+		(new SummaryTraversal(topLevelDir)).run();
 	}
 
 
@@ -149,21 +157,18 @@ public class MoveClass extends Refactoring
 		MoveClassVisitor mcv = new MoveClassVisitor(srcPackage,
 				destPackage, base, getComplexTransform());
 		Iterator iter = fileList.iterator();
-		while (iter.hasNext())
-		{
+		while (iter.hasNext()) {
 			//  Get the next file
 			String nextFile = (String) iter.next();
 
 			int start = Math.max(0, nextFile.indexOf(File.separator));
 			int end = nextFile.indexOf(".java");
-
+			
 			String nextClass = "";
-			if (end > 0)
-			{
+			if (end > 0) {
 				nextClass = nextFile.substring(start, end);
 			}
-			else
-			{
+			else {
 				nextClass = nextFile.substring(start);
 			}
 
@@ -172,4 +177,15 @@ public class MoveClass extends Refactoring
 
 		mcv.visit(null);
 	}
+
+    protected void validateClassName(LinkedList inputFileList) throws RefactoringException{
+	Iterator iter = inputFileList.iterator();
+	while (iter.hasNext()) {
+	    //  Get the next file
+	    String nextFile = (String) iter.next();
+	    if (!nextFile.endsWith(".java"))
+		throw new RefactoringException( nextFile + " should ba a java file");
+	}
+    }			
+
 }

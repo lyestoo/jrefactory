@@ -27,6 +27,7 @@ import org.acm.seguin.summary.MethodSummary;
 import org.acm.seguin.summary.ParameterSummary;
 import org.acm.seguin.summary.TypeSummary;
 import org.acm.seguin.summary.VariableSummary;
+import org.acm.seguin.parser.ast.ASTTypeParameters;
 
 /**
  *  Creates a list of arguments to the extacted method
@@ -160,6 +161,11 @@ public class EMParameterFinder
 				cantBe.add(lvs.getName());
 				addReturnType(lvs);
 			}
+			else if (next instanceof ParameterSummary)
+			{
+				ParameterSummary param = (ParameterSummary) next;
+				cantBe.add(param.getName());
+			}
 		}
 	}
 
@@ -199,8 +205,13 @@ public class EMParameterFinder
 			ASTMethodDeclarator decl = (ASTMethodDeclarator) child.jjtGetChild(1);
 			if (decl.getName().equals(methodSummary.getName()))
 			{
-				ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetChild(0);
-				return isParametersSame(params, methodSummary);
+                            if (decl.jjtGetChild(0) instanceof ASTTypeParameters) {
+                                    ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetChild(1);
+                                    return isParametersSame(params, methodSummary);
+                            } else {
+                                    ASTFormalParameters params = (ASTFormalParameters) decl.jjtGetChild(0);
+                                    return isParametersSame(params, methodSummary);
+                            }
 			}
 			return false;
 		}
@@ -379,6 +390,14 @@ public class EMParameterFinder
 				if (lvs.getName().equals(name))
 				{
 					return lvs;
+				}
+			}
+			else if (next instanceof ParameterSummary)
+			{
+				ParameterSummary ps = (ParameterSummary) next;
+				if (ps.getName().equals(name))
+				{
+					return ps;
 				}
 			}
 		}

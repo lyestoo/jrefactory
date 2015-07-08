@@ -11,6 +11,7 @@ package org.acm.seguin.pretty.sort;
 import org.acm.seguin.parser.ast.ASTMethodDeclaration;
 import org.acm.seguin.parser.ast.ASTMethodDeclarator;
 import org.acm.seguin.parser.ast.SimpleNode;
+import org.acm.seguin.parser.ast.ASTTypeParameters;
 
 import java.util.StringTokenizer;
 
@@ -18,6 +19,7 @@ import java.util.StringTokenizer;
  *  Orders the items in a class according to type.
  *
  *@author     Chris Seguin
+ *@author     Mike Atkinson
  *@created    August 3, 1999
  */
 public class SetterGetterOrder extends Ordering {
@@ -73,9 +75,13 @@ public class SetterGetterOrder extends Ordering {
 		//  Now that we have data, determine the type of data
 		if (data instanceof ASTMethodDeclaration) {
 			ASTMethodDeclaration declaration = (ASTMethodDeclaration) data;
-			ASTMethodDeclarator declar = (ASTMethodDeclarator) (declaration.jjtGetChild(1));
-			String name = declar.getName();
-			return findCode(getCode(name));
+                        int child=1;
+                        if (declaration.jjtGetChild(0) instanceof ASTTypeParameters) {
+                            child++;
+                        }
+                        ASTMethodDeclarator declar = (ASTMethodDeclarator) (declaration.jjtGetChild(child));
+                        String name = declar.getName();
+                        return findCode(getCode(name));
 		}
 		else {
 			return 100;

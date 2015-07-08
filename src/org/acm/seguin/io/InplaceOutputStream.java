@@ -9,6 +9,7 @@
 package org.acm.seguin.io;
 
 import java.io.*;
+import org.acm.seguin.util.FileSettings;
 
 /**
  *  To the user of this object, it appears that the file is written in place.
@@ -32,12 +33,23 @@ public class InplaceOutputStream extends OutputStream {
 	public InplaceOutputStream(File dest) throws IOException {
 		finalDestination = dest;
 
-		do {
-			temporary = createTempFile("inplace", ".java");
-			temporary.delete();
-		} while (temporary.exists());
-
-		out = new FileOutputStream(temporary);
+		String parent = dest.getPath();
+		if ((parent != null) && attempt(parent + File.separator + "inplace"))
+		{
+			//  Things have worked out!
+		}
+		else if (attempt("." + File.separator + "inplace"))
+		{
+			//  Things have worked out!
+		}
+		//else if (attempt(System.getProperty("user.home") + File.separator + ".Refactory" + File.separator + "inplace"))
+		else if (attempt(new File(FileSettings.getRefactorySettingsRoot(), "inplace").toString()))
+		{
+		}
+		else
+		{
+			throw new IOException("Unable to create the output file!");
+		}
 	}
 
 
@@ -156,13 +168,32 @@ public class InplaceOutputStream extends OutputStream {
 			double number = Math.random() * 1024 * 1024;
 			long rounded = Math.round(number);
 
-			File base = new File(System.getProperty("user.dir"));
-			File possible = new File(base, prefix + rounded + suffix);
+			File possible = new File(prefix + rounded + suffix);
 			if (!possible.exists()) {
 				return possible;
 			}
 		}
 
 		return null;
+	}
+
+/**  Attempts to determine if the file can be used for output
+@param filepath the file to open
+@return true if it worked
+*/
+	private boolean attempt(String filepath)
+	{
+		try {
+			temporary = createTempFile(filepath, ".java");
+			temporary.delete();
+		 if (temporary.exists())
+		 	return false;
+
+		out = new FileOutputStream(temporary);
+		}
+		catch (IOException ioe) {
+			return false;
+		}
+		return true;
 	}
 }

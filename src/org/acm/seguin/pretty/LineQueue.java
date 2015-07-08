@@ -25,7 +25,6 @@ public class LineQueue {
 	private StringBuffer buffer;
 	private String endOfLine;
 
-
 	/**
 	 *  Constructor for the LineQueue object
 	 *
@@ -36,7 +35,7 @@ public class LineQueue {
 		list = new Vector();
 		buffer = new StringBuffer();
 
-		FileSettings bundle = FileSettings.getSettings("Refactory", "pretty");
+		FileSettings bundle = FileSettings.getRefactoryPrettySettings();
 		try {
 			absoluteSpace = bundle.getInteger("singleline.comment.absoluteindent");
 		}
@@ -89,6 +88,7 @@ public class LineQueue {
 		catch (MissingSettingsException mse) {
 			endOfLine = "\n";
 		}
+
 
 		lineNumber = 1;
 	}

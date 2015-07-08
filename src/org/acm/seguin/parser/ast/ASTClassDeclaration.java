@@ -8,6 +8,8 @@
  */
 package org.acm.seguin.parser.ast;
 
+import java.text.DateFormat;
+import java.util.Date;
 import org.acm.seguin.pretty.ModifierHolder;
 import org.acm.seguin.pretty.JavaDocComponent;
 import org.acm.seguin.pretty.JavaDocable;
@@ -17,10 +19,9 @@ import org.acm.seguin.pretty.ai.RequiredTags;
 import org.acm.seguin.parser.JavaParserVisitor;
 import org.acm.seguin.parser.JavaParser;
 import org.acm.seguin.pretty.ForceJavadocComments;
-import java.text.DateFormat;
 import org.acm.seguin.util.FileSettings;
 import org.acm.seguin.util.MissingSettingsException;
-import java.util.Date;
+import org.acm.seguin.pretty.DescriptionPadder;
 
 /**
  *  Holds a class declaration.  Contains the list of modifiers
@@ -193,10 +194,14 @@ public class ASTClassDeclaration extends SimpleNode implements JavaDocable {
 	/**
 	 *  Returns a string containing all the modifiers
 	 *
-	 *@return    the iterator
+	 *@param code the code used to determine the order of the modifiers
+	 *@return    the string representationof the order
 	 */
-	public String getModifiersString() {
-		return modifiers.toString();
+	public String getModifiersString(int code) {
+		if (code == PrintData.ALPHABETICAL_ORDER)
+			return modifiers.toString();
+		else
+			return modifiers.toStandardOrderString();
 	}
 
 
@@ -239,7 +244,7 @@ public class ASTClassDeclaration extends SimpleNode implements JavaDocable {
 	 *@return    a string representing this object
 	 */
 	public String toString() {
-		return super.toString() + " [" + getModifiersString() + "]";
+		return super.toString() + " [" + getModifiersString(PrintData.ALPHABETICAL_ORDER) + "]";
 	}
 
 
@@ -274,7 +279,7 @@ public class ASTClassDeclaration extends SimpleNode implements JavaDocable {
 		FileSettings bundle = FileSettings.getSettings("Refactory", "pretty");
 
 		//  Description of the class
-		jdi.require("", bundle.getString("class.descr"));
+		jdi.require("", DescriptionPadder.find(bundle, "class.descr"));
 
 		//  Require the other tags
 		ASTUnmodifiedClassDeclaration child = (ASTUnmodifiedClassDeclaration) jjtGetChild(0);

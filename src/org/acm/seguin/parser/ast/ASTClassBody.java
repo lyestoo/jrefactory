@@ -8,10 +8,11 @@
  */
 package org.acm.seguin.parser.ast;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import org.acm.seguin.parser.JavaParserVisitor;
 import org.acm.seguin.parser.JavaParser;
-import org.acm.seguin.util.Comparator;
-import org.acm.seguin.util.InsertionSortArray;
+import org.acm.seguin.pretty.sort.FixupFinalStaticOrder;
 
 /**
  *  Stores the class body.  This has the ability to sort the
@@ -19,6 +20,7 @@ import org.acm.seguin.util.InsertionSortArray;
  *  pretty.settings file.
  *
  *@author     Chris Seguin
+ *@author     Mike Atkinson
  *@created    October 13, 1999
  */
 public class ASTClassBody extends SimpleNode {
@@ -50,7 +52,9 @@ public class ASTClassBody extends SimpleNode {
 	 */
 	public void sort(Comparator order) {
 		if (children != null) {
-			(new InsertionSortArray()).sort(children, order);
+			Arrays.sort(children, order);
+                        // ensure that static final constants are defined in the correct order
+			Arrays.sort(children, new FixupFinalStaticOrder());
 		}
 	}
 

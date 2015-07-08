@@ -10,6 +10,7 @@ package org.acm.seguin.pretty;
 
 import org.acm.seguin.parser.JavaParserConstants;
 import org.acm.seguin.parser.Node;
+import org.acm.seguin.parser.Token;
 
 /**
  *  Consume a category comment
@@ -21,11 +22,26 @@ public class PrintSpecialCategoryComment extends PrintSpecial {
 	/**
 	 *  Determines if this print special can handle the current object
 	 *
+         *@FIXME this tries to handle Category comments, but convert non-Category comments
+         *       to multiline comments. This convertion should really take place as part of
+         *       the parser but I can't work out how to do it.
+         *
 	 *@param  spec  Description of Parameter
 	 *@return       true if this one should process the input
 	 */
 	public boolean isAcceptable(SpecialTokenData spec) {
-		return (spec.getTokenType() == JavaParserConstants.CATEGORY_COMMENT);
+            if (spec.getTokenType() == JavaParserConstants.CATEGORY_COMMENT) {
+		String image = spec.getTokenImage().trim();
+                Token special = spec.getSpecialToken();
+                if (image.endsWith(">*/") ) {
+                   special.kind = JavaParserConstants.CATEGORY_COMMENT;
+                   return true;
+                } else {
+                   special.kind = JavaParserConstants.MULTI_LINE_COMMENT;
+                   return false;
+                }
+            }
+            return false;
 	}
 
 

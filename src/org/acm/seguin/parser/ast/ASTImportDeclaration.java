@@ -16,11 +16,13 @@ import org.acm.seguin.parser.JavaParser;
  *  a java file.
  *
  *@author     Chris Seguin
+ *@author     Mike Atkinson
  *@created    October 13, 1999
  */
 public class ASTImportDeclaration extends SimpleNode {
 	//  Instance Variables
 	private boolean importPackage;
+	private boolean staticImport;   // JDK 1.5
 
 
 	/**
@@ -63,6 +65,33 @@ public class ASTImportDeclaration extends SimpleNode {
 		return importPackage;
 	}
 
+        
+	/**
+	 *  Set when including everything in a package.
+         *
+         * JDK 1.5 indicate that this is a static import.
+	 *
+	 *@param  isStatic  whether we are importing statics from the package
+         *@since     JRefactory 2.7.00
+	 */
+        public void setStaticImport(boolean isStatic) {
+            staticImport = isStatic;
+        }
+        
+
+	/**
+	 *  Return whether we are importing a the static from this package.
+	 *
+         * JDK 1.5
+         *
+	 *@return    true if we are importing statics from the package
+         *@since     JRefactory 2.7.00
+	 */
+        public boolean isStaticImport() {
+            return staticImport;
+        }
+        
+        
 
 	/**
 	 *  Accept the visitor.

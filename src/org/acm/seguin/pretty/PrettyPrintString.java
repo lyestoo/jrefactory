@@ -18,7 +18,7 @@ import org.acm.seguin.parser.factory.BufferParserFactory;
  *
  *@author    Chris Seguin
  */
-abstract class PrettyPrintString extends PrettyPrintFile {
+public abstract class PrettyPrintString extends PrettyPrintFile {
 	//  Instance Variables
 	private ByteArrayOutputStream outputStream;
 

@@ -63,7 +63,7 @@ public class PrintingThread extends Thread {
 				job.print();
 			}
 			catch (Throwable ex) {
-				ExceptionPrinter.print(ex);
+				ExceptionPrinter.print(ex, false);
 			}
 		}
 	}
@@ -76,17 +76,17 @@ public class PrintingThread extends Thread {
 	 */
 	private void loadDefaults(TextPagePrinter textpp) {
 		try {
-			FileSettings bundle = FileSettings.getSettings("Refactory", "printing");
+			FileSettings bundle = FileSettings.getRefactorySettings("printing");
 			textpp.setTextFontSize(Integer.parseInt(bundle.getString("text.font.size")));
 			textpp.setBetweenLineSpacing(Integer.parseInt(bundle.getString("text.space")));
 			textpp.setFilenameFontSize(Integer.parseInt(bundle.getString("filename.font.size")));
 			textpp.setDatePageCountFontSize(Integer.parseInt(bundle.getString("date.font.size")));
 		}
 		catch (MissingSettingsException mre) {
-			ExceptionPrinter.print(mre);
+			ExceptionPrinter.print(mre, false);
 		}
 		catch (NumberFormatException inf) {
-			ExceptionPrinter.print(inf);
+			ExceptionPrinter.print(inf, false);
 		}
 	}
 
@@ -113,7 +113,7 @@ public class PrintingThread extends Thread {
 			(new PrintingThread(args[0], all.toString(), new LinePrinter())).run();
 		}
 		catch (IOException ioe) {
-			ExceptionPrinter.print(ioe);
+			ExceptionPrinter.print(ioe, false);
 		}
 	}
 }
