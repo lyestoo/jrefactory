@@ -66,6 +66,7 @@ import java.util.HashMap;
 import org.acm.seguin.ide.common.MultipleDirClassDiagramReloader;
 import org.acm.seguin.ide.common.PackageSelectorDialog;
 import org.acm.seguin.summary.PackageSummary;
+import org.acm.seguin.uml.PackageLoader;
 
 /**
  *  Package selector dialog box

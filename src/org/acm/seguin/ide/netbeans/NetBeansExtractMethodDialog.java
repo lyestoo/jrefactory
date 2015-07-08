@@ -51,18 +51,20 @@
  */
 package org.acm.seguin.ide.netbeans;
 
-import javax.swing.*;
+import javax.swing.JEditorPane;
 import org.acm.seguin.refactor.RefactoringException;
 import org.acm.seguin.uml.refactor.*;
-import org.openide.*;
-import org.openide.cookies.*;
-import org.openide.nodes.*;
-import org.openide.windows.*;
+import org.openide.cookies.EditorCookie;
+import org.openide.nodes.Node;
+import org.openide.windows.WindowManager;
+import org.openide.windows.TopComponent;
+import org.openide.util.Lookup;
 
 /**
  *  Description of the Class
  *
  *@author     Chris Seguin
+ *@author     <a href="mailto:JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
  *@created    October 18, 2001
  */
 public class NetBeansExtractMethodDialog extends ExtractMethodDialog {
@@ -129,8 +131,8 @@ public class NetBeansExtractMethodDialog extends ExtractMethodDialog {
      *@return         The CurrentEditorPane value
      */
     private JEditorPane getCurrentEditorPane(EditorCookie cookie) {
-        TopComponent comp =
-                TopManager.getDefault().getWindowManager().getRegistry().getActivated();
+        WindowManager wm = (WindowManager)Lookup.getDefault().lookup(WindowManager.class);
+        TopComponent comp = wm.getRegistry().getActivated();
         Node[] nodes = comp.getRegistry().getActivatedNodes();
 
         //(NOTE) This is a hack fix

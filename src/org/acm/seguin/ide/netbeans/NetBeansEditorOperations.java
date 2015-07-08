@@ -51,21 +51,27 @@
  */
 package org.acm.seguin.ide.netbeans;
 
-import java.io.*;
-import javax.swing.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 
-import org.acm.seguin.ide.common.*;
-import org.openide.*;
-import org.openide.cookies.*;
-import org.openide.filesystems.*;
-import org.openide.loaders.*;
-import org.openide.nodes.*;
-import org.openide.windows.*;
+import org.acm.seguin.ide.common.EditorOperations;
+import org.openide.loaders.DataObject;
+import org.openide.filesystems.FileObject;
+import org.openide.nodes.Node;
+import org.openide.cookies.EditorCookie;
+import org.openide.windows.WindowManager;
+import org.openide.windows.TopComponent;
+import org.openide.util.Lookup;
 
 /**
  *  Description of Class
  *
  *@author     unknown
+ *@author     <a href="mailto:JRefactory@ladyshot.demon.co.uk">Mike Atkinson</a>
  *@created    October 18, 2001
  */
 public class NetBeansEditorOperations extends EditorOperations {
@@ -136,8 +142,8 @@ public class NetBeansEditorOperations extends EditorOperations {
      *@return    The currentEditorPane value
      */
     private JEditorPane getCurrentEditorPane() {
-        TopComponent comp =
-                TopManager.getDefault().getWindowManager().getRegistry().getActivated();
+        WindowManager wm = (WindowManager)Lookup.getDefault().lookup(WindowManager.class);
+        TopComponent comp = wm.getRegistry().getActivated();
         Node[] nodes = comp.getRegistry().getActivatedNodes();
 
         EditorCookie cookie = null;

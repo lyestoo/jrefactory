@@ -88,8 +88,12 @@ public class JBuilderRefactoringFactory extends RefactoringFactory {
      *  We use this as an opportunity to save all the files in the system before
      *  we perform the refactorings.
      */
-    protected void prepare() {
-        Browser.getActiveBrowser().doSaveAll(true);
+    protected void prepare()  {
+        try {
+            Browser.getActiveBrowser().doSaveAll(true);
+        } catch (com.borland.primetime.util.VetoException e) {
+            e.printStackTrace();
+        }
     }
 
 

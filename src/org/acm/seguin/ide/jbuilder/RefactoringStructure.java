@@ -57,6 +57,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JMenu;
 import javax.swing.tree.TreePath;
 import com.borland.primetime.node.TextStructure;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseAdapter;
 
 /**
  *  Structure view that provides access to the refactorings
@@ -75,6 +77,20 @@ public class RefactoringStructure extends TextStructureDelegate {
      */
     public RefactoringStructure(TextStructure init) {
         super(init);
+        getTree().addMouseListener(new MouseAdapter() {
+             /**
+              *  The mouse was pressed
+              *
+              *@param  evt  the mouse event
+              */
+             public void mousePressed(MouseEvent evt) {
+                 TreePath path = getTree().getClosestPathForLocation(evt.getX(), evt.getY());
+                 currentNode = path.getLastPathComponent();
+         
+                 System.out.println("Hit:  " + currentNode.toString() +
+                         "  is a " + currentNode.getClass().getName());
+             }
+        });
     }
 
 
@@ -91,18 +107,5 @@ public class RefactoringStructure extends TextStructureDelegate {
     }
 
 
-    /**
-     *  The mouse was pressed
-     *
-     *@param  evt  the mouse event
-     */
-    public void mousePressed(MouseEvent evt) {
-        TreePath path = getTree().getClosestPathForLocation(evt.getX(), evt.getY());
-        currentNode = path.getLastPathComponent();
-
-        System.out.println("Hit:  " + currentNode.toString() +
-                "  is a " + currentNode.getClass().getName());
-        super.mousePressed(evt);
-    }
 }
 //  EOF

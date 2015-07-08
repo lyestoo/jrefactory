@@ -224,7 +224,7 @@ public class UMLNode extends FileNode {
      *@param  minorVersion  the version number
      */
     public static void initOpenTool(byte majorVersion, byte minorVersion) {
-        if (majorVersion != 4) {
+        if (majorVersion != PrimeTime.CURRENT_MAJOR_VERSION) {
             return;
         }
 

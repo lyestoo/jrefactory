@@ -32,7 +32,7 @@ public class JRefactoryVersion {
 	 *@return    The Build value
 	 */
 	public int getBuild() {
-		return 05;
+		return 07;
 	}
 
 

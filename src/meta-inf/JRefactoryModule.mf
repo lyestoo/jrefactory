@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Specified-By: org/acm/seguin/ide/netbeans/JRefactoryModule.jarContent
+OpenIDE-Module-Layer: org/acm/seguin/ide/netbeans/JRefactoryLayer.xml
+OpenIDE-Module-Name: JRefactory
+OpenIDE-Module-Short-Description: JRefactory for Netbeans
+OpenIDE-Module-Implementation-Version: build 2
+OpenIDE-Module-Long-Description: Java refactoring tool plugin for Netb
+ eans
+Created-By: NetBeans
+Class-Path: ext\jrefactory.jar
+OpenIDE-Module-Specification-Version: 0.2
+OpenIDE-Module: org.acm.seguin.ide.netbeans.JRefactoryModule
+

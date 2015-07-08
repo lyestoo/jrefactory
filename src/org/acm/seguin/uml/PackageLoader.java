@@ -73,10 +73,10 @@ import org.acm.seguin.util.FileSettings;
  *
  *@author     Chris Seguin
  *@author     Mike Atkinson
- *@version    $Id: PackageLoader.java,v 1.4 2003/07/18 16:14:54 mikeatkinson Exp $
+ *@version    $Id: PackageLoader.java,v 1.5 2003/07/22 20:43:27 mikeatkinson Exp $
  *@created    September 12, 2001
  */
-class PackageLoader implements Runnable {
+public class PackageLoader implements Runnable {
     private UMLPackage packagePanel;
     private int defaultX = 20;
     private int defaultY = 20;
