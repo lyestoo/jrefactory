@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Created-By: 1.2.2 (Sun Microsystems Inc.)
+Elixir-Extension: org.acm.seguin.ide.elixir.RefactoryExtension
+OpenTools-UI: org.acm.seguin.ide.jbuilder.UMLNode
+Specified-By: org/acm/seguin/ide/netbeans/JRefactoryModule.jarContent
+OpenIDE-Module-Layer: org/acm/seguin/ide/netbeans/JRefactoryLayer.xml
+OpenIDE-Module-Name: JRefactory
+OpenIDE-Module-Short-Description: JRefactory for Netbeans
+OpenIDE-Module-Implementation-Version: build 2
+OpenIDE-Module-Long-Description: Java refactoring tool plugin for Netb
+ eans
+Created-By: NetBeans
+OpenIDE-Module-Specification-Version: 0.2
+OpenIDE-Module: org.acm.seguin.ide.netbeans.JRefactoryModule
+Name: org.acm.seguin.ide.cafe.CafeSetup
+VisualCafe-Plugin: True
+Java-Bean: False

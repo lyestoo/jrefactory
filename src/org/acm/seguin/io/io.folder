@@ -1,0 +1,6 @@
+.\org\acm\seguin\io\InplaceOutputStream.java
+.\org\acm\seguin\io\FileCopy.java
+.\org\acm\seguin\io\DirectoryTreeTraversal.java
+.\org\acm\seguin\io\Saveable.java
+.\org\acm\seguin\io\AllFileFilter.java
+.\org\acm\seguin\io\ExtensionFileFilter.java

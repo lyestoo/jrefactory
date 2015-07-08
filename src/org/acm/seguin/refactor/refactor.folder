@@ -1,0 +1,13 @@
+.\org\acm\seguin\refactor\Refactoring.java
+.\org\acm\seguin\refactor\TransformAST.java
+.\org\acm\seguin\refactor\RemoveImportTransform.java
+.\org\acm\seguin\refactor\RefactoringFactory.java
+.\org\acm\seguin\refactor\RefactoringException.java
+.\org\acm\seguin\refactor\field\field.folder
+.\org\acm\seguin\refactor\type\type.folder
+.\org\acm\seguin\refactor\method\method.folder
+.\org\acm\seguin\refactor\package.html
+.\org\acm\seguin\refactor\ComplexTransform.java
+.\org\acm\seguin\refactor\AddImportTransform.java
+.\org\acm\seguin\refactor\undo\undo.folder
+.\org\acm\seguin\refactor\EliminatePackageImportVisitor.java

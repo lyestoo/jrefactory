@@ -1,0 +1,15 @@
+.\org\acm\seguin\refactor\field\AddFieldTransform.java
+.\org\acm\seguin\refactor\field\AddFieldVisitor.java
+.\org\acm\seguin\refactor\field\FieldRefactoring.java
+.\org\acm\seguin\refactor\field\FieldRefactoringFactory.java
+.\org\acm\seguin\refactor\field\PushDownFieldRefactoring.java
+.\org\acm\seguin\refactor\field\PushUpFieldRefactoring.java
+.\org\acm\seguin\refactor\field\RemoveFieldFromSubclassVisitor.java
+.\org\acm\seguin\refactor\field\RemoveFieldTransform.java
+.\org\acm\seguin\refactor\field\RemoveFieldVisitor.java
+.\org\acm\seguin\refactor\field\RenameFieldData.java
+.\org\acm\seguin\refactor\field\RenameFieldRefactoring.java
+.\org\acm\seguin\refactor\field\RenameFieldTransform.java
+.\org\acm\seguin\refactor\field\RenameFieldVisitor.java
+.\org\acm\seguin\refactor\field\RenameSystemTraversal.java
+.\org\acm\seguin\refactor\field\package.html

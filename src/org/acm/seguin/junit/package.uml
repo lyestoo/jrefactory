@@ -1,0 +1,8 @@
+V[1.1:org.acm.seguin.junit]
+S[org.acm.seguin.junit:RemoveCR,org.acm.seguin.io:FileCopy]{2:(656,94),(869,116)}
+S[org.acm.seguin.junit:TestAddChildTwo,org.acm.seguin.junit:DirSourceTestCase]{2:(670,220),(610,220)}
+P[org.acm.seguin.junit:FileCompare]{20,20}
+P[org.acm.seguin.junit:RemoveCR]{416,20}
+P[org.acm.seguin.junit:DirSourceTestCase]{437,167}
+P[org.acm.seguin.junit:TestAddChildTwo]{670,177}
+P[org.acm.seguin.io:FileCopy]{869,20}

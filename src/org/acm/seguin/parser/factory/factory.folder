@@ -1,0 +1,6 @@
+.\org\acm\seguin\parser\factory\ParserFactory.java
+.\org\acm\seguin\parser\factory\BufferParserFactory.java
+.\org\acm\seguin\parser\factory\InputStreamParserFactory.java
+.\org\acm\seguin\parser\factory\NameFactory.java
+.\org\acm\seguin\parser\factory\FileParserFactory.java
+.\org\acm\seguin\parser\factory\StdInParserFactory.java
